@@ -1,0 +1,130 @@
+/* 유지되는 기존 스타일들 */
+
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-family: Arial, sans-serif;
+}
+
+.register-container h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.profile-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.upload-button {
+    position: absolute;
+    bottom: -10px;
+    background-color: #ff4f5a;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+    background-color: #e04448;
+}
+
+.register-form {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 기본 input-group 스타일 */
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 이메일 필드만 가로 정렬 */
+.email-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.email-group input[type="text"],
+.email-group select {
+    width: calc(33.33% - 10px); /* 각 요소의 너비를 균등하게 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.email-group span {
+    font-size: 1em;
+    color: #555;
+}
+
+/* 나머지 input 필드와 버튼 스타일 유지 */
+.input-group label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.input-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus,
+.email-group input:focus,
+.email-group select:focus {
+    border-color: #ff4f5a;
+}
+
+.submit-button {
+    background-color: #ff4f5a;
+    color: #fff;
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #e04448;
+}
+
+.error-text {
+    color: #ff4f5a;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
