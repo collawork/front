@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import '../components/assest/css/Register.css';
@@ -13,31 +13,9 @@ function Register() {
     const [errors, setErrors] = useState({});
     const [validations, setValidations] = useState({});
     const [previewImage, setPreviewImage] = useState(null);
-    const [domains] = useState(['naver.com', 'daum.com', 'google.com']);
+    const [domains] = useState(['naver.com','google.com', 'daum.com', "kakao.com" ]);
 
-    useEffect(() => {
-        if (formData.username) validateUsername();
-        if (formData.email && formData.emailDomain) validateEmail();
-        if (formData.phone) validatePhone();
-    }, [formData.username, formData.email, formData.emailDomain, formData.phone]);
-
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        if (name === 'profileImage' && files) {
-            setFormData({ ...formData, profileImage: files[0] });
-            setPreviewImage(URL.createObjectURL(files[0]));
-        } else if (name === 'emailDomain') {
-            setFormData({ ...formData, emailDomain: value });
-        } else if (name === 'phone') {
-            // 핸드폰 번호 필드는 숫자만 입력 가능하도록 설정
-            const formattedValue = value.replace(/\D/g, ''); // 숫자가 아닌 값 제거
-            setFormData({ ...formData, [name]: formattedValue });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
-    };
-
-    const validateUsername = async () => {
+    const validateUsername = useCallback(async () => {
         if (!formData.username) {
             setErrors(prev => ({ ...prev, username: '이름을 입력해주세요' }));
             setValidations(prev => ({ ...prev, username: false }));
@@ -47,13 +25,13 @@ function Register() {
                 setErrors(prev => ({ ...prev, username: '' }));
                 setValidations(prev => ({ ...prev, username: true }));
             } catch (error) {
-                setErrors(prev => ({ ...prev, username: '아이디가 중복 되었습니다.' }));
+                setErrors(prev => ({ ...prev, username: '아이디가 중복되었습니다.' }));
                 setValidations(prev => ({ ...prev, username: false }));
             }
         }
-    };
+    }, [formData.username]);
 
-    const validateEmail = async () => {
+    const validateEmail = useCallback(async () => {
         if (!formData.email || !formData.emailDomain) {
             setErrors(prev => ({ ...prev, email: '이메일을 입력해주세요' }));
             setValidations(prev => ({ ...prev, email: false }));
@@ -70,9 +48,9 @@ function Register() {
                 setValidations(prev => ({ ...prev, email: false }));
             }
         }
-    };
+    }, [formData.email, formData.emailDomain]);
 
-    const validatePhone = async () => {
+    const validatePhone = useCallback(async () => {
         if (!formData.phone) {
             setErrors(prev => ({ ...prev, phone: '핸드폰 번호를 입력해주세요' }));
             setValidations(prev => ({ ...prev, phone: false }));
@@ -89,6 +67,28 @@ function Register() {
                 setValidations(prev => ({ ...prev, phone: false }));
             }
         }
+    }, [formData.phone]);
+
+    useEffect(() => {
+        if (formData.username) validateUsername();
+        if (formData.email && formData.emailDomain) validateEmail();
+        if (formData.phone) validatePhone();
+    }, [formData.username, formData.email, formData.emailDomain, formData.phone, validateUsername, validateEmail, validatePhone]);
+    
+
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === 'profileImage' && files.length > 0) {
+            setFormData({ ...formData, profileImage: files[0] });
+            setPreviewImage(URL.createObjectURL(files[0]));
+        } else if (name === 'emailDomain') {
+            setFormData({ ...formData, emailDomain: value });
+        } else if (name === 'phone') {
+            const formattedValue = value.replace(/\D/g, '');
+            setFormData({ ...formData, [name]: formattedValue });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -98,9 +98,8 @@ function Register() {
             return;
         }
 
-        const dataToSend = { ...formData, email: `${formData.email}@${formData.emailDomain}` };
         try {
-            await authService.registerUser(dataToSend);
+            await authService.registerUser(formData);
             alert('회원가입이 완료되었습니다.');
             navigate('/login');
         } catch (error) {
