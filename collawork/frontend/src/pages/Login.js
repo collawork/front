@@ -1,3 +1,4 @@
+// Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
@@ -13,7 +14,7 @@ function Login() {
         e.preventDefault();
         try {
             const response = await authService.login({ email, password });
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.token); // `token` 필드로 저장
             navigate('/');
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -21,11 +22,10 @@ function Login() {
             } else if (error.request) {
                 setError('서버와의 통신에 실패했습니다.');
             } else {
-                setError('로그인 요청 중 오류가 발생했습니다.');
+                setError(error.message || '로그인 요청 중 오류가 발생했습니다.');
             }
         }
     };
-    
 
     return (
         <div className="login-container">
@@ -49,8 +49,7 @@ function Login() {
                         required
                     />
                 </div>
-                {/* 에러 메시지 출력 */}
-                {error && <p className="error-text">{typeof error === 'string' ? error : JSON.stringify(error)}</p>}
+                {error && <p className="error-text">{error}</p>}
                 <button type="submit" className="submit-button">로그인</button>
                 <button type="button" className="register-button" onClick={() => navigate('/register')}>회원가입</button>
             </form>
