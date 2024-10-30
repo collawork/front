@@ -81,3 +81,56 @@
 .register-button:hover {
     background-color: #ddd;
 }
+
+/* 새로운 구분선 스타일 */
+.separator {
+    text-align: center;
+    margin: 10px 0;
+    color: #999;
+}
+
+/* 소셜 로그인 버튼 그룹 */
+.social-login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 공통 소셜 버튼 스타일 */
+.social-button {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white;
+    text-align: center;
+}
+
+/* 소셜 버튼별 색상 */
+.google-button {
+    background-color: #61aeec;
+}
+
+.google-button:hover {
+    background-color: #3d9ceb;
+}
+
+.kakao-button {
+    background-color: #fee500;
+    color: #3d1d1d;
+}
+
+.kakao-button:hover {
+    background-color: #ebd500;
+}
+
+.naver-button {
+    background-color: #03c75a;
+}
+
+.naver-button:hover {
+    background-color: #02994a;
+}

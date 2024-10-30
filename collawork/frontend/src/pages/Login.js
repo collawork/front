@@ -27,14 +27,14 @@ function Login() {
     };
 
     const handleSocialLogin = (provider) => {
-        const redirectUri = `${window.location.origin}/social-login`; // 소셜 로그인 후 리다이렉션될 URI
         const providerUrls = {
-            google: `${process.env.REACT_APP_API_URL}/oauth2/authorize/google?redirect_uri=${redirectUri}`,
-            kakao: `${process.env.REACT_APP_API_URL}/oauth2/authorize/kakao?redirect_uri=${redirectUri}`,
-            naver: `${process.env.REACT_APP_API_URL}/oauth2/authorize/naver?redirect_uri=${redirectUri}`
+            google: `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.REACT_APP_GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/google&response_type=code&scope=email%20profile`,
+            kakao: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&response_type=code`,
+            naver: `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/naver&response_type=code`,
         };
         window.location.href = providerUrls[provider];
     };
+    
 
     return (
         <div className="login-container">
