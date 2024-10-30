@@ -12,7 +12,7 @@ function Home() {
         <div style={styles.container}>
             <div style={styles.textContainer}>
                 <h1 style={styles.title}>쉬운 협업툴<br />팀 업무관리에<br />메신저를 더하다.</h1>
-                <p style={styles.subtitle}>모든 팀이 플로우로 모이면 더 큰 목표를 얻을 수 있습니다.</p>
+                <p style={styles.subtitle}>일정관리로 업무의 효율을 더하기.</p>
                 <button style={styles.button} onClick={handleStartClick}>시작하기</button>
             </div>
             <div style={styles.imageContainer}>
