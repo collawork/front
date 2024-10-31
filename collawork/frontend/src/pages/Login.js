@@ -13,7 +13,7 @@ function Login() {
         e.preventDefault();
         try {
             const response = await authService.login({ email, password });
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.token);
             navigate('/');
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -21,9 +21,18 @@ function Login() {
             } else if (error.request) {
                 setError('서버와의 통신에 실패했습니다.');
             } else {
-                setError('로그인 요청 중 오류가 발생했습니다.');
+                setError(error.message || '로그인 요청 중 오류가 발생했습니다.');
             }
         }
+    };
+
+    const handleSocialLogin = (provider) => {
+        const providerUrls = {
+            google: `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.REACT_APP_GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/google&response_type=code&scope=email%20profile`,
+            kakao: `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/kakao&response_type=code`,
+            naver: `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.REACT_APP_NAVER_CLIENT_ID}&redirect_uri=http://localhost:8080/login/oauth2/code/naver&response_type=code`,
+        };
+        window.location.href = providerUrls[provider];
     };
     
 
@@ -49,10 +58,32 @@ function Login() {
                         required
                     />
                 </div>
-                {/* 에러 메시지 출력 */}
-                {error && <p className="error-text">{typeof error === 'string' ? error : JSON.stringify(error)}</p>}
+                {error && <p className="error-text">{error}</p>}
                 <button type="submit" className="submit-button">로그인</button>
                 <button type="button" className="register-button" onClick={() => navigate('/register')}>회원가입</button>
+
+                <div className="separator">또는</div>
+
+                <div className="social-login-buttons">
+                    <button 
+                        type="button" 
+                        className="social-button google-button" 
+                        onClick={() => handleSocialLogin('google')}>
+                        Google로 로그인
+                    </button>
+                    <button 
+                        type="button" 
+                        className="social-button kakao-button" 
+                        onClick={() => handleSocialLogin('kakao')}>
+                        Kakao로 로그인
+                    </button>
+                    <button 
+                        type="button" 
+                        className="social-button naver-button" 
+                        onClick={() => handleSocialLogin('naver')}>
+                        Naver로 로그인
+                    </button>
+                </div>
             </form>
         </div>
     );
