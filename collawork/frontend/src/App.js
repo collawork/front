@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import SocialLoginCallback from './pages/SocialLoginCallback';
-import KakaoUserInfo from './components/Auth/KakaoUserInfo';
+import KakaoUserInfo from './components/auth/KakaoUserInfo';
 
 function App() {
     return (

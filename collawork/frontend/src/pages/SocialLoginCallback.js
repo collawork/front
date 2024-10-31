@@ -1,33 +1,52 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function SocialLoginCallback() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const url = window.location.href;
-        console.log("Current URL:", url); // 현재 URL 출력
-
         const params = new URLSearchParams(window.location.search);
-        let token = params.get('token'); // URL에서 token 파라미터 추출
-        console.log("Extracted Token:", token); // token 값 출력
+        const token = params.get('token'); 
+        const provider = params.get('provider');
 
-        if (!token) {
-            // URL에 토큰이 없으면 localStorage에서 가져오기
-            token = localStorage.getItem('token');
-            console.log("Token from localStorage:", token);
-        }
+        const handleSocialAuth = async () => {
+            console.log("받은 token:", token);
+            console.log("받은 provider:", provider);
 
-        if (token) {
-            // token이 존재하면 로컬 스토리지에 저장 후 리디렉션
-            localStorage.setItem('token', token);
-            console.log("Token stored in localStorage");
-            navigate('/');
-        } else {
-            console.error("Missing token in URL and localStorage");
-            alert("로그인에 필요한 정보가 부족합니다.");
-            navigate('/login');
-        }
+            if (!token || !provider) {
+                console.error("Authorization token or provider가 없음");
+                alert("로그인에 필요한 정보가 부족합니다.");
+                navigate('/login');
+                return;
+            }
+
+            try {
+                const response = await axios.post(
+                    `${process.env.REACT_APP_API_URL}/api/auth/social/${provider}`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                const { jwtToken, kakaoAccessToken } = response.data;
+                if (jwtToken) localStorage.setItem('token', jwtToken);
+                if (kakaoAccessToken) localStorage.setItem('kakaoAccessToken', kakaoAccessToken);
+
+                navigate('/login');
+            } catch (error) {
+                console.error("소셜 로그인 실패:", error);
+                console.log("에러 응답 데이터:", error.response ? error.response.data : "응답 없음");
+                alert("소셜 로그인 실패");
+                navigate('/login');
+            }
+        };
+
+        handleSocialAuth();
     }, [navigate]);
 
     return <div>소셜 로그인 중입니다...</div>;

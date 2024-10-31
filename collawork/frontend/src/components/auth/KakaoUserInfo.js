@@ -5,21 +5,28 @@ function KakaoUserInfo() {
     const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            axios.get(`${process.env.REACT_APP_API_URL}/api/kakao/user-info`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            .then(response => {
-                setUserInfo(response.data); // 사용자 정보 저장
-                console.log("User Info:", response.data);
-            })
-            .catch(error => {
-                console.error("Failed to fetch user info:", error);
-            });
+        const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
+        
+        // 액세스 토큰 확인용 로그
+        console.log("카카오 액세스 토큰:", kakaoAccessToken);
+        
+        if (!kakaoAccessToken) {
+            console.error("카카오 액세스 토큰이 없습니다.");
+            return;
         }
+
+        axios.get(`${process.env.REACT_APP_API_URL}/api/kakao/user-info`, {
+            headers: {
+                Authorization: `Bearer ${kakaoAccessToken}`
+            }
+        })
+        .then(response => {
+            setUserInfo(response.data);
+            console.log("User Info:", response.data);
+        })
+        .catch(error => {
+            console.error("Failed to fetch user info:", error);
+        });
     }, []);
 
     if (!userInfo) return <div>Loading user information...</div>;

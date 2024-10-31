@@ -13,7 +13,7 @@ function Register() {
     const [errors, setErrors] = useState({});
     const [validations, setValidations] = useState({});
     const [previewImage, setPreviewImage] = useState(null);
-    const [domains] = useState(['naver.com','google.com', 'daum.com', "kakao.com" ]);
+    const [domains] = useState(['naver.com','gmail.com', 'daum.com', "yahoo.com" ]);
 
     const validateUsername = useCallback(async () => {
         if (!formData.username) {
