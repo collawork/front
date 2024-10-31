@@ -1,6 +1,6 @@
-const Layout = () => {
+const Aside = () => {
     return(
-        <h1>Layout</h1>
+        <h1>Aside</h1>
     )
 }
-export default Layout;
+export default Aside;
