@@ -36,6 +36,7 @@ function KakaoUserInfo() {
             <h1>카카오 사용자 정보</h1>
             <p>이름: {userInfo.properties?.nickname}</p>
             <p>이메일: {userInfo.kakao_account?.email}</p>
+            <p>테스트 ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ</p>
         </div>
     );
 }
