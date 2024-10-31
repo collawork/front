@@ -7,7 +7,7 @@ function SocialLoginCallback() {
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const token = params.get('token'); 
+        const token = localStorage.getItem('token');
         const provider = params.get('provider');
 
         const handleSocialAuth = async () => {
@@ -36,8 +36,10 @@ function SocialLoginCallback() {
                 const { jwtToken, kakaoAccessToken } = response.data;
                 if (jwtToken) localStorage.setItem('token', jwtToken);
                 if (kakaoAccessToken) localStorage.setItem('kakaoAccessToken', kakaoAccessToken);
+                
+                localStorage.setItem('provider', provider);
 
-                navigate('/login');
+                navigate('/');
             } catch (error) {
                 console.error("소셜 로그인 실패:", error);
                 console.log("에러 응답 데이터:", error.response ? error.response.data : "응답 없음");

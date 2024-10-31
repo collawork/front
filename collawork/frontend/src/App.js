@@ -6,7 +6,7 @@ import Project from './pages/Project';
 import Layout from './layout/Layout';
 import Register from './pages/Register';
 import SocialLoginCallback from './pages/SocialLoginCallback';
-import KakaoUserInfo from './components/auth/KakaoUserInfo';
+import KakaoUserInfo from './components/Auth/KakaoUserInfo';
 
 function App() {
     return (
