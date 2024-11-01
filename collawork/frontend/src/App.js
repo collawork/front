@@ -6,7 +6,8 @@ import Project from './pages/Project';
 import Layout from './layout/Layout';
 import Register from './pages/Register';
 import SocialLoginCallback from './pages/SocialLoginCallback';
-import KakaoUserInfo from './components/Auth/KakaoUserInfo';
+import KakaoUserInfo from './components/auth/KakaoUserInfo';
+import WeatherBackground from './pages/WeatherBackground';
 
 function App() {
     return (
@@ -22,7 +23,7 @@ function App() {
                 </Route>
 
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
-
+                <Route path='/home' element={<WeatherBackground/>}/>
             </Routes>
         </Router>
     );
