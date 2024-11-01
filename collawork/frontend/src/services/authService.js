@@ -34,6 +34,7 @@ const registerUser = async (data) => {
 const login = async (data) => {
     try {
         const loginData = {
+            username: data.username,
             email: data.email,
             password: data.password
         };
@@ -46,6 +47,7 @@ const login = async (data) => {
         });
 
         console.log("로그인 응답:", response.data);
+        console.log("data:", data);
 
         const token = response.data.token;
         if (token) {
