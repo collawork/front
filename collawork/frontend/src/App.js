@@ -7,6 +7,7 @@ import Layout from './layout/Layout';
 import Register from './pages/Register';
 import SocialLoginCallback from './pages/SocialLoginCallback';
 import KakaoUserInfo from './components/auth/KakaoUserInfo';
+import MyPage from './pages/MyPage';
 
 function App() {
     return (
@@ -16,7 +17,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/social-login" element={<SocialLoginCallback />} />
                 <Route path="/register" element={<Register />} />
-
+                <Route path="/mypage" element={<MyPage/>}/>
+                
                 <Route path="/project" element={<Layout />}>
                     <Route index element={<Project/>} />
                 </Route>
