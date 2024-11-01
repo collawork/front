@@ -6,11 +6,13 @@ function SocialLoginCallback() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log("SocialLoginCallback 컴포넌트가 렌더링됨");
         const params = new URLSearchParams(window.location.search);
         const token = localStorage.getItem('token');
         const provider = params.get('provider');
 
         const handleSocialAuth = async () => {
+            console.log("현재 URL:", window.location.href);
             console.log("받은 token:", token);
             console.log("받은 provider:", provider);
 
@@ -33,9 +35,11 @@ function SocialLoginCallback() {
                     }
                 );
 
-                const { jwtToken, kakaoAccessToken } = response.data;
+                const { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken } = response.data;
                 if (jwtToken) localStorage.setItem('token', jwtToken);
                 if (kakaoAccessToken) localStorage.setItem('kakaoAccessToken', kakaoAccessToken);
+                if (googleAccsessToken) localStorage.setItem('googleAccsessToken', googleAccsessToken);
+                if (NaverAccessToken) localStorage.setItem('NaverAccessToken', NaverAccessToken);
                 
                 localStorage.setItem('provider', provider);
 
