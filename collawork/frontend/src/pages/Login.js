@@ -14,7 +14,7 @@ function Login() {
         try {
             const token = await authService.login({ email, password });
             localStorage.setItem('token', token);
-            navigate('/');
+            navigate('/main');
         } catch (error) {
             if (error.response && error.response.data.message) {
                 setError(error.response.data.message);
