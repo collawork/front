@@ -12,34 +12,43 @@ function SocialLoginCallback() {
         const token = params.get('token'); 
         const provider = params.get('provider');
 
-        if (token) {
-            localStorage.setItem('token', token);
-            console.log("저장된 JWT 토큰:", localStorage.getItem('token'));
-        } else {
-            console.error("URL에 토큰이 없습니다.");
+        console.log("받은 토큰:", token);
+        console.log("Provider:", provider);
+
+        const isValidToken = (token) => {
+            return token && token.length > 20;
+        };
+        
+        if (!isValidToken(token)) {
+            console.error("유효하지 않은 토큰");
+            alert("유효하지 않은 인증 정보");
+            navigate('/login');
+            return;
         }
 
-        const handleSocialAuth = async () => {
-            if (!token || !provider) {
-                console.error("Authorization token 또는 provider가 없음");
-                alert("로그인에 필요한 정보가 부족합니다.");
-                navigate('/login');
-                return;
-            }
+        localStorage.setItem('token', token);
+        console.log("저장된 JWT 토큰:", localStorage.getItem('token'));
 
+        const handleSocialAuth = async () => {
             try {
+                console.log("토큰과 제공자:", token, provider);
                 const response = await axios.post(
                     `${process.env.REACT_APP_API_URL}/api/auth/social/${provider}`,
                     {},
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        withCredentials: true
                     }
                 );
 
+                console.log("응답 데이터:", response.data);
+
                 const { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken } = response.data;
+                console.log("받은 토큰들:", { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken });
                 if (jwtToken) localStorage.setItem('token', jwtToken);
                 if (kakaoAccessToken) localStorage.setItem('kakaoAccessToken', kakaoAccessToken);
                 if (googleAccsessToken) localStorage.setItem('googleAccsessToken', googleAccsessToken);
@@ -47,11 +56,20 @@ function SocialLoginCallback() {
 
                 localStorage.setItem('provider', provider);
                 console.log("모든 토큰 저장 완료 후 리디렉션 시작");
-                navigate('/');
+                navigate('/main');  // 소셜 로그인 후 /main으로 리디렉션
             } catch (error) {
                 console.error("소셜 로그인 실패:", error);
-                console.log("에러 응답 데이터:", error.response ? error.response.data : "응답 없음");
-                alert("소셜 로그인 실패");
+                if (error.response) {
+                    console.log("상태:", error.response.status);
+                    console.log("헤더:", error.response.headers);
+                    console.log("데이터:", error.response.data);
+                } else if (error.request) {
+                    console.log("요청은 전송됐으나 응답을 받지 못함:", error.request);
+                } else {
+                    console.log("에러 메시지:", error.message);
+                }
+                
+                alert(`소셜 로그인 실패: ${error.response?.data?.message || error.message}`);
                 navigate('/login');
             }
         };
