@@ -1,117 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from './api'; // 설정된 axios 인스턴스 import
+import WebSocket from 'isomorphic-ws';
 
-const ChatRoom = () => {
-  const [userId, setUserId] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [messageInput, setMessageInput] = useState('');
-  const [webSocket, setWebSocket] = useState(null);
-  const [fileInput, setFileInput] = useState(null);
-  const navigate = useNavigate();
+const ChatRoom = ({ chatRoomId }) => {
+    const [messages, setMessages] = useState([]);
+    const [socket, setSocket] = useState(null);
+    const [file, setFile] = useState(null);
+    const [messageContent, setMessageContent] = useState('');
 
-  useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const response = await api.get('/auth/userinfo');
-        setUserId(response.data.userId);
-      } catch (error) {
-        console.error("사용자 정보를 가져오는데 실패했습니다.", error);
-        navigate('/login');
-      }
+    const url = process.env.REACT_APP_API_URL; // 환경 변수에서 API URL 가져오기
+
+    useEffect(() => {
+        const ws = new WebSocket(`ws://localhost:8080/chat/${chatRoomId}`);
+        setSocket(ws);
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            setMessages((prevMessages) => [...prevMessages, message]);
+        };
+
+        return () => {
+            ws.close();
+        };
+    }, [chatRoomId]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            const response = await fetch(`${url}/messages/${chatRoomId}`); // 수정된 API URL
+            const data = await response.json();
+            setMessages(data);
+        };
+
+        fetchMessages();
+    }, [chatRoomId, url]); // url 추가 의존성
+
+    const handleSendMessage = async () => {
+        const newMessage = {
+            content: messageContent,
+            senderId: 'currentUserId', // 현재 사용자 ID로 변경
+            chatRoomId,
+            messageType: file ? 'file' : 'text', // 파일 여부에 따라 메시지 유형 설정
+            fileUrl: file ? await uploadFile(file) : null, // 파일 업로드 후 URL 받아오기
+            createdAt: new Date().toISOString(),
+        };
+
+        await fetch(`${url}/messages`, { // 수정된 API URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newMessage),
+        });
+        socket.send(JSON.stringify(newMessage)); // 웹소켓으로 메시지 전송
+
+        // 초기화
+        setMessageContent('');
+        setFile(null);
     };
 
-    fetchUserId();
-  }, [navigate]);
+    const uploadFile = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
 
-  useEffect(() => {
-    if (!userId) return;
+        const response = await fetch(`${url}/upload`, { // 수정된 API URL
+            method: 'POST',
+            body: formData,
+        });
 
-    const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-    const wsURL = `${wsProtocol}localhost:8080/chattingServer`;
-    const ws = new WebSocket(wsURL);
-
-    ws.onopen = () => {
-      console.log("webSocket 연결 성공");
-      ws.send(JSON.stringify({ type: 'join', userId }));
+        if (response.ok) {
+            const result = await response.text(); // 파일 업로드 성공 시 URL 반환
+            return result; // URL 반환 
+        }
+        return null;
     };
 
-    ws.onmessage = (event) => {
-      console.log("서버로부터 메세지 수신: " + event.data);
-      try {
-        const parsedMessage = JSON.parse(event.data);
-        setMessages(prev => [...prev, parsedMessage]);
-      } catch (error) {
-        console.error("메시지 파싱 오류: ", error);
-      }
-    };
-
-    ws.onclose = () => {
-      console.log("서버 연결 종료");
-    };
-
-    ws.onerror = (error) => {
-      console.error("웹소켓 에러: ", error);
-    };
-
-    setWebSocket(ws);
-
-    return () => {
-      if (ws) {
-        ws.send(JSON.stringify({ type: 'leave', userId }));
-        ws.close();
-      }
-    };
-  }, [userId]);
-
-  const sendMessage = () => {
-    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-      const trimmedMessage = messageInput.trim();
-      if (trimmedMessage) {
-        webSocket.send(JSON.stringify({ type: 'message', userId, content: trimmedMessage }));
-        setMessageInput('');
-      }
-    }
-  };
-
-  const sendFile = () => {
-    if (fileInput && webSocket && webSocket.readyState === WebSocket.OPEN) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const arrayBuffer = reader.result;
-        webSocket.send(arrayBuffer);
-      };
-      reader.readAsArrayBuffer(fileInput);
-      setFileInput(null);
-    }
-  };
-
-  return (
-    <>
-      <div className="chat-container">
-        <h2>웹소켓 채팅</h2>
-        <div className="chat-window">
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.type}`}>
-              <strong>{msg.senderId}</strong>: {msg.content}
+    return (
+        <div>
+            <div>
+                {messages.map((msg) => (
+                    <div key={msg.id}>
+                        <strong>{msg.senderId}:</strong> {msg.content} <em>{new Date(msg.createdAt).toLocaleString()}</em>
+                        {msg.fileUrl && (
+                            <div>
+                                <a href={`/${msg.fileUrl}`} target="_blank" rel="noopener noreferrer">
+                                    파일 다운로드
+                                </a>
+                            </div>
+                        )}
+                    </div>
+                ))}
             </div>
-          ))}
+            <div>
+                <input 
+                    type="text" 
+                    value={messageContent} 
+                    onChange={(e) => setMessageContent(e.target.value)} 
+                    placeholder="메시지를 입력하세요"
+                />
+                <input 
+                    type="file" 
+                    onChange={(e) => setFile(e.target.files[0])} 
+                />
+                <button onClick={handleSendMessage}>보내기</button>
+            </div>
         </div>
-        <input
-          type="text"
-          value={messageInput}
-          onChange={e => setMessageInput(e.target.value)}
-          onKeyPress={e => e.key === 'Enter' && sendMessage()}
-        />
-        <input
-          type="file"
-          onChange={e => setFileInput(e.target.files[0])}
-        />
-        <button onClick={sendMessage}>전송</button>
-        <button onClick={sendFile}>파일 전송</button>
-      </div>
-    </>
-  );
+    );
 };
 
 export default ChatRoom;

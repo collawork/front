@@ -18,4 +18,3 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
-//사용자가 로그인했는지 확인해서 인증이 필요한 요청에는 자동으로 토큰을 붙이는 것
