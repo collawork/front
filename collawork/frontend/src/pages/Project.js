@@ -34,6 +34,7 @@ const Project = () => {
 
 
     return (
+        
         <div className="project-container">
             <div className="button-group">
                 <button onClick={homeClickHandler}>피드</button>
