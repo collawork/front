@@ -13,6 +13,14 @@ function Dashboard() {
     const [schedule, setSchedule] = useState([]);
 
     useEffect(() => {
+        // URL에서 토큰 추출 및 저장
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+    
+        if (token) {
+            localStorage.setItem('token', token);
+        }
+    
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -32,9 +40,10 @@ function Dashboard() {
                 }
             }
         };
-
+    
         fetchUserData();
     }, []);
+    
 
     return (
         <div className="dashboard">

@@ -12,7 +12,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import './MyPage.css' ;
+import '../components/assest/css/MyPage.css' ;
 
 
 const MyPage = () => {
