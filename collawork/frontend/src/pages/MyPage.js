@@ -20,6 +20,7 @@ const MyPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: '' });
     const [currentDate, setCurrentDate] = useState('');
+    const [greeting, setGreeting] = useState("어서오세요.");
 
     useEffect(() => {
         // URL에서 토큰 추출 및 저장
@@ -56,6 +57,16 @@ const MyPage = () => {
         const date = new Date();
         const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
         setCurrentDate(formattedDate);
+
+        // 인사말을 설정하는 useEffect
+        const currentHour = date.getHours();
+
+        if (currentHour < 11) {
+            setGreeting("좋은 아침이예요!");
+        } else {
+            setGreeting("어서오세요.");
+        }
+        
     }, []);
 
     // 캘린더로 이동
