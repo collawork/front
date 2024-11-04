@@ -21,16 +21,17 @@ const MyPage = () => {
     const [user, setUser] = useState({ username: '' });
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
+    const [currentView, setCurrentView] = useState('dayGridMonth');
 
     useEffect(() => {
         // URL에서 토큰 추출 및 저장
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
-    
+
         if (token) {
             localStorage.setItem('token', token);
         }
-    
+
         // 사용자 정보 가져오기
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -50,7 +51,7 @@ const MyPage = () => {
                 }
             }
         };
-    
+
         fetchUserData();
 
         // 현재 날짜 설정
@@ -66,8 +67,12 @@ const MyPage = () => {
         } else {
             setGreeting("어서오세요.");
         }
-        
+
     }, []);
+
+    const changeView = (view) => {
+        setCurrentView(view);
+    };
 
     // 캘린더로 이동
     const moveToCalender = () => {
@@ -102,7 +107,7 @@ const MyPage = () => {
     return (
         <>
             <div className="header">
-                <span className="hi-user-name">안녕하세요 {user.username || '사용자'}님, 좋은 아침이예요!</span>
+                <span className="hi-user-name">안녕하세요 {user.username || '사용자'}님, {greeting}</span>
                 {/* 로그인 정보를 바탕으로 이름을 조회하고 접속한 시간을 조회해서 해당하는 적당한 인사말을 넣어준다.*/}
 
                 <span className="today">{currentDate}</span>
@@ -118,17 +123,27 @@ const MyPage = () => {
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                         dateClick={handleDateClick} // 날짜 클릭 이벤트
                         eventContent={renderEventContent}
-                        initialView="dayGridMonth" // 초기 달력 화면
-                        views={{
-                            timeGridWeek: {
-                                duration: { weeks: 1 }, // 한번에 보여줄 주의 단위를 설정
-                                buttonText: '주간 계획' // 주별로 화면 전환 버튼 텍스트
-                            }
-                        }}
+                        initialView= {currentView} // 초기 달력 화면
+                        // views={{
+                        //     timeGridWeek: {
+                        //         duration: { weeks: 1 }, // 한번에 보여줄 주의 단위를 설정
+                        //         buttonText: '주간 계획' // 주별로 화면 전환 버튼 텍스트
+                        //     }
+                        // }}
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'timeGridWeek' // 달력 화면 전환 버튼
+                            right: 'custom,custom2' // 사용자 정의 버튼 추가
+                        }}
+                        customButtons={{
+                            custom: {
+                                text: '주간 보기',
+                                click: () => changeView('timeGridWeek') // 주간 뷰로 변경
+                            },
+                            custom2: {
+                                text: '월간 보기',
+                                click: () => changeView('dayGridMonth') // 월간 뷰로 변경
+                            }
                         }}
                         weekends={true}
                         events={[ // 이벤트 객체들
