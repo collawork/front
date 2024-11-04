@@ -1,14 +1,13 @@
 import { Outlet } from "react-router-dom";
 import TopHeader from "../components/TopHeader";
 import Aside from "../components/Aside";
-import "./Layout.css"; 
+import "../components/assest/css/Layout.css"; 
 
 const Layout = () => {
   return (
     <div className="layout-container">
       <div className="top-header">
-        <div>collawork</div>
-        <div>프로젝트 명</div>
+        <TopHeader/>
       </div>
 
       <div className="main-content">
@@ -28,7 +27,7 @@ const Layout = () => {
               <li>e</li>
             </ul>
           </div>
-          <div>Pagination or other content here</div>
+          <div></div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Project from '../pages/Project';
+import NewProject from './project/NewProject';
 
 const Aside = () => {
 
@@ -18,8 +19,8 @@ const Aside = () => {
         <div className="aside">
             <div className="aside-top">
                 <div>collawork</div>
-                <button onClick={<Project newProjectShow={newProjectShow} 
-                setNewProjectShow={setNewProjectShow}/>}>+ 새 프로젝트</button>
+                <button onClick={onClickHandler}>+ 새 프로젝트</button>
+                {newProjectShow && <NewProject setNewProjectShow={setNewProjectShow}/>}
             </div>
             <div className="aside-bottom">
                 <div className="project-list">
