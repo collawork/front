@@ -10,7 +10,7 @@ const ChatRoom = ({ chatRoomId }) => {
     const url = process.env.REACT_APP_API_URL; // 환경 변수에서 API URL 가져오기
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://localhost:8080/chat/${chatRoomId}`);
+        const ws = new WebSocket(`ws://localhost:8080/chattingServer/${chatRoomId}`);
         setSocket(ws);
 
         ws.onmessage = (event) => {
@@ -25,13 +25,13 @@ const ChatRoom = ({ chatRoomId }) => {
 
     useEffect(() => {
         const fetchMessages = async () => {
-            const response = await fetch(`${url}/messages/${chatRoomId}`); // 수정된 API URL
+            const response = await fetch(`${url}/messages/${chatRoomId}`); 
             const data = await response.json();
             setMessages(data);
         };
 
         fetchMessages();
-    }, [chatRoomId, url]); // url 추가 의존성
+    }, [chatRoomId, url]); 
 
     const handleSendMessage = async () => {
         const newMessage = {
@@ -43,7 +43,7 @@ const ChatRoom = ({ chatRoomId }) => {
             createdAt: new Date().toISOString(),
         };
 
-        await fetch(`${url}/messages`, { // 수정된 API URL
+        await fetch(`${url}/messages`, { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const ChatRoom = ({ chatRoomId }) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch(`${url}/upload`, { // 수정된 API URL
+        const response = await fetch(`${url}/upload`, { 
             method: 'POST',
             body: formData,
         });
