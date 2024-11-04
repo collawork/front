@@ -25,7 +25,7 @@ function Dashboard() {
                     console.log('반환된 유저 정보 :', response.data);
                     setUser({
                         username: response.data.username,
-                        name: response.data.username
+                        name: response.data.username,
                     });
                 } catch (error) {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
@@ -34,7 +34,7 @@ function Dashboard() {
         };
 
         fetchUserData();
-    }, []); // 컴포넌트가 마운트될 때 한 번만 실행
+    }, []);
 
     return (
         <div className="dashboard">
@@ -64,9 +64,9 @@ function Dashboard() {
             <section className="calendar">
                 <h3>스케줄</h3>
                 <FullCalendar
-                    plugins={[dayGridPlugin, interactionPlugin]}
+                    plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
-                    events={schedule}
+                    weekends={true}
                 />
             </section>
 

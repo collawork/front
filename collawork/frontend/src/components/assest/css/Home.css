@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #2C1A47;
+    color: #F3F3F3;
+}
+
+.text-container {
+    max-width: 500px;
+    margin-right: 50px;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #7C3AED;
+    color: #FFF;
+    padding: 15px 30px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.image-container {
+
+}

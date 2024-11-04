@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import "../components/assest/css/Home.css"
 
 function Home() {
     const navigate = useNavigate();
@@ -9,52 +10,17 @@ function Home() {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.textContainer}>
-                <h1 style={styles.title}>쉬운 협업툴<br />팀 업무관리에<br />메신저를 더하다.</h1>
-                <p style={styles.subtitle}>일정관리로 업무의 효율을 더하기.</p>
-                <button style={styles.button} onClick={handleStartClick}>시작하기</button>
+        <div className="container">
+            <div className="text-container">
+                <h1 className="title">쉬운 협업툴<br />팀 업무관리에<br />메신저를 더하다.</h1>
+                <p className="subtitle">일정관리로 업무의 효율을 더하기.</p>
+                <button className="button" onClick={handleStartClick}>시작하기</button>
             </div>
-            <div style={styles.imageContainer}>
+            <div className="image-container">
                
             </div>
         </div>
-    );
+    )
 }
-
-const styles = {
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#2C1A47',
-        color: '#F3F3F3',
-    },
-    textContainer: {
-        maxWidth: '500px',
-        marginRight: '50px',
-    },
-    title: {
-        fontSize: '3rem',
-        fontWeight: 'bold',
-        lineHeight: '1.2',
-    },
-    subtitle: {
-        fontSize: '1.2rem',
-        marginBottom: '20px',
-    },
-    button: {
-        backgroundColor: '#7C3AED',
-        color: '#FFF',
-        padding: '15px 30px',
-        fontSize: '1rem',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-    },
-    imageContainer: {
-    },
-};
 
 export default Home;
