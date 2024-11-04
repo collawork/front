@@ -12,11 +12,29 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import './MyPage.css' ;
+import { useState, useEffect } from "react"
+import axios from "axios"
 
+import '../components/assest/css/MyPage.css' ;
 
 const MyPage = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState({ username: '', name: '', greeting: '' });
+    const [greeting, setGreeting] = useState("어서오세요.");
+
+
+    // 인사말을 설정하는 useEffect
+    useEffect(() => {
+        const date = new Date();
+        const currentHour = date.getHours();
+
+        if (currentHour < 11) {
+            setGreeting("좋은 아침이예요!");
+        } else {
+            setGreeting("어서오세요.");
+        }
+    }, []); // 빈 배열을 전달하여 컴포넌트가 처음 렌더링될 때만 실행
+
 
     // 캘린더로 이동
     const moveToCalender = () => {
@@ -48,6 +66,29 @@ const MyPage = () => {
         )
     }
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await axios.get('http://localhost:8080/api/user/info', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log('반환된 유저 정보 :', response.data);
+                    setUser({
+                        username: response.data.username,
+                        name: response.data.username,
+                    });
+                } catch (error) {
+                    console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
+                }
+            }
+        };
+        fetchUserData();
+    }, []);
+
 
     /*
     사용자가 달력에서 요구하는 기능 목록을 뽑아내 보자..!
@@ -62,7 +103,7 @@ const MyPage = () => {
     return (
         <>
             <div className="나름 헤더">
-                <span className="hi-user-name">안녕하세요 현준님, 좋은 아침이예요!</span>
+                <span className="hi-user-name">안녕하세요 {user.name}님, {greeting}</span>
                 {/* 로그인 정보를 바탕으로 이름을 조회하고 접속한 시간을 조회해서 해당하는 적당한 인사말을 넣어준다.*/}
 
                 <span className="tpday">2024년 10월 30일</span>
@@ -93,7 +134,7 @@ const MyPage = () => {
                         weekends={true}
 
                         events={[ // 이벤트 객체들.. 여기 쌓이면 달력에 반영된다.
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
+                            { title: '현욱이 생일', date: '2024-11-05' },
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
                             { title: 'event 3', date: '2024-11-06' },
                             { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
