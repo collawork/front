@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import '../components/assest/css/Dashboard.css';
 
 function Dashboard() {
-    const [user, setUser] = useState({ username: '', name: '', greeting: '' });
+    const [user, setUser] = useState({ username: '', greeting: '' });
     const [projectReport, setProjectReport] = useState([]);
     const [projects, setProjects] = useState([]);
     const [friends, setFriends] = useState([]);
@@ -32,8 +32,7 @@ function Dashboard() {
                     });
                     console.log('반환된 유저 정보 :', response.data);
                     setUser({
-                        username: response.data.username,
-                        name: response.data.username,
+                        username: response.data.username
                     });
                 } catch (error) {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
@@ -48,7 +47,7 @@ function Dashboard() {
     return (
         <div className="dashboard">
             <header className="header">
-                <h2>안녕하세요! {user.name || '사용자'}님 좋은 아침이에요.</h2>
+                <h2>안녕하세요! {user.username || '사용자'}님 좋은 아침이에요.</h2>
                 <p>{user.greeting}</p>
             </header>
 
