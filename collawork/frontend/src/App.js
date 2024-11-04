@@ -5,9 +5,10 @@ import Login from './pages/Login';
 import Project from './pages/Project';
 import Layout from './layout/Layout';
 import Register from './pages/Register';
-import SocialLoginCallback from './pages/SocialLoginCallback';
+import SocialLoginCallback from './components/auth/SocialLoginCallback';
 import KakaoUserInfo from './components/auth/KakaoUserInfo';
-import WeatherBackground from './pages/WeatherBackground';
+import UserProfile from './pages/Test';
+import Dashboard from './pages/Dashboard';
 
 function App() {
     return (
@@ -23,7 +24,8 @@ function App() {
                 </Route>
 
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
-                <Route path='/home' element={<WeatherBackground/>}/>
+                <Route path='/main' element={<Dashboard/>}/>
+                <Route path='/info' element={<UserProfile/>} />
             </Routes>
         </Router>
     );
