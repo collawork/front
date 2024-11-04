@@ -12,6 +12,8 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import './MyPage.css' ;
+
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -32,7 +34,18 @@ const MyPage = () => {
     }
 
     const handleDateClick = (arg) => {
-        alert(arg.dateStr)
+        alert(arg.dateStr) // 클릭한 헤당 날짜를 알러트로..
+    }
+
+    function renderEventContent(eventInfo) {
+        return (
+            <>
+                {/* 이벤트의 시작과 종료 시간 출력. event4를 참고 */}
+                <b>{eventInfo.timeText}</b> 
+                {/* 이벤트 타이틀 */}
+                <i>{eventInfo.event.title}</i>
+            </>
+        )
     }
 
 
@@ -61,17 +74,29 @@ const MyPage = () => {
                     <span className="text">달력</span>
                     <image className="mypage-icon" src='../image/icon/calender.png' />
                     <FullCalendar
-                        plugins={[dayGridPlugin, interactionPlugin]}
-                        dateClick={handleDateClick}
+                        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+                        dateClick={handleDateClick} // 
                         eventContent={renderEventContent}
-                        initialView="dayGridMonth"
+                        initialView="dayGridMonth" // 달력을 보여준다. // "timeGridWeek" 주별로 시간을 나눠 보여준다.
+                        views={{
+                            timeGridWeek:{
+                                duration: {week:1}, // 한번에 보여줄 주의 단위를 정한다. 
+                                buttonText: '주간 계획' //  주별로 화면을 전환시켜준다.
+                            }
+                        }}
+                        headerToolbar={{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'timeGridWeek' // 달력 화면 전환 버튼
+                        }}
+
                         weekends={true}
 
-                        events={[
+                        events={[ // 이벤트 객체들.. 여기 쌓이면 달력에 반영된다.
                             { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
                             { title: 'event 3', date: '2024-11-06' },
-                            { title: '' }
+                            { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
                         ]}
                     />
                 </div>
@@ -94,7 +119,7 @@ const MyPage = () => {
                         <div className="friend-list">
                             <span>카리스마.동규</span>
                             <span>애착인형.진우</span>
-                            <span>똘똘한 핑프.서연</span>
+                            <span>똘똘핑프.서연</span>
                         </div>
                     </div>
                 </div>
@@ -107,11 +132,3 @@ const MyPage = () => {
 }
 export default MyPage;
 
-function renderEventContent(eventInfo) {
-    return (
-        <>
-            <b>{eventInfo.timeText}</b>
-            <i>{eventInfo.event.title}</i>
-        </>
-    )
-}
