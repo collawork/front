@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import TopHeader from "../components/TopHeader";
 import Aside from "../components/Aside";
-import "./Layout.css"; 
+import "../components/assest/css/Layout.css"; 
 
 const Layout = () => {
   return (
