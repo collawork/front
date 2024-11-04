@@ -10,6 +10,7 @@ import KakaoUserInfo from './components/auth/KakaoUserInfo';
 import MyPage from './pages/MyPage';
 import UserProfile from './pages/Test';
 import Dashboard from './pages/Dashboard';
+import ChatRoom from './components/Chat/ChatRoom';
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
                 {/* <Route path='/main' element={<Dashboard/>}/> */}
                 <Route path='/info' element={<UserProfile/>} />
+                <Route path="/chat/:chatRoomId" element={<ChatRoom/>} />
             </Routes>
         </Router>
     );
