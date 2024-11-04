@@ -1,0 +1,121 @@
+
+* {
+    margin: 17;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .layout-container {
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    height: 90vh;
+    border: 2px solid black;
+  }
+  
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-bottom: 2px solid black;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-grow: 1;
+    border-bottom: 2px solid black;
+  }
+  
+  .aside {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid black;
+  }
+  
+  .aside-top {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 2px solid black; 
+  }
+  
+  .aside-top button {
+    margin-top: 10px;
+  }
+  
+  .aside-bottom {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .project-list {
+    margin-top: 10px;
+  }
+  
+  .project-item {
+    margin: 5px 0;
+  }
+  
+  .outlet-content {
+    flex-grow: 2;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+  }
+  
+  .participants {
+    width: 20%;
+    padding: 10px;
+    border-left: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .friend-list-modal {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 90%;
+    overflow-y: auto;
+    margin-top: 10px;
+    background-color: #ffffff;
+  }
+  
+  .friend-list-modal ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .friend-list-modal li {
+    margin: 5px 0;
+  }
+  
+  .participants div:last-child {
+    margin-top: auto;
+  }
+  
+  .footer {
+    padding: 10px;
+    border-top: 2px solid black;
+    text-align: center;
+  }
+  
