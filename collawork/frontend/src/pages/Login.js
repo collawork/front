@@ -12,9 +12,9 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await authService.login({ email, password });
-            localStorage.setItem('token', response.token);
-            navigate('/');
+            const token = await authService.login({ email, password });
+            localStorage.setItem('token', token);
+            navigate('/main');
         } catch (error) {
             if (error.response && error.response.data.message) {
                 setError(error.response.data.message);
@@ -25,6 +25,7 @@ function Login() {
             }
         }
     };
+    
 
     const handleSocialLogin = (provider) => {
         const providerUrls = {
