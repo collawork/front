@@ -107,7 +107,7 @@ const Layout = () => {
               <li>e</li>
             </ul>
           </div>
-          <div>Pagination or other content here</div>
+          <div></div>
         </div>
       </div>
     </div>

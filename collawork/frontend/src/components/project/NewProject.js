@@ -1,18 +1,36 @@
 import { useState } from "react";
 import ReactModal from "react-modal";
 
+
 const NewProject = ({setNewProjectShow}) => {
 
     // 새로운 프로젝트 양식 작성 부분
+    const [title, setTitle] = useState("");
+    const [contents, setContents] = useState("");
+    
+
+
+
     const [textShow, setTextShow] = useState(false);
+    const [selectShow, setSelectShow] = useState(false);
+    const [modalShow1, setModalShow1] = useState(true);
     const [newShow, setNewShow] = useState(true);
 
-    const onClickHandler = () => {
+    const onClickHandler = (e) => {
         setTextShow(true);
+        setTitle(e.target.value);
+    }
+
+    const selectHandler = () => {
+        setSelectShow(true);
     }
 
     const closeModal = () => {
         setNewShow(false);
+    }
+
+    const modalCloseHandler = () => {
+        setNewProjectShow(false);
     }
 
 
@@ -43,10 +61,13 @@ const NewProject = ({setNewProjectShow}) => {
         <h2>프로젝트 만들기</h2>
         <input type="text" name="title" placeholder="제목을 입력하세요" required/>
         <button onClick={onClickHandler}>설명입력</button>
-        {/* {setShow && <input type="textarea" name="text" placeholder="프로젝트에 관한 설명 입력(옵션)"/>}
-        <button onClick={()=>setShow(false)}>닫기</button>
-        {/* 프로젝트 생성일, 프로젝트 코드, 관리자 변경 */}
-         
+        {textShow&&<input type="textarea" name="text"/>}
+
+        <input type="date" name="date">프로젝트 시작일 지정</input>
+        {/* 시간되면.. 참석자 추가도.. */}
+        <button onClick={modalCloseHandler}>프로젝트 생성</button>
+        
+
         </ReactModal>
         </>
     )

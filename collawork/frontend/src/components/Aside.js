@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Project from '../pages/Project';
+import NewProject from './project/NewProject';
 
 const Aside = () => {
   const [newProjectShow, setNewProjectShow] = useState(false);
