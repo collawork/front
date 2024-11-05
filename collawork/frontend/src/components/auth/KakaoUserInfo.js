@@ -7,7 +7,6 @@ function KakaoUserInfo() {
     useEffect(() => {
         const kakaoAccessToken = localStorage.getItem('kakaoAccessToken');
         
-        // 액세스 토큰 확인용 로그
         console.log("카카오 액세스 토큰:", kakaoAccessToken);
         
         if (!kakaoAccessToken) {
@@ -25,7 +24,7 @@ function KakaoUserInfo() {
             console.log("User Info:", response.data);
         })
         .catch(error => {
-            console.error("Failed to fetch user info:", error);
+            console.error("user info 실패 :", error);
         });
     }, []);
 
