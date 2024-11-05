@@ -18,7 +18,7 @@ import '../components/assest/css/MyPage.css';
 
 const MyPage = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState({ username: '' });
+    const [user, setUser] = useState({ username: ''});
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
     const [currentView, setCurrentView] = useState('dayGridMonth');
