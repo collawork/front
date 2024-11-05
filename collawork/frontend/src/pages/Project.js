@@ -2,7 +2,6 @@ import { useNavigate, useLocation} from 'react-router-dom';
 import ProjectHome from '../components/project/ProjectHome';
 import ProjectChat from "../components/project/ProjectChat";
 import ProjectCalendar from "../components/project/ProjectCalendar";
-import NewProject from "../components/project/NewProject";
 import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
 import Notification from '../components/project/Notification';
