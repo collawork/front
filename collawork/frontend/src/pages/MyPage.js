@@ -123,7 +123,8 @@ const MyPage = () => {
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                         dateClick={handleDateClick} // 날짜 클릭 이벤트
                         eventContent={renderEventContent}
-                        initialView= {currentView} // 초기 달력 화면
+                        key={currentView} // currentView가 변경될 때마다 FullCalendar를 다시 렌더링하기 위함.. 
+                        initialView={currentView} // 초기 달력 화면
                         // views={{
                         //     timeGridWeek: {
                         //         duration: { weeks: 1 }, // 한번에 보여줄 주의 단위를 설정
