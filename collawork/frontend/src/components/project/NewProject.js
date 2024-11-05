@@ -5,13 +5,20 @@ import ReactModal from "react-modal";
 const NewProject = ({setNewProjectShow}) => {
 
     // 새로운 프로젝트 양식 작성 부분
+    const [title, setTitle] = useState("");
+    const [contents, setContents] = useState("");
+    
+
+
+
     const [textShow, setTextShow] = useState(false);
     const [selectShow, setSelectShow] = useState(false);
     const [modalShow1, setModalShow1] = useState(true);
     const [newShow, setNewShow] = useState(true);
 
-    const onClickHandler = () => {
+    const onClickHandler = (e) => {
         setTextShow(true);
+        setTitle(e.target.value);
     }
 
     const selectHandler = () => {
