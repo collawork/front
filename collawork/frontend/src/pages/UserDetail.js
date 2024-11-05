@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/Axios';
 import "../components/assest/css/UserDetail.css";
 
-const UserDetail = ({ type, item, closeModal }) => {
+const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
+  const [friendshipStatus, setFriendshipStatus] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -13,37 +14,79 @@ const UserDetail = ({ type, item, closeModal }) => {
         let response;
 
         if (type === 'user') {
-          // 새로운 엔드포인트 사용하여 선택한 사용자를 email 또는 id로 조회
           response = await axiosInstance.get(`/user/detail`, {
             headers: {
               'Authorization': `Bearer ${token}`
             },
             params: {
-              email: item.email // 선택한 사용자의 이메일로 조회
+              email: item?.email // 선택한 사용자의 이메일로 조회
             }
           });
+          setData(response.data);
+
+          // 친구 상태 가져오기 (currentUser와 data.id가 모두 있어야 실행)
+          if (currentUser?.id && response.data?.id) {
+            const friendStatusResponse = await axiosInstance.get(`/friends/status`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+              params: {
+                userId: currentUser.id, // 현재 로그인한 사용자 ID
+                selectedUserId: response.data.id // 선택된 사용자의 ID
+              }
+            });
+            setFriendshipStatus(friendStatusResponse.data);
+          }
         } else if (type === 'project') {
           response = await axiosInstance.get(`/user/projects/${item.id}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
+          setData(response.data);
         } else if (type === 'chatRoom') {
           response = await axiosInstance.get(`/user/chatrooms/${item.id}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
+          setData(response.data);
         }
-
-        setData(response.data);
       } catch (error) {
         console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
       }
     };
 
     fetchData();
-  }, [type, item]);
+  }, [type, item, currentUser]);
+
+  const handleFriendRequest = async () => {
+    if (!currentUser?.id || !data?.id) return; // ID가 없으면 요청 중단
+    try {
+      const response = await axiosInstance.post('/friends/request', null, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        params: { requesterId: currentUser.id, responderId: data.id }
+      });
+      setFriendshipStatus('PENDING');
+      alert(response.data);
+    } catch (error) {
+      console.error('친구 요청 중 오류 발생: ', error);
+    }
+  };
+
+  const handleRemoveFriend = async () => {
+    if (!data?.id) return; // 친구 삭제하려는 ID가 없으면 요청 중단
+    try {
+      const response = await axiosInstance.delete('/friends/remove', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        params: { requestId: data.id }
+      });
+      setFriendshipStatus(null);
+      alert(response.data);
+    } catch (error) {
+      console.error('친구 삭제 중 오류 발생: ', error);
+    }
+  };
 
   if (!data) return <p>로딩 중...</p>;
 
@@ -65,6 +108,20 @@ const UserDetail = ({ type, item, closeModal }) => {
           <p>핸드폰 번호: {data.phone || '정보 없음'}</p>
           <p>팩스 번호: {data.fax || '정보 없음'}</p>
           <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
+          
+          {/* 친구 상태에 따라 다른 버튼을 표시 */}
+          <div className="friend-actions">
+            {friendshipStatus === 'PENDING' && <p>친구 요청 상태: 대기중</p>}
+            {friendshipStatus === 'ACCEPTED' && (
+              <>
+                <p>친구 상태: 수락됨</p>
+                <button onClick={handleRemoveFriend}>친구 삭제</button>
+              </>
+            )}
+            {friendshipStatus !== 'ACCEPTED' && friendshipStatus !== 'PENDING' && (
+              <button onClick={handleFriendRequest}>친구 추가</button>
+            )}
+          </div>
         </>
       )}
 

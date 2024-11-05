@@ -1,3 +1,4 @@
+// utils/Axios.js
 import axios from 'axios';
 
 const instance = axios.create({
@@ -9,15 +10,33 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 만료된 토큰으로 인해 403 Forbidden 에러가 발생한 경우
     if (error.response && error.response.status === 403) {
-      console.error("JWT 토큰이 만료되었습니다. 다시 로그인하십시오.");
-      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+      const refreshToken = localStorage.getItem('refreshToken');
       
-      // 로그아웃 처리 또는 새로 로그인 유도
-      window.location.href = "/login";
-      
-      return Promise.reject(error);
+      if (!refreshToken) {
+        console.error("리프레시 토큰이 없습니다. 다시 로그인하십시오.");
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+        // window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      try {
+        // 리프레시 토큰을 이용해 새로운 액세스 토큰 요청
+        const response = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken });
+        const newAccessToken = response.data.token;
+        
+        // 새로운 토큰 저장
+        localStorage.setItem('token', newAccessToken);
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        // 갱신된 토큰으로 원래 요청 다시 시도
+        return axios(originalRequest);
+      } catch (refreshError) {
+        console.error("리프레시 토큰 갱신 실패:", refreshError);
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+        // window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
 
     return Promise.reject(error);

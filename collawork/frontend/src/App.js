@@ -20,14 +20,14 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/social-login" element={<SocialLoginCallback />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/mypage" element={<MyPage/>}/>
+                {/* <Route path="/mypage" element={<MyPage/>}/> */}
                 
                 <Route path="/project" element={<Layout />}>
                     <Route index element={<Project/>} />
                 </Route>
 
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
-                <Route path='/main' element={<Dashboard/>}/>
+                <Route path='/main' element={<MyPage/>}/>
                 <Route path='/info' element={<UserProfile/>} />
                 {/* <Route path="/chattingServer/:chatRoomId" element={<ChatRoom />} /> */}
 
