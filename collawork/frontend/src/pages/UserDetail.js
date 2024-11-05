@@ -1,153 +1,91 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+// src/pages/UserDetail.js
+import React, { useEffect, useState } from 'react';
+import axiosInstance from '../utils/Axios';
 import "../components/assest/css/UserDetail.css";
 
-const UserDetails = ({ currentUser, user }) => {
-    console.log("currentUser : " + currentUser);
-    console.log("user : " + user);
-  const [friendshipStatus, setFriendshipStatus] = useState(null);
-  const [notification, setNotification] = useState('');
-  const [user, setUser] = useState({ username: '', email: '', company: '', position: '', phone: '', fax: '', createdAt: ''});
+const UserDetail = ({ type, item, closeModal }) => {
+  const [data, setData] = useState(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        let response;
 
-    const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-        console.log("token : " + token)
-
-        if (token) {
-            localStorage.setItem('token', token);
-        }
-
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await axios.get('http://localhost:8080/api/user/info', {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    console.log('반환된 유저 정보 :', response.data);
-                    setUser({
-                        username: response.data.username,
-                        email: response.data.email,
-                        company: response.data.company,
-                        position: response.data.position,
-                        phone: response.data.phone,
-                        fax: response.data.fax,
-                        createdAt: response.data.createdAt
-                    });
-                } catch (error) {
-                    console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
-                }
+        if (type === 'user') {
+          // 새로운 엔드포인트 사용하여 선택한 사용자를 email 또는 id로 조회
+          response = await axiosInstance.get(`/user/detail`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            params: {
+              email: item.email // 선택한 사용자의 이메일로 조회
             }
-        };
-
-        fetchUserData();
-
-
-    if (selectedUser) {
-      const fetchFriendshipStatus = async () => {
-        try {
-          const response = await axios.get(`http://localhost:8080/api/friends/status`, {
-            params: { userId: currentUser.id, selectedUserId: selectedUser.id },
           });
-          setFriendshipStatus(response.data);
-        } catch (error) {
-          console.error('친구 상태를 가져오는 중 오류 발생: ', error);
+        } else if (type === 'project') {
+          response = await axiosInstance.get(`/user/projects/${item.id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        } else if (type === 'chatRoom') {
+          response = await axiosInstance.get(`/user/chatrooms/${item.id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
         }
-      };
 
-      fetchFriendshipStatus();
-    }
-  }, [selectedUser, currentUser]);
+        setData(response.data);
+      } catch (error) {
+        console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
+      }
+    };
 
-  const sendFriendRequest = async () => {
-    try {
-      await axios.post('http://localhost:8080/api/friends/request', {
-        requesterId: currentUser.id,
-        responderId: selectedUser.id,
-      });
-      setFriendshipStatus('PENDING');
-      setNotification('친구 요청을 보냈습니다.');
-    } catch (error) {
-      console.error('친구 요청 중 오류 발생: ', error);
-    }
-  };
+    fetchData();
+  }, [type, item]);
 
-  const acceptFriendRequest = async (requestId) => {
-    try {
-      await axios.post(`http://localhost:8080/api/friends/accept`, {
-        requestId,
-      });
-      setFriendshipStatus('ACCEPTED');
-      setNotification('친구 요청을 수락했습니다.');
-    } catch (error) {
-      console.error('친구 요청 수락 중 오류 발생: ', error);
-    }
-  };
-
-  const rejectFriendRequest = async (requestId) => {
-    try {
-      await axios.post(`http://localhost:8080/api/friends/reject`, {
-        requestId,
-      });
-      setFriendshipStatus('REJECTED');
-      setNotification('친구 요청을 거절했습니다.');
-    } catch (error) {
-      console.error('친구 요청 거절 중 오류 발생: ', error);
-    }
-  };
-
-  const removeFriend = async (requestId) => {
-    try {
-      await axios.delete(`http://localhost:8080/api/friends/remove`, {
-        params: { requestId },
-      });
-      setFriendshipStatus(null);
-      setNotification('친구를 삭제했습니다.');
-    } catch (error) {
-      console.error('친구 삭제 중 오류 발생: ', error);
-    }
-  };
+  if (!data) return <p>로딩 중...</p>;
 
   return (
-    <div className="user-details">
-      <h3>사용자 정보</h3>
-      <img 
-        src={user?.profileImage ? user.profileImage : '../components/assest/imges/default_image.png'} 
-        alt={`${user?.username || '사용자'}의 프로필 이미지`} 
-      />
-      <h2>{user?.username || '사용자 이름 없음'}</h2>
-      <p>이메일: {user?.email || '사용자 이메일 없음'}</p>
-      <p>회사명: {user?.company || '사용자 회사명 없음'}</p>
-      <p>직급: {user?.position || '사용자 직급 없음'}</p>
-      <p>핸드폰 번호: {user?.phone || '사용자 번호 없음'}</p>
-      <p>팩스 번호: {user?.fax || '사용자 팩스번호 없음'}</p>
-      <p>계정 생성일: {user?.createdAt || '사용자 생성일 없음' }</p>
+    <div className="user-detail-modal">
+      <button className="close-button" onClick={closeModal}>닫기</button>
 
-      <div className="friend-actions">
-        {friendshipStatus === 'PENDING' && (
-          <>
-            <p>친구 상태: 대기중</p>
-            <button onClick={() => acceptFriendRequest(selectedUser.id)}>수락</button>
-            <button onClick={() => rejectFriendRequest(selectedUser.id)}>거절</button>
-          </>
-        )}
-        {friendshipStatus === 'ACCEPTED' && (
-          <>
-            <p>친구 상태: 수락됨</p>
-            <button onClick={() => removeFriend(selectedUser.id)}>친구 삭제</button>
-          </>
-        )}
-        {friendshipStatus === 'REJECTED' && <p>친구 상태: 거절됨</p>}
-        {!friendshipStatus && <button onClick={sendFriendRequest}>친구 추가</button>}
-      </div>
+      {type === 'user' && (
+        <>
+          <h3>사용자 정보</h3>
+          <img
+            src={data.profileImage || '../components/assest/imges/default_image.png'}
+            alt={`${data.username || '사용자'}의 프로필 이미지`}
+          />
+          <p>이름: {data.username || '정보 없음'}</p>
+          <p>이메일: {data.email || '정보 없음'}</p>
+          <p>회사명: {data.company || '정보 없음'}</p>
+          <p>직급: {data.position || '정보 없음'}</p>
+          <p>핸드폰 번호: {data.phone || '정보 없음'}</p>
+          <p>팩스 번호: {data.fax || '정보 없음'}</p>
+          <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
+        </>
+      )}
 
-      {notification && <div className="notification">{notification}</div>}
+      {type === 'project' && (
+        <>
+          <h3>프로젝트 정보</h3>
+          <p>프로젝트명: {data.projectName || '정보 없음'}</p>
+          <p>프로젝트 코드: {data.projectCode || '정보 없음'}</p>
+          <p>생성일: {data.createdAt || '정보 없음'}</p>
+        </>
+      )}
+
+      {type === 'chatRoom' && (
+        <>
+          <h3>채팅방 정보</h3>
+          <p>채팅방 이름: {data.roomName || '정보 없음'}</p>
+          <p>생성일: {data.createdAt || '정보 없음'}</p>
+        </>
+      )}
     </div>
   );
 };
 
-export default UserDetails;
+export default UserDetail;
