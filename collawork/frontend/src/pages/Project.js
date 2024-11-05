@@ -4,7 +4,7 @@ import ProjectChat from "../components/project/ProjectChat";
 import ProjectCalendar from "../components/project/ProjectCalendar";
 import NewProject from "../components/project/NewProject";
 import { useState } from 'react';
-import './Project.css'; 
+import '../components/assest/css/Project.css'; 
 import Notification from '../components/project/Notification';
 
 const Project = () => {

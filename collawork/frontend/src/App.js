@@ -29,7 +29,8 @@ function App() {
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
                 <Route path='/main' element={<Dashboard/>}/>
                 <Route path='/info' element={<UserProfile/>} />
-                <Route path="/chattingServer/:chatRoomId" element={<ChatRoom/>} />
+                <Route path="/chattingServer/:chatRoomId" element={<ChatRoom />} />
+
             </Routes>
         </Router>
     );
