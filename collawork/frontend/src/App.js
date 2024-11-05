@@ -7,8 +7,10 @@ import Layout from './layout/Layout';
 import Register from './pages/Register';
 import SocialLoginCallback from './components/auth/SocialLoginCallback';
 import KakaoUserInfo from './components/auth/KakaoUserInfo';
+import MyPage from './pages/MyPage';
 import UserProfile from './pages/Test';
 import Dashboard from './pages/Dashboard';
+import ChatRoom from './components/Chat/ChatRoom';
 
 function App() {
     return (
@@ -18,7 +20,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/social-login" element={<SocialLoginCallback />} />
                 <Route path="/register" element={<Register />} />
-
+                <Route path="/mypage" element={<MyPage/>}/>
+                
                 <Route path="/project" element={<Layout />}>
                     <Route index element={<Project/>} />
                 </Route>
@@ -26,6 +29,8 @@ function App() {
                 <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
                 <Route path='/main' element={<Dashboard/>}/>
                 <Route path='/info' element={<UserProfile/>} />
+                <Route path="/chattingServer/:chatRoomId" element={<ChatRoom />} />
+
             </Routes>
         </Router>
     );
