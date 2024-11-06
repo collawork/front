@@ -9,7 +9,7 @@ const NotificationList = ({ userId }) => {
             console.log("/notifications/unread로 보낼 요청 userId:", userId);
             try {
                 const response = await axios.get(`http://localhost:8080/api/notifications/unread`, {
-                    params: { userId: userId },
+                    params: { userId },
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
@@ -26,7 +26,7 @@ const NotificationList = ({ userId }) => {
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            await axios.post(`http://localhost:8080/notifications/markAsRead/${notificationId}`, {}, {
+            await axios.post(`http://localhost:8080/api/notifications/markAsRead/${notificationId}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
@@ -34,6 +34,34 @@ const NotificationList = ({ userId }) => {
             setNotifications(notifications.filter(notification => notification.id !== notificationId));
         } catch (error) {
             console.error('알림을 읽음 처리 중 오류 발생:', error);
+        }
+    };
+
+    const handleAcceptFriendRequest = async (requestId) => {
+        try {
+            await axios.post(`http://localhost:8080/api/friends/accept`, null, {
+                params: { requestId },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            setNotifications(notifications.filter(notification => notification.id !== requestId));
+        } catch (error) {
+            console.error('친구 요청 승인 중 오류 발생:', error);
+        }
+    };
+
+    const handleRejectFriendRequest = async (requestId) => {
+        try {
+            await axios.post(`http://localhost:8080/api/friends/reject`, null, {
+                params: { requestId },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            setNotifications(notifications.filter(notification => notification.id !== requestId));
+        } catch (error) {
+            console.error('친구 요청 거절 중 오류 발생:', error);
         }
     };
 
@@ -48,6 +76,12 @@ const NotificationList = ({ userId }) => {
                 {notifications.map(notification => (
                     <li key={notification.id}>
                         <span>{notification.message}</span>
+                        {notification.type === 'FRIEND_REQUEST' && (
+                            <>
+                                <button onClick={() => handleAcceptFriendRequest(notification.id)}>승인</button>
+                                <button onClick={() => handleRejectFriendRequest(notification.id)}>거절</button>
+                            </>
+                        )}
                         <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
                     </li>
                 ))}

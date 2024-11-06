@@ -204,15 +204,18 @@ const MyPage = () => {
                 </div>
 
                 <div className="horizontal-alignment">
-                    <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
+                    {/* <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
                         <span className="text">프로젝트</span>
                         <div className="project-list">
                             <span>Collawork 프로젝트</span>
                             <span>현준의 두 번째 프로젝트</span>
                             <span>현준의 첫 번째 프로젝트</span>
                         </div>
+                    </div> */}
+                    <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
+                        <span className="text">프로젝트</span>  
                     </div>
-                    <div className="friends-mypage">
+                    {/* <div className="friends-mypage">
                         <span className="text">친구</span>
                         <img className="mypage-icon" alt="친구 아이콘" src='../image/icon/friend.png' />
                         <div className="friend-list">
@@ -220,7 +223,7 @@ const MyPage = () => {
                             <span>애착인형.진우</span>
                             <span>똘똘핑프.서연</span>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* 친구 목록 컴포넌트 */}
                     {userId && <FriendList userId={userId} />}
@@ -228,8 +231,6 @@ const MyPage = () => {
                     {/* 알림 컴포넌트 */}
                     {userId && <NotificationList userId={userId} />}
                 </div>
-                {/* Notification Component */}
-                <NotificationList userId={userId} />
             </div>
         </>
     );
