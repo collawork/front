@@ -9,8 +9,8 @@ import SocialLoginCallback from './components/Auth/SocialLoginCallback';
 import KakaoUserInfo from './components/Auth/KakaoUserInfo';
 import MyPage from './pages/MyPage';
 import UserProfile from './pages/Test';
-import Dashboard from './pages/Dashboard';
-import ChatRoom from './components/Chat/ChatRoom';
+// import Dashboard from './pages/Dashboard';
+// import ChatRoom from './components/Chat/ChatRoom';
 
 function App() {
     return (

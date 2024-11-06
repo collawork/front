@@ -1,3 +1,11 @@
+/*
+작성자: 서현준
+작성일: 2024.10.31
+마이 페이지 겸 헤더랑 네비가 없는 메인 페이지
+날씨 AIP
+fullcalendar API를 사용할 예정
+*/
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
@@ -5,11 +13,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-<<<<<<< HEAD
 import ReactModal from "react-modal";
-=======
 import NotificationList from '../components/NotificationList/NotificationList';
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
 import '../components/assest/css/MyPage.css';
 
 const MyPage = () => {
@@ -25,6 +30,8 @@ const MyPage = () => {
         scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
         scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
     });
+    const [errors, setErrors] = useState({});
+    const [validations, setValidations] = useState({});
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -74,7 +81,6 @@ const MyPage = () => {
         navigate('/');
     };
 
-<<<<<<< HEAD
     const handleDateClick = (arg) => {
 
         // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
@@ -82,8 +88,25 @@ const MyPage = () => {
         setEventCRUDModal(true); // 모달창 오픈
     };
 
-    const closeModal =()=>{
+    const closeModal = () => {
         setEventCRUDModal(false);
+    }
+
+
+    // const [formData, setFormData] = useState({
+    //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
+    //     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
+    // });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (validations.scheduleTilte || validations.scheduleDesc || validations.scheduleStart) {
+            alert('일정등록에는 최소 한 가지 항목 이상의 입력이 필요합니다.');
+            return;
+        }
+        // try{
+        //     await CalendarService.
+        // }
     }
 
     function renderEventContent(eventInfo) {
@@ -97,8 +120,6 @@ const MyPage = () => {
         );
     }
 
-=======
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
     return (
         <>
             <div className="header">
@@ -116,8 +137,8 @@ const MyPage = () => {
                     <span className="text">달력</span>
                     <FullCalendar
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                        dateClick={() => {}}
-                        eventContent={() => {}}
+                        dateClick={handleDateClick}
+                        eventContent={renderEventContent}
                         key={currentView}
                         initialView={currentView}
                         headerToolbar={{
@@ -136,11 +157,10 @@ const MyPage = () => {
                             }
                         }}
                         weekends={true}
-<<<<<<< HEAD
-                        events={[ 
+                        events={[
 
                             /* 출력부 */
-                            
+
                             // 이벤트 객체들, 예시..
                             { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
@@ -159,29 +179,24 @@ const MyPage = () => {
                             //     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE, -- 프로젝트 삭제 시 일정도 삭제
                             //     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL -- 생성자 삭제 시 NULL로 설정
                             // );
-                            
-=======
-                        events={[
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' }
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
+
                         ]}
                     />
                     <ReactModal className={"event-CRUD-modal"}
                         isOpen={eventCRUDModal}
                         contentLabel="일정 조회 등록 수정 삭제"
-                       
+
                     >
                         <h2>{selectedDate}의 일정</h2>
                         {/* 입력부 */}
-                        <form>
-                            제목: <input type='text' name='title' placeholder='일정의 제목'/>
-                            설명: <input type='text' name='description' placeholder='상세한 내용'/>
-                            기간 설정: <input type='date' name='startDate' placeholder='시작 시점'/>
-                                      <input type='date' name='endDate' placeholder='종료 시점'/>
-                            
+                        <form onSubmit={handleSubmit}>
+                            제목: <input type='text' name='title' placeholder='일정의 제목' />
+                            설명: <input type='text' name='description' placeholder='상세한 내용' />
+                            기간 설정: <input type='date' name='startDate' placeholder='시작 시점' />
+                            <input type='date' name='endDate' placeholder='종료 시점' />
+                            <button onClick={closeModal}>닫기</button>
+                            <button type='submit'>일정등록</button>
                         </form>
-                        <button></button>
-                        <button onClick={closeModal}>닫기</button>
                     </ReactModal>
                 </div>
 
@@ -194,10 +209,18 @@ const MyPage = () => {
                             <span>현준의 첫 번째 프로젝트</span>
                         </div>
                     </div>
-
-                    {/* Notification Component */}
-                    <NotificationList userId={userId} />
+                    <div className="friends-mypage">
+                        <span className="text">친구</span>
+                        <img className="mypage-icon" alt="친구 아이콘" src='../image/icon/friend.png' />
+                        <div className="friend-list">
+                            <span>카리스마.동규</span>
+                            <span>애착인형.진우</span>
+                            <span>똘똘핑프.서연</span>
+                        </div>
+                    </div>
                 </div>
+                {/* Notification Component */}
+                <NotificationList userId={userId} />
             </div>
         </>
     );
