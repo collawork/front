@@ -161,7 +161,11 @@ const MyPage = () => {
                             }
                         }}
                         weekends={true}
-                        events={[ // 이벤트 객체들
+                        events={[ 
+
+                            /* 출력부 */
+                            
+                            // 이벤트 객체들, 예시..
                             { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
                             { title: 'event 3', date: '2024-11-06' },
@@ -188,7 +192,15 @@ const MyPage = () => {
                        
                     >
                         <h2>{selectedDate}의 일정</h2>
-                        {/* 모달 내용 */}
+                        {/* 입력부 */}
+                        <form>
+                            제목: <input type='text' name='title' placeholder='일정의 제목'/>
+                            설명: <input type='text' name='description' placeholder='상세한 내용'/>
+                            기간 설정: <input type='date' name='startDate' placeholder='시작 시점'/>
+                                      <input type='date' name='endDate' placeholder='종료 시점'/>
+                            
+                        </form>
+                        <button></button>
                         <button onClick={closeModal}>닫기</button>
                     </ReactModal>
                 </div>
