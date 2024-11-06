@@ -5,11 +5,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-<<<<<<< HEAD
 import ReactModal from "react-modal";
-=======
 import NotificationList from '../components/NotificationList/NotificationList';
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
 import '../components/assest/css/MyPage.css';
 
 const MyPage = () => {
@@ -73,8 +70,6 @@ const MyPage = () => {
         localStorage.removeItem('token');
         navigate('/');
     };
-
-<<<<<<< HEAD
     const handleDateClick = (arg) => {
 
         // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
@@ -97,8 +92,6 @@ const MyPage = () => {
         );
     }
 
-=======
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
     return (
         <>
             <div className="header">
@@ -136,7 +129,6 @@ const MyPage = () => {
                             }
                         }}
                         weekends={true}
-<<<<<<< HEAD
                         events={[ 
 
                             /* 출력부 */
@@ -160,10 +152,6 @@ const MyPage = () => {
                             //     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL -- 생성자 삭제 시 NULL로 설정
                             // );
                             
-=======
-                        events={[
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' }
->>>>>>> 8c8923797edec3037c7cbb4ddf16958bcebe265c
                         ]}
                     />
                     <ReactModal className={"event-CRUD-modal"}
