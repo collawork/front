@@ -6,7 +6,7 @@ const newProjctInsert =  async(data) => {
     const context = data.context;
 
     const token = localStorage.getItem('token');
-    return await axios.post(`${API_URL}/api/project/newproject`,{
+    return await axios.post(`${API_URL}/project/newproject`,{
         title,
         context
     },{
