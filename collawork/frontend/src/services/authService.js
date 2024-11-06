@@ -23,7 +23,6 @@ const registerUser = async (data) => {
         formData.append("profileImage", data.profileImage);
     }
 
-    console.log(`${API_URL}`);
     return await axios.post(`${API_URL}/api/auth/register`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
@@ -34,8 +33,8 @@ const registerUser = async (data) => {
 
 const login = async (data) => {
     try {
+        // 로그인 데이터 형식 명시적 지정
         const loginData = {
-            username: data.username,
             email: data.email,
             password: data.password
         };
@@ -47,22 +46,21 @@ const login = async (data) => {
             withCredentials: true
         });
 
-        console.log("로그인 응답:", response.data);
-        console.log("data:", data);
-
-        const token = response.data.token;
-        if (token) {
-            localStorage.setItem('token', token);
-            return token;
+        // 응답에 토큰이 포함된 경우 로컬 스토리지에 저장
+        if (response.data && response.data.token && response.data.refreshToken) {
+            localStorage.setItem('token', response.data.token);            // 액세스 토큰 저장
+            localStorage.setItem('refreshToken', response.data.refreshToken); // 리프레시 토큰 저장
+            return response.data.token;
         } else {
-            console.error("토큰이 응답에 없습니다:", response.data);
-            throw new Error("토큰이 응답에 없습니다.");
+            throw new Error('토큰이 포함된 응답을 받지 못했습니다.');
         }
     } catch (error) {
         console.error("로그인 에러: ", error);
         throw error;
     }
 };
+
+
 
 
 // 중복 확인 요청 함수
@@ -78,6 +76,7 @@ const checkDuplicates = async (username, email, phone) => {
         }
     });
 };
+
 
 const authService = {
     registerUser,

@@ -1,4 +1,3 @@
-// NotificationList.js
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../utils/Axios';
 
@@ -7,18 +6,21 @@ const NotificationList = ({ userId }) => {
 
     useEffect(() => {
         const fetchNotifications = async () => {
+            console.log("/notifications/unread로 보낼 요청 userId:", userId);
             try {
                 const response = await axiosInstance.get(`/notifications/unread`, {
-                    params: { userId },
+                    params: { userId: userId },
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`, // 토큰이 누락되었을 경우 추가
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 setNotifications(response.data);
+                console.log("응답 데이터 :", response.data);
             } catch (error) {
                 console.error('알림을 불러오는 중 오류 발생:', error);
             }
         };
+        
 
         fetchNotifications();
     }, [userId]);
