@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import ReactModal from "react-modal";
+import ProjectService from "../services/ProjectService";
 
 const Aside = () => {
-  const [newProjectShow, setNewProjectShow] = useState(false);
-  const [title, setTitle] = useState("");
-  const [contents, setContents] = useState("");
-  const [textShow, setTextShow] = useState(false);
-  const [selectShow, setSelectShow] = useState(false);
-  const [modalShow1, setModalShow1] = useState(true);
-  const [newShow, setNewShow] = useState(false);
+  
+  const [title, setTitle] = useState(""); // 제목
+  const [contents, setContents] = useState(""); // 설명(뺄까 고민중)
+  const [newShow, setNewShow] = useState(false); // 모달 스위치
 
   const modalCloseHandler = () => {
     setNewShow(false);
@@ -16,6 +14,15 @@ const Aside = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(title == null){
+      alert("프로젝트의 이름을 입력해주세요.");
+    }
+    try{
+      await ProjectService.newProjctInsert(title, contents);
+      alert('새 프로젝트가 생성되었습니다.')
+    }catch(error){
+      alert('프로젝트 생성에 실패하였습니다.')
+    }
   }
 
   return (
@@ -51,10 +58,8 @@ const Aside = () => {
             value={title}
             required
           />
-          <textarea
-            placeholder="설명을 입력하세요"
-            value={contents}
-            onChange={(e) => setContents(e.target.value)}
+          <input
+
           />
           <input
             type="date"
