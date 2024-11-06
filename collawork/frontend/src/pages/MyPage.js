@@ -70,6 +70,7 @@ const MyPage = () => {
         localStorage.removeItem('token');
         navigate('/');
     };
+
     const handleDateClick = (arg) => {
 
         // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
@@ -151,7 +152,6 @@ const MyPage = () => {
                             //     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE, -- 프로젝트 삭제 시 일정도 삭제
                             //     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL -- 생성자 삭제 시 NULL로 설정
                             // );
-                            
                         ]}
                     />
                     <ReactModal className={"event-CRUD-modal"}

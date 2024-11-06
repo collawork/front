@@ -56,10 +56,10 @@ const Project = () => {
 
             <div className="content-area">
 
-                {homeShow && <ProjectHome setHomeShow={setHomeShow} />}
-                {chatShow && <ProjectChat setChatShow={setChatShow} />}
-                {calShow && <ProjectCalendar setCalShow={setCalShow} />}
-                {notiShow && <Notification setNotiShow={setNotiShow} />}
+                {homeShow && <ProjectHome />}
+                {chatShow && <ProjectChat />}
+                {calShow && <ProjectCalendar />}
+                {notiShow && <Notification />}
             </div>
         </div>
     );
