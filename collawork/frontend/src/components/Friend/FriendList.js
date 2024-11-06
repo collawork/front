@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../utils/Axios';
+import axios from 'axios';
 
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
@@ -7,7 +7,7 @@ const FriendList = ({ userId }) => {
     useEffect(() => {
         const fetchFriends = async () => {
             try {
-                const response = await axiosInstance.get('/friends/list', {
+                const response = await axios.get('http://localhost:8080/api/friends/list', {
                     params: { userId },
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -22,6 +22,21 @@ const FriendList = ({ userId }) => {
         if (userId) fetchFriends();
     }, [userId]);
 
+    const handleRemoveFriend = async (friendId) => {
+        console.log("friendId : " + friendId);
+        try {
+            await axios.delete('http://localhost:8080/api/friends/remove', {
+                params: { requestId: friendId },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFriends(friends.filter(friend => friend.id !== friendId));
+        } catch (error) {
+            console.error('친구 삭제 중 오류 발생:', error);
+        }
+    };
+
     if (friends.length === 0) {
         return <p>친구가 없습니다.</p>;
     }
@@ -35,6 +50,7 @@ const FriendList = ({ userId }) => {
                         {friend.requester.id === userId
                             ? friend.responder.username
                             : friend.requester.username}
+                        <button onClick={() => handleRemoveFriend(friend.id)}>삭제</button>
                     </li>
                 ))}
             </ul>
