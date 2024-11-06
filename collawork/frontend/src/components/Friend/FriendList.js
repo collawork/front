@@ -4,21 +4,21 @@ import axios from 'axios';
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
 
-    useEffect(() => {
-        const fetchFriends = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/friends/list', {
-                    params: { userId },
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    }
-                });
-                setFriends(response.data);
-            } catch (error) {
-                console.error('친구 목록을 불러오는 중 오류 발생:', error);
-            }
-        };
+    const fetchFriends = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/friends/list', {
+                params: { userId },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFriends(response.data);
+        } catch (error) {
+            console.error('친구 목록을 불러오는 중 오류 발생:', error);
+        }
+    };
 
+    useEffect(() => {
         if (userId) fetchFriends();
     }, [userId]);
 
