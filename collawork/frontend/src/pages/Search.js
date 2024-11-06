@@ -3,13 +3,15 @@ import axios from 'axios';
 import UserDetail from './UserDetail';
 import "../components/assest/css/Search.css";
 
-const Search = () => {
+const Search = ({ currentUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState({ users: [], projects: [], chatRooms: [] });
   const [noResults, setNoResults] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  console.log("Search currentUser:", currentUser);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -143,7 +145,7 @@ const Search = () => {
         <div className="modal-overlay" onClick={closeDetailModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-button" onClick={closeDetailModal}>닫기</button>
-            <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} />
+            <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} currentUser={currentUser} />
           </div>
         </div>
       )}

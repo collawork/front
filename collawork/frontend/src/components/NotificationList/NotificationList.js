@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../utils/Axios';
+import axios from 'axios';
 
 const NotificationList = ({ userId }) => {
     const [notifications, setNotifications] = useState([]);
@@ -8,7 +8,7 @@ const NotificationList = ({ userId }) => {
         const fetchNotifications = async () => {
             console.log("/notifications/unread로 보낼 요청 userId:", userId);
             try {
-                const response = await axiosInstance.get(`/notifications/unread`, {
+                const response = await axios.get(`http://localhost:8080/api/notifications/unread`, {
                     params: { userId: userId },
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -20,14 +20,13 @@ const NotificationList = ({ userId }) => {
                 console.error('알림을 불러오는 중 오류 발생:', error);
             }
         };
-        
 
         fetchNotifications();
     }, [userId]);
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            await axiosInstance.post(`/notifications/markAsRead/${notificationId}`, {}, {
+            await axios.post(`http://localhost:8080/notifications/markAsRead/${notificationId}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
