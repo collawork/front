@@ -1,4 +1,4 @@
-const Notification = ({setNotiShow}) => {
+const Notification = () => {
     return(
         <h2>공지사항</h2>
     )

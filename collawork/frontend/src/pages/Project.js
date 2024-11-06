@@ -5,10 +5,17 @@ import ProjectCalendar from "../components/project/ProjectCalendar";
 import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
 import Notification from '../components/project/Notification';
+import { useUser } from '../context/UserContext';
 
 
 const Project = () => {
     
+    const token = localStorage.getItem("token");
+    console.log("현재 로그인한 사용자의 token : " + token);
+
+    const { userId } = useUser();
+    console.log("Project 페이지의 userId: ", userId);
+
     const [homeShow, setHomeShow] = useState(true);
     const [chatShow, setChatShow] = useState(false);
     const [calShow, setCalShow] = useState(false);
@@ -56,10 +63,10 @@ const Project = () => {
 
             <div className="content-area">
 
-                {homeShow && <ProjectHome setHomeShow={setHomeShow} />}
-                {chatShow && <ProjectChat setChatShow={setChatShow} />}
-                {calShow && <ProjectCalendar setCalShow={setCalShow} />}
-                {notiShow && <Notification setNotiShow={setNotiShow} />}
+                {homeShow && <ProjectHome />}
+                {chatShow && <ProjectChat />}
+                {calShow && <ProjectCalendar />}
+                {notiShow && <Notification />}
             </div>
         </div>
     );

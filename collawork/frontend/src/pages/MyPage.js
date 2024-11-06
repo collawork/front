@@ -15,12 +15,15 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import ReactModal from "react-modal";
 import NotificationList from '../components/NotificationList/NotificationList';
+import FriendList from '../components/Friend/FriendList';
 import '../components/assest/css/MyPage.css';
+import { useUser } from '../context/UserContext';
 
 const MyPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: '' });
-    const [userId, setUserId] = useState(null); // 유저 ID 저장
+    // const [userId, setUserId] = useState(null); // 유저 ID 저장
+    const { userId, setUserId } = useUser();
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
     const [currentView, setCurrentView] = useState('dayGridMonth');
@@ -52,6 +55,7 @@ const MyPage = () => {
                     });
                     setUser({ username: response.data.username });
                     setUserId(response.data.id); // 유저 ID 저장
+                    console.log("Fetched userId:", response.data.id);
                 } catch (error) {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
                 }
@@ -179,7 +183,6 @@ const MyPage = () => {
                             //     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE, -- 프로젝트 삭제 시 일정도 삭제
                             //     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL -- 생성자 삭제 시 NULL로 설정
                             // );
-
                         ]}
                     />
                     <ReactModal className={"event-CRUD-modal"}
@@ -218,6 +221,12 @@ const MyPage = () => {
                             <span>똘똘핑프.서연</span>
                         </div>
                     </div>
+
+                    {/* 친구 목록 컴포넌트 */}
+                    {userId && <FriendList userId={userId} />}
+
+                    {/* 알림 컴포넌트 */}
+                    {userId && <NotificationList userId={userId} />}
                 </div>
                 {/* Notification Component */}
                 <NotificationList userId={userId} />

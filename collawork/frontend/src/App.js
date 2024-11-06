@@ -9,30 +9,28 @@ import SocialLoginCallback from './components/Auth/SocialLoginCallback';
 import KakaoUserInfo from './components/Auth/KakaoUserInfo';
 import MyPage from './pages/MyPage';
 import UserProfile from './pages/Test';
-// import Dashboard from './pages/Dashboard';
-// import ChatRoom from './components/Chat/ChatRoom';
+import Dashboard from './pages/Dashboard';
+import ChatRoom from './components/Chat/ChatRoom';
+import { UserProvider } from './context/UserContext';
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/social-login" element={<SocialLoginCallback />} />
-                <Route path="/register" element={<Register />} />
-                {/* <Route path="/mypage" element={<MyPage/>}/> */}
-                
-                <Route path="/project" element={<Layout />}>
-                    <Route index element={<Project/>} />
-                </Route>
-
-                <Route path='/api/kakao/user-info' element={<KakaoUserInfo/>}/>
-                <Route path='/main' element={<MyPage/>}/>
-                <Route path='/info' element={<UserProfile/>} />
-                {/* <Route path="/chattingServer/:chatRoomId" element={<ChatRoom />} /> */}
-
-            </Routes>
-        </Router>
+        <UserProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/social-login" element={<SocialLoginCallback />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/project" element={<Layout />}>
+                        <Route index element={<Project />} />
+                    </Route>
+                    <Route path="/api/kakao/user-info" element={<KakaoUserInfo />} />
+                    <Route path="/main" element={<MyPage />} />
+                    <Route path="/info" element={<UserProfile />} />
+                </Routes>
+            </Router>
+        </UserProvider>
     );
 }
 
