@@ -5,11 +5,14 @@ import ProjectService from "../services/ProjectService";
 const Aside = () => {
   
   const [title, setTitle] = useState(""); // 제목
-  const [contents, setContents] = useState(""); // 설명(뺄까 고민중)
+  const [contents, setContents] = useState(""); 
   const [newShow, setNewShow] = useState(false); // 모달 스위치
 
   const modalCloseHandler = () => {
     setNewShow(false);
+    setTitle("");
+    setContents("");
+    
   }
 
   const handleSubmit = async (e) => {
@@ -58,9 +61,14 @@ const Aside = () => {
             value={title}
             required
           />
-          <input
-
-          />
+          <textarea
+          type="textarea"
+          name="context"
+          placeholder='프로젝트 설명을 입력하세요.'
+          onChange={(e) =>  setContents(e.target.value)}
+          value={contents}
+          >
+          </textarea>
           <input
             type="date"
             name="start-date"
