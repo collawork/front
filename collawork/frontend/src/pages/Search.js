@@ -27,40 +27,41 @@ const Search = ({ currentUser }) => {
 
   const handleSearch = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8080/api/search', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: { query: searchQuery }, // query로 검색
-      });
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/api/search', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            params: { query: searchQuery },
+        });
 
-      // 검색 결과를 검색어와 일치하는 항목만 필터링
-      const filteredResults = {
-        users: response.data.users.filter(user => 
-          user.username.includes(searchQuery) || user.email.includes(searchQuery)
-        ),
-        projects: response.data.projects.filter(project =>
-          project.projectName.includes(searchQuery)
-        ),
-        chatRooms: response.data.chatRooms.filter(chatRoom =>
-          chatRoom.roomName.includes(searchQuery)
-        )
-      };
+        const filteredResults = {
+            users: response.data.users.filter(user => 
+                (user.username.includes(searchQuery) || user.email.includes(searchQuery)) &&
+                user.id !== currentUser.id
+            ),
+            projects: response.data.projects.filter(project =>
+                project.projectName.includes(searchQuery)
+            ),
+            chatRooms: response.data.chatRooms.filter(chatRoom =>
+                chatRoom.roomName.includes(searchQuery)
+            )
+        };
 
-      const isEmptyResults = 
-        filteredResults.users.length === 0 &&
-        filteredResults.projects.length === 0 &&
-        filteredResults.chatRooms.length === 0;
+        const isEmptyResults = 
+            filteredResults.users.length === 0 &&
+            filteredResults.projects.length === 0 &&
+            filteredResults.chatRooms.length === 0;
 
-      setNoResults(isEmptyResults);
-      setSearchResults(filteredResults);
-      setIsModalOpen(true); // 검색 후 모달 열기
+        setNoResults(isEmptyResults);
+        setSearchResults(filteredResults);
+        setIsModalOpen(true); // 검색 후 모달 열기
     } catch (error) {
-      console.error('검색 중 오류 발생: ', error);
-      setNoResults(true);
+        console.error('검색 중 오류 발생: ', error);
+        setNoResults(true);
     }
-  };
+};
+
 
   const handleResultClick = (type, item) => {
     setSelectedDetail({ type, item });
