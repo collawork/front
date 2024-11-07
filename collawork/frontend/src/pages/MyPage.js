@@ -101,9 +101,17 @@ const MyPage = () => {
     }
 
     const handleChange = (e) => {
-        
+        const nowDateTime = new Date();
         const {name, value} = e.target;
-        setFormData({...formData, [name]:value})
+        console.log(value);
+        setFormData({...formData, [name] : value})
+        setFormData({...formData, createdBy: userId})
+        setFormData({...formData, createdAt: nowDateTime})
+        console.log(nowDateTime);
+        if(formData.scheduleId){
+            setFormData({...formData, pjId:/*프로젝트 아이디 가져와서 넣기*/ "pjId"})
+        }
+        
         
 
         // if(name === "scheduleTilte"){
@@ -123,7 +131,7 @@ const MyPage = () => {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        if (!validations.scheduleTilte) {
+        if (!formData.scheduleTilte) {
             alert('일정의 타이틀을 입력해 주세요.');
             return;
         }
@@ -190,14 +198,14 @@ const MyPage = () => {
 
                             // 이벤트 객체들, 예시..
                             { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
-                            { title: 'event 1', start: '2024-11-15'},
+                            { title: 'event 1', start: '2024-11-15T23:00:00+09:00'},
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
                             { title: 'event 3', date: '2024-11-06' },
                             { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
 
                             // CREATE TABLE calendar_events (
                             //     id BIGINT AUTO_INCREMENT PRIMARY KEY,        -- 일정 고유 ID
-                            //     project_id BIGINT NOT NULL,                  -- 프로젝트 ID (projects 테이블 참조)
+                            //     project_id BIGINT,                           -- 프로젝트 ID (projects 테이블 참조)
                             //     title VARCHAR(255),                          -- 일정 제목
                             //     description TEXT,                            -- 일정 설명
                             //     start_time TIMESTAMP,                        -- 일정 시작 시간
@@ -219,7 +227,8 @@ const MyPage = () => {
                         <form onSubmit={handleSubmit}>
                             제목: <input type='text' name='scheduleTilte' placeholder='일정의 제목' onChange={handleChange}/>
                             설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
-                            기간 설정: <input type='date' name='scheduleStart' placeholder='시작 시점' onChange={handleChange}/>
+                            기간 설정: 
+                            <input type='date' name='scheduleStart' placeholder='시작 시점' onChange={handleChange}/>
                             <input type='date' name='scheduleEnd' placeholder='종료 시점' onChange={handleChange}/>
                             <button onClick={closeModal}>닫기</button>
                             <button type='submit'>일정등록</button>
