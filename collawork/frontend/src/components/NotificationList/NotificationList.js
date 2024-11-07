@@ -29,7 +29,9 @@ const NotificationList = ({ userId }) => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            setNotifications(notifications.filter(notification => notification.id !== notificationId));
+            setNotifications(prevNotifications =>
+                prevNotifications.filter(notification => notification.id !== notificationId)
+            );
         } catch (error) {
             console.error('알림을 읽음 처리 중 오류 발생:', error);
         }
@@ -44,9 +46,9 @@ const NotificationList = ({ userId }) => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            // 성공 시 친구 목록을 새로고침
-            setNotifications(notifications.filter(notification => notification.id !== friendRequestId));
-            // 친구 목록 새로고침 로직 추가 필요
+            setNotifications(prevNotifications =>
+                prevNotifications.filter(notification => notification.requestId !== friendRequestId)
+            );
         } catch (error) {
             console.error("친구 요청 승인 중 오류 발생:", error);
         }
@@ -60,7 +62,9 @@ const NotificationList = ({ userId }) => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setNotifications(notifications.filter(notification => notification.id !== friendRequestId));
+            setNotifications(prevNotifications =>
+                prevNotifications.filter(notification => notification.requestId !== friendRequestId)
+            );
         } catch (error) {
             console.error('친구 요청 거절 중 오류 발생:', error);
         }
@@ -73,13 +77,15 @@ const NotificationList = ({ userId }) => {
                 {notifications.map(notification => (
                     <li key={notification.id}>
                         <span>{notification.message}</span>
-                        {notification.type === 'FRIEND_REQUEST' && notification.friendRequestId && (
+                        {notification.type === 'FRIEND_REQUEST' && notification.requestId && notification.status === 'PENDING' && (
                             <>
-                                <button onClick={() => handleAcceptFriendRequest(notification.friendRequestId)}>승인</button>
-                                <button onClick={() => handleRejectFriendRequest(notification.friendRequestId)}>거절</button>
+                                <button onClick={() => handleAcceptFriendRequest(notification.requestId)}>승인</button>
+                                <button onClick={() => handleRejectFriendRequest(notification.requestId)}>거절</button>
                             </>
                         )}
-                        <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
+                        {notification.status !== 'ACCEPTED' && (
+                            <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
+                        )}
                     </li>
                 ))}
             </ul>
