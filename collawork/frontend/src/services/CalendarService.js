@@ -12,8 +12,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-
-const CalendarService = async(data)=>{
+const registerSchedule = async(data)=>{
     const formData = new FormData();
 
     const registerScheduleRequest ={
@@ -38,4 +37,8 @@ const CalendarService = async(data)=>{
     });
 };
 
+const CalendarService = {
+    registerSchedule
+}
+  
 export default CalendarService;

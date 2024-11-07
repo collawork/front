@@ -17,8 +17,6 @@ const Aside = () => {
             localStorage.setItem('token', token);
         }
   
-   
-
     const [newShow, setNewShow] = useState(false); 
     function Send(){
       console.log(title);
@@ -30,10 +28,10 @@ const Aside = () => {
                 'Authorization': `Bearer ${token}`
             },
               method: 'post',
-            //   data: {
-            //       title:title, context:context
-            //   },
-            params: { title, context },
+              data: {
+                  title:title, context:context
+              },
+            //  params: { title, context },
               baseURL:'http://localhost:8080',
               withCredentials: true,
           }
