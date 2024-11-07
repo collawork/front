@@ -5,7 +5,6 @@ import "../components/assest/css/UserDetail.css";
 
 const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
-  const [friendshipStatus, setFriendshipStatus] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +39,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
     <div className="user-detail-modal">
       <button className="close-button" onClick={closeModal}>닫기</button>
 
-      {type === 'user' && (
+      {type === 'user' && data && data.id && (
         <>
           <h3>사용자 정보</h3>
           <img
@@ -58,8 +57,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
           <FriendRequest
             currentUser={currentUser}
             selectedUserId={data.id}
-            friendshipStatus={friendshipStatus}
-            setFriendshipStatus={setFriendshipStatus}
+            fetchFriends={() => {}}
           />
         </>
       )}
