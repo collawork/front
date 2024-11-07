@@ -9,11 +9,15 @@ const Aside = () => {
 
   const [title, setTitle] = useState("");
   const [context, setContext] = useState("");
+
+  const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+    
+        if (token) {
+            localStorage.setItem('token', token);
+        }
+  
    
-    // const [formData, setFormData] = useState({ 
-    //     title: "", 
-    //     context: "" 
-    // });
 
     const [newShow, setNewShow] = useState(false); 
     function Send(){
@@ -22,10 +26,14 @@ const Aside = () => {
       axios(
           {
               url:`${API_URL}/api/user/projects/newproject`,
+              headers: {
+                'Authorization': `Bearer ${token}`
+            },
               method: 'post',
-              data: {
-                  title:title, context:context
-              },
+            //   data: {
+            //       title:title, context:context
+            //   },
+            params: { title, context },
               baseURL:'http://localhost:8080',
               withCredentials: true,
           }
