@@ -9,6 +9,8 @@
 //     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
 // });
 
+import axios from 'axios';
+
 const API_URL = process.env.REACT_APP_API_URL;
 
 const registerSchedule = async(data)=>{
@@ -26,13 +28,12 @@ const registerSchedule = async(data)=>{
         createdAt: data.createdAt
     };
 
-    formData.append("registerScheduleRequest", new Blop([JSON.stringify(registerScheduleRequest)],{type: 'application/json'}));
+    formData.append("registerScheduleRequest", new Blob([JSON.stringify(registerScheduleRequest)],{type: 'application/json'}));
 
     console.log(`${API_URL}`);
     return await axios.post(`${API_URL}/api/calendar`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
-        }
-    })
-    
-}
+        }, withCredentials: true
+    });
+};
