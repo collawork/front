@@ -36,8 +36,8 @@ const NotificationList = ({ userId }) => {
     };
 
     const handleAcceptFriendRequest = async (notification) => {
-        // 요청을 보낸 사용자 ID는 별도로 저장된 requestId를 사용하거나, 백엔드에서 올바르게 전달된 정보를 사용해야 합니다.
-        const requesterId = notification.requestId; // 알림에서 올바른 요청자 ID를 참조하도록 수정
+        // 요청을 보낸 사용자 ID는 별도로 저장된 requestId를 사용하거나, 백엔드에서 올바르게 전달된 정보를 사용해야 함
+        const requesterId = notification.requestId; // 알림에서 올바른 요청자 ID를 참조하도록 수정함
     
         // 현재 로그인된 사용자 ID
         const responderId = userId;
@@ -51,7 +51,7 @@ const NotificationList = ({ userId }) => {
             return;
         }
     
-        // 요청자와 응답자가 같은 경우 처리 방지
+        // 요청자와 응답자가 같은 경우 처리 방지할라고
         if (requesterId === responderId) {
             console.error("자기 자신에게 친구 요청을 수락할 수 없습니다.");
             alert("자기 자신에게 친구 요청을 수락할 수 없습니다.");
