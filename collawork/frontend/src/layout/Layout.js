@@ -13,7 +13,7 @@ const Layout = () => {
         <div className="layout-container">
             <Search currentUser={{ id: userId }} />
             <div className="main-content">
-                <Aside />
+                <Aside currentUser={{ id: userId }}/>
                 <div className="outlet-content">
                     <Outlet />
                 </div>

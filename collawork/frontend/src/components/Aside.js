@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactModal from "react-modal"; 
 import ProjectService from "../services/ProjectService"; 
 import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,29 +10,25 @@ const Aside = () => {
 
   const [title, setTitle] = useState("");
   const [context, setContext] = useState("");
-
-  const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-    
-        if (token) {
-            localStorage.setItem('token', token);
-        }
+  const { userId } = useUser();
+  console.log("2userId : " + userId );
   
     const [newShow, setNewShow] = useState(false); 
     function Send(){
       console.log(title);
       console.log(context);
+      console.log(userId);
       axios(
           {
               url:`${API_URL}/api/user/projects/newproject`,
               headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
               method: 'post',
-              data: {
-                  title:title, context:context
-              },
-            //  params: { title, context },
+            //   data: {
+            //       title:title, context:context, userId:userId
+            //   },
+             params: { title, context , userId},
               baseURL:'http://localhost:8080',
               withCredentials: true,
           }
