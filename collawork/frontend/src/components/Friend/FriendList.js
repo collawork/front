@@ -1,9 +1,11 @@
+// FriendList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
 
+    // 새로고침 함수 (다른 컴포넌트에서 호출 가능)
     const fetchFriends = async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/friends/list', {
@@ -23,7 +25,6 @@ const FriendList = ({ userId }) => {
     }, [userId]);
 
     const handleRemoveFriend = async (friendId) => {
-        console.log("friendId : " + friendId);
         try {
             await axios.delete('http://localhost:8080/api/friends/remove', {
                 params: { requestId: friendId },
@@ -36,10 +37,6 @@ const FriendList = ({ userId }) => {
             console.error('친구 삭제 중 오류 발생:', error);
         }
     };
-
-    if (friends.length === 0) {
-        return <p>친구가 없습니다.</p>;
-    }
 
     return (
         <div className="friend-list">
@@ -54,6 +51,7 @@ const FriendList = ({ userId }) => {
                     </li>
                 ))}
             </ul>
+            {friends.length === 0 && <p>친구가 없습니다.</p>}
         </div>
     );
 };
