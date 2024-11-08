@@ -16,22 +16,16 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 
 const registerSchedule = async(data)=>{
+    console.log("123")
     const formData = new FormData();
 
     const registerScheduleRequest ={
-        scheduleId: data.scheduleId,
-        pjId: data.pjId,
-        scheduleTilte: data.scheduleTilte,
-        scheduleDesc: data.scheduleDesc,
-        scheduleStart: data.scheduleStart,
-        scheduleEnd: data.scheduleEnd,
-        scheduleCreate: data.scheduleCreate,
-        createdBy: data.createdBy,
-        createdAt: data.createdAt
+        data // ex) title: ''
     };
+    console.log("sdsdfasdfgdfhadf");
 
     formData.append("registerScheduleRequest", new Blob([JSON.stringify(registerScheduleRequest)],{type: 'application/json'}));
-
+    console.log(formData);
     console.log(`${API_URL}`);
     return await axios.post(`${API_URL}/api/calendar`, formData, {
         headers: {
