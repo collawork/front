@@ -34,9 +34,10 @@ const MyPage = () => {
     // const [start,setStart] =use
     // setformdata.scheduleStart(start);
 
-    const [formData, setFormData] = useState([]);
+    // const [formData, setFormData] = useState({});
 
-    const [title, setTitle] = useState({title: ''});
+    const [title, setTitle] = useState("");
+    const [description , setDescription] = useState("");
 
     // const []
 
@@ -100,7 +101,7 @@ const MyPage = () => {
 
     const handleDateClick = (arg) => {
         
-        setFormData({...formData, scheduleStart:arg.dateStr}) // 클릭한 날짜를 일정의 시작일로 박아둔다. 물론 수정 가능!
+        // setFormData({...formData, scheduleStart:arg.dateStr}) // 클릭한 날짜를 일정의 시작일로 박아둔다. 물론 수정 가능!
 
         // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
         // setSelectedDate(arg.dateStr); // 클릭한 날짜 저장
@@ -141,20 +142,25 @@ const MyPage = () => {
     // });
 
     const handleChange = e =>{
-        setTitle({title: e.target.value});
+        setTitle(e.target.value);
+        setDescription("1234");
         console.log(e.target.value);
 
     };
 
     const handleSubmit = async (e) => {
-        alert(title.title);
-        setFormData(prev =>[...prev,title]);
+        
+        let formData = {title , description};
+        
+        
+        
 
         e.preventDefault();
-        // if (!formData[0].title) { // title: 'sdf'
-        //     alert('일정의 타이틀을 입력해 주세요.');
-        //     return;
-        // } 이거가 없어야 되는데...
+      
+        if (formData.title === '') { // title: 'sdf'
+            alert('일정의 타이틀을 입력해 주세요.');
+            return;
+        } 
 
         try{
             await CalendarService.registerSchedule(formData);
