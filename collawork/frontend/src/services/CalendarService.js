@@ -13,26 +13,18 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 const registerSchedule = async(data)=>{
-    const formData = new FormData();
+    console.log(data);
+    const formData = data;
 
-    const registerScheduleRequest ={
-        scheduleId: data.scheduleId,
-        pjId: data.pjId,
-        scheduleTilte: data.scheduleTilte,
-        scheduleDesc: data.scheduleDesc,
-        scheduleStart: data.scheduleStart,
-        scheduleEnd: data.scheduleEnd,
-        scheduleCreate: data.scheduleCreate,
-        createdBy: data.createdBy,
-        createdAt: data.createdAt
-    };
+    const registerScheduleRequest = data; // ex) title: ''
+    console.log("sdsdfasdfgdfhadf");
 
-    formData.append("registerScheduleRequest", new Blob([JSON.stringify(registerScheduleRequest)],{type: 'application/json'}));
-
+    
+    console.log(formData);
     console.log(`${API_URL}`);
     return await axios.post(`${API_URL}/api/calendar`, formData, {
         headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json', // JSON 형식으로 전송
         }, withCredentials: true
     });
 };

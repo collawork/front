@@ -30,10 +30,23 @@ const MyPage = () => {
     const [currentView, setCurrentView] = useState('dayGridMonth');
     const [eventCRUDModal, setEventCRUDModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
-    const [formData, setFormData] = useState({
-        scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
-        scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
-    });
+
+    // const [start,setStart] =use
+    // setformdata.scheduleStart(start);
+
+    // const [formData, setFormData] = useState({});
+
+    const [title, setTitle] = useState("");
+    const [description , setDescription] = useState("");
+
+    // const []
+
+    // const [formData, setFormData] = useState({
+    //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
+    //     scheduleStart: '', scheduleEnd: '', createdBy: '', createdAt: ''
+    // });
+
+
     const [errors, setErrors] = useState({});
     const [validations, setValidations] = useState({});
 
@@ -88,7 +101,7 @@ const MyPage = () => {
 
     const handleDateClick = (arg) => {
         
-        setFormData({...formData, scheduleStart:arg.dateStr}) // 클릭한 날짜를 일정의 시작일로 박아둔다. 물론 수정 가능!
+        // setFormData({...formData, scheduleStart:arg.dateStr}) // 클릭한 날짜를 일정의 시작일로 박아둔다. 물론 수정 가능!
 
         // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
         // setSelectedDate(arg.dateStr); // 클릭한 날짜 저장
@@ -100,48 +113,62 @@ const MyPage = () => {
         setEventCRUDModal(false);
     }
 
-    const handleChange = (e) => {
-        const nowDateTime = new Date();
-        const {name, value} = e.target;
-        console.log(value);
-        setFormData({...formData, [name] : value})
-        setFormData({...formData, createdBy: userId})
-        setFormData({...formData, createdAt: nowDateTime})
-        console.log(nowDateTime);
-        if(formData.scheduleId){
-            setFormData({...formData, pjId:/*프로젝트 아이디 가져와서 넣기*/ "pjId"})
-        }
+    // const handleChange = (e) => {
+    //     const nowDateTime = new Date();
+    //     const {name, value} = e.target;
+    //     console.log(value);
+    //     setFormData({...formData, [name] : value})
+    //     setFormData({...formData, createdBy: userId})
+    //     setFormData({...formData, createdAt: nowDateTime})
+    //     console.log(nowDateTime);
+    //     if(formData.scheduleId){
+    //         setFormData({...formData, pjId:/*프로젝트 아이디 가져와서 넣기*/ "pjId"})
+    //     }
         
         
 
-        // if(name === "scheduleTilte"){
-        //     setFormData({scheduleTilte: value})
-        // } else if(name === "scheduleDesc"){
-        //     setFormData({scheduleDesc: value})
-        // } else if(name === "scheduleStart"){
-        //     setFormData({scheduleStart: value})
-        // }
-    }
+    //     // if(name === "scheduleTilte"){
+    //     //     setFormData({scheduleTilte: value})
+    //     // } else if(name === "scheduleDesc"){
+    //     //     setFormData({scheduleDesc: value})
+    //     // } else if(name === "scheduleStart"){
+    //     //     setFormData({scheduleStart: value})
+    //     // }
+    // }
 
     // const [formData, setFormData] = useState({
     //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
     //     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
     // });
 
+    const handleChange = e =>{
+        setTitle(e.target.value);
+        setDescription("1234");
+        console.log(e.target.value);
+
+    };
+
     const handleSubmit = async (e) => {
+        
+        let formData = {title , description};
+        
+        
+        
 
         e.preventDefault();
-        if (!formData.scheduleTilte) {
+      
+        if (formData.title === '') { // title: 'sdf'
             alert('일정의 타이틀을 입력해 주세요.');
             return;
-        }
+        } 
+
         try{
             await CalendarService.registerSchedule(formData);
-            alert('일정이 등록되었습니다.')
+            alert('일정이 등록되었습니다.');
         }catch(error){
             console.error(error);
-            alert('일정등록에 실패하였습니다.')
-        }
+            alert('일정등록에 실패하였습니다.');
+        };
     };
 
     function renderEventContent(eventInfo) {
@@ -197,9 +224,9 @@ const MyPage = () => {
                             /* 출력부 */
 
                             // 이벤트 객체들, 예시..
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
+                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red', groupId:'1', description: '메롱~!!! 이거시가 설명이다~!!! 근데, 아무데서도 볼 수가 없네..' },
                             { title: 'event 1', start: '2024-11-15T23:00:00+09:00'},
-                            { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
+                            { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12', groupId:'1'},
                             { title: 'event 3', date: '2024-11-06' },
                             { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
 
@@ -222,14 +249,15 @@ const MyPage = () => {
                         contentLabel="일정 조회 등록 수정 삭제"
 
                     >
-                        <h2>{selectedDate}의 일정</h2>
+                        <h2>일정등록</h2>
                         {/* 입력부 */}
                         <form onSubmit={handleSubmit}>
-                            제목: <input type='text' name='scheduleTilte' placeholder='일정의 제목' onChange={handleChange}/>
-                            설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
+                            제목: <input type='text' name='Tilte' placeholder='일정의 제목' onChange={handleChange}/>
+                         
+                            {/* 설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
                             기간 설정: 
                             <input type='date' name='scheduleStart' placeholder='시작 시점' onChange={handleChange}/>
-                            <input type='date' name='scheduleEnd' placeholder='종료 시점' onChange={handleChange}/>
+                            <input type='date' name='scheduleEnd' placeholder='종료 시점' onChange={handleChange}/> */}
                             <button onClick={closeModal}>닫기</button>
                             <button type='submit'>일정등록</button>
                         </form>
