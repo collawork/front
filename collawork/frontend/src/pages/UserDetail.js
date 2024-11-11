@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../utils/Axios';
+import axios from 'axios';
 import FriendRequest from '../components/Friend/FriendRequest';
 import "../components/assest/css/UserDetail.css";
 
@@ -13,7 +13,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
         let response;
 
         if (type === 'user') {
-          response = await axiosInstance.get(`/user/detail`, {
+          response = await axios.get(`http://localhost:8080/api/user/detail`, {
             headers: {
               'Authorization': `Bearer ${token}`
             },
@@ -39,7 +39,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
     <div className="user-detail-modal">
       <button className="close-button" onClick={closeModal}>닫기</button>
 
-      {type === 'user' && (
+      {type === 'user' && data && data.id && (
         <>
           <h3>사용자 정보</h3>
           <img
@@ -54,7 +54,11 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
           <p>팩스 번호: {data.fax || '정보 없음'}</p>
           <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
           
-          <FriendRequest currentUser={currentUser} selectedUserId={data.id} />
+          <FriendRequest
+            currentUser={currentUser}
+            selectedUserId={data.id}
+            fetchFriends={() => {}}
+          />
         </>
       )}
     </div>

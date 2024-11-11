@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ReactModal from "react-modal"; 
 import ProjectService from "../services/ProjectService"; 
 import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,23 +10,25 @@ const Aside = () => {
 
   const [title, setTitle] = useState("");
   const [context, setContext] = useState("");
-   
-    // const [formData, setFormData] = useState({ 
-    //     title: "", 
-    //     context: "" 
-    // });
-
+  const { userId } = useUser();
+  console.log("2userId : " + userId );
+  
     const [newShow, setNewShow] = useState(false); 
     function Send(){
       console.log(title);
       console.log(context);
+      console.log(userId);
       axios(
           {
               url:`${API_URL}/api/user/projects/newproject`,
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
               method: 'post',
-              data: {
-                  title:title, context:context
-              },
+            //   data: {
+            //       title:title, context:context, userId:userId
+            //   },
+             params: { title, context , userId},
               baseURL:'http://localhost:8080',
               withCredentials: true,
           }
