@@ -4,7 +4,7 @@ import ProjectChat from "../components/project/ProjectChat";
 import ProjectCalendar from "../components/project/ProjectCalendar";
 import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
-import Notification from '../components/project/Notification';
+import Notification from '../components/project/Board';
 import { useUser } from '../context/UserContext';
 
 
@@ -63,7 +63,7 @@ const Project = () => {
 
             <div className="content-area">
 
-                {homeShow && <ProjectHome />}
+                {homeShow && <ProjectHome setHomeShow={setHomeShow}/>}
                 {chatShow && <ProjectChat />}
                 {calShow && <ProjectCalendar />}
                 {notiShow && <Notification />}
