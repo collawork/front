@@ -4,14 +4,12 @@ import axios from 'axios';
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
 
-    // 새로고침 함수 (다른 컴포넌트에서 호출 가능)
     const fetchFriends = async () => {
         try {
+            const token = localStorage.getItem('token');
             const response = await axios.get('http://localhost:8080/api/friends/list', {
-                params: { userId },
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
+                headers: { 'Authorization': `Bearer ${token}` },
+                params: { userId }
             });
             setFriends(response.data);
         } catch (error) {
