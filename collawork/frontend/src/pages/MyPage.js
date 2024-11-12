@@ -104,7 +104,7 @@ const MyPage = () => {
     };
 
     const handleDateClick = (arg) => {
-               
+
         setEventCRUDModal(true); // 모달창 오픈
     };
 
@@ -114,7 +114,12 @@ const MyPage = () => {
 
     const handleChange = e =>{
         setTitle(e.target.value);
-        setDescription("1234");
+        setStart(e.target.value);
+        setEnd(e.target.value);
+        setDescription(e.target.value);
+        setProjectId(); // mypage의 달력을 개인용 달력이니 여기선 넘길 값이 없다. 프로젝트 달력에서 보내보자.
+        setCreateBy(userId);
+        
         console.log(e.target.value);
 
 
@@ -141,7 +146,7 @@ const MyPage = () => {
 
         e.preventDefault();
       
-        if (formData.title === '') { // title: 'sdf'
+        if (formData.title === '') { 
             alert('일정의 타이틀을 입력해 주세요.');
             return;
         } 
@@ -228,8 +233,11 @@ const MyPage = () => {
                         <h2>일정등록</h2>
                         {/* 입력부 */}
                         <form onSubmit={handleSubmit}>
-                            제목: <input type='text' name='Tilte' placeholder='일정의 제목' onChange={handleChange}/>
-                         
+                            제목: <input type='text' name='tilte' placeholder='일정의 제목' onChange={handleChange}/>
+                            설명: <input type='text' name='description' placeholder='일정의 내용' onChange={handleChange}/>
+                            설명: <input type='date' name='start' placeholder='시작일' onChange={handleChange}/>
+                            설명: <input type='date' name='end' placeholder='종료일' onChange={handleChange}/>
+                            {/* 스케쥴의 그룹인 프로젝트 아이디와 일정을 등록한 이의 아이디는 입력받지 않고 자동으로 */}
                             {/* 설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
                             기간 설정: 
                             <input type='date' name='scheduleStart' placeholder='시작 시점' onChange={handleChange}/>

@@ -12,13 +12,8 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const registerSchedule = async(data)=>{
-    console.log(data);
-    const formData = data;
-
-    const registerScheduleRequest = data; // ex) title: ''
-    console.log("sdsdfasdfgdfhadf");
-
+const registerSchedule = async(formData)=>{
+    console.log("CalendatService에서 백으로 보내는 데이터: " + formData);
     
     console.log(formData);
     console.log(`${API_URL}`);
