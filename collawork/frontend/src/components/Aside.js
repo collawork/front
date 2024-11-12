@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
 import ReactModal from "react-modal"; 
 import ProjectService from "../services/ProjectService"; 
 import axios from 'axios';
@@ -6,18 +6,44 @@ import { useUser } from '../context/UserContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Aside = () => {  
 
+const Aside = ({currentUser}) => {  
+
+  const [projectName, setProjectName] = useState([])
   const [title, setTitle] = useState("");
   const [context, setContext] = useState("");
   const { userId } = useUser();
-  console.log("2userId : " + userId );
+
+//   const [usser, setUsser] = useState("");
+
+//   console.log("2userId : " + userId );
+
+    function selectProjectName(){
+        axios(
+            {
+                url:`${API_URL}/api/user/projects/selectAll`,
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            method: 'post',
+            params: {userId},
+            baseURL:'http://localhost:8080',
+              withCredentials: true,
+        }
+        ).then(function(response){
+            setProjectName(response.data);
+            console.log("Aside : " + response.data);
+        }
+    )
+    }
+
   
     const [newShow, setNewShow] = useState(false); 
     function Send(){
-      console.log(title);
-      console.log(context);
-      console.log(userId);
+      console.log("Aside : " + title);
+      console.log("Aside : " + context);
+    //   console.log("Aside : " + currentUser.id);
+    //   setUsser(user.id);
       axios(
           {
               url:`${API_URL}/api/user/projects/newproject`,
@@ -33,10 +59,12 @@ const Aside = () => {
               withCredentials: true,
           }
       ).then(function(response){
-          console.log(response.data)
+        console.log("Aside : " + response);
+          console.log("Aside : " + response.data);
       }
   )
   }
+
 
     
     const modalCloseHandler = () => { 
@@ -56,6 +84,7 @@ const Aside = () => {
         try {
             Send(title, context);
             alert('새 프로젝트가 생성되었습니다.');
+            selectProjectName();
             setNewShow(false);
         } catch (error) {
             alert('프로젝트 생성에 실패하였습니다.');
@@ -124,14 +153,15 @@ const Aside = () => {
                     <div>collawork</div> 
                     <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button> 
                 </div> 
-                <div className="aside-bottom"> 
-                    <div className="project-list"> 
-                        <div className="project-item">프로젝트1</div> 
-                        <div className="project-item">프로젝트2</div> 
-                        <div className="project-item">프로젝트3</div> 
-                        <div className="project-item">프로젝트4</div> 
-                    </div> 
-                </div> 
+                     <div className="aside-bottom"> 
+                     <div className="project-list"> 
+                     {Array.isArray(projectName) ? (
+                            projectName.map((pro, index) => (
+                        <li key={index}> 
+                        {pro}
+                        </li> ))) : (<li>{projectName}</li>)}
+                     </div> 
+                 </div> 
             </div> 
         </>  
     ); 
