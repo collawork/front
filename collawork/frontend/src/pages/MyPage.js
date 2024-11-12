@@ -37,7 +37,11 @@ const MyPage = () => {
     // const [formData, setFormData] = useState({});
 
     const [title, setTitle] = useState("");
+    const [start, setStart] = useState(new Date);
+    const [end, setEnd] = useState("")
+
     const [description , setDescription] = useState("");
+
 
     // const []
 
@@ -224,7 +228,9 @@ const MyPage = () => {
                             /* 출력부 */
 
                             // 이벤트 객체들, 예시..
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red', groupId:'1', description: '메롱~!!! 이거시가 설명이다~!!! 근데, 아무데서도 볼 수가 없네..' },
+                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red', groupId:'1', extendedProps: {
+                                department: 'BioChemistry'
+                              }, description: '메롱~!!! 이거시가 설명이다~!!! 근데, 아무데서도 볼 수가 없네..' },
                             { title: 'event 1', start: '2024-11-15T23:00:00+09:00'},
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12', groupId:'1'},
                             { title: 'event 3', date: '2024-11-06' },
