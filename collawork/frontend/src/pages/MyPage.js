@@ -31,16 +31,16 @@ const MyPage = () => {
     const [eventCRUDModal, setEventCRUDModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
 
-    // const [start,setStart] =use
-    // setformdata.scheduleStart(start);
-
-    // const [formData, setFormData] = useState({});
-
+    // 달력 관련 변수들..
+    let formData; // fullcalendar에서 지원해 주는 기능.
     const [title, setTitle] = useState("");
-    const [start, setStart] = useState(new Date);
+    const [start, setStart] = useState("");
     const [end, setEnd] = useState("")
-
+    let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
     const [description , setDescription] = useState("");
+    const [projectId, setProjectId] = useState("");
+    const [createBy, setCreateBy] = useState("");
+    // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
 
 
     // const []
@@ -104,12 +104,7 @@ const MyPage = () => {
     };
 
     const handleDateClick = (arg) => {
-        
-        // setFormData({...formData, scheduleStart:arg.dateStr}) // 클릭한 날짜를 일정의 시작일로 박아둔다. 물론 수정 가능!
-
-        // 날짜를 클릭하면 해당하는 날짜의 모달창이 뜨고, 그 안에서 이벤트를 입력할 수 있도록 한다.
-        // setSelectedDate(arg.dateStr); // 클릭한 날짜 저장
-       
+               
         setEventCRUDModal(true); // 모달창 오픈
     };
 
@@ -117,47 +112,32 @@ const MyPage = () => {
         setEventCRUDModal(false);
     }
 
-    // const handleChange = (e) => {
-    //     const nowDateTime = new Date();
-    //     const {name, value} = e.target;
-    //     console.log(value);
-    //     setFormData({...formData, [name] : value})
-    //     setFormData({...formData, createdBy: userId})
-    //     setFormData({...formData, createdAt: nowDateTime})
-    //     console.log(nowDateTime);
-    //     if(formData.scheduleId){
-    //         setFormData({...formData, pjId:/*프로젝트 아이디 가져와서 넣기*/ "pjId"})
-    //     }
-        
-        
-
-    //     // if(name === "scheduleTilte"){
-    //     //     setFormData({scheduleTilte: value})
-    //     // } else if(name === "scheduleDesc"){
-    //     //     setFormData({scheduleDesc: value})
-    //     // } else if(name === "scheduleStart"){
-    //     //     setFormData({scheduleStart: value})
-    //     // }
-    // }
-
-    // const [formData, setFormData] = useState({
-    //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
-    //     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
-    // });
-
     const handleChange = e =>{
         setTitle(e.target.value);
         setDescription("1234");
         console.log(e.target.value);
 
+
+        // // 달력 관련 변수들..
+        // let formData; // fullcalendar에서 지원해 주는 기능.
+        // const [title, setTitle] = useState("");
+        // const [start, setStart] = useState("");
+        // const [end, setEnd] = useState("")
+        // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
+        // const [description , setDescription] = useState("");
+        // const [projectId, setProjectId] = useState("");
+        // const [createBy, setCreateBy] = useState("");
+        // // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
+
+
+
+
     };
 
     const handleSubmit = async (e) => {
         
-        let formData = {title , description};
-        
-        
-        
+        extendedProps = {description, projectId, createBy}
+        formData = {title , start, end, extendedProps};
 
         e.preventDefault();
       
@@ -234,20 +214,10 @@ const MyPage = () => {
                             { title: 'event 1', start: '2024-11-15T23:00:00+09:00'},
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12', groupId:'1'},
                             { title: 'event 3', date: '2024-11-06' },
-                            { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
+                            { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' },
+                            { title: 'event 5', date:'2024-11-05', start: '2024-11-05T09:00:00+09:00', end: '2024-11-06T07:00:00+09:00' },
+                            { title: 'event 6', date:'2024-11-13', start: '2024-11-08', end: '2024-11-13T00:00:00+09:00' }
 
-                            // CREATE TABLE calendar_events (
-                            //     id BIGINT AUTO_INCREMENT PRIMARY KEY,        -- 일정 고유 ID
-                            //     project_id BIGINT,                           -- 프로젝트 ID (projects 테이블 참조)
-                            //     title VARCHAR(255),                          -- 일정 제목
-                            //     description TEXT,                            -- 일정 설명
-                            //     start_time TIMESTAMP,                        -- 일정 시작 시간
-                            //     end_time TIMESTAMP,                          -- 일정 종료 시간
-                            //     created_by BIGINT,                           -- 일정 생성자 ID (users 테이블 참조)
-                            //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 일정 생성일
-                            //     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE, -- 프로젝트 삭제 시 일정도 삭제
-                            //     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL -- 생성자 삭제 시 NULL로 설정
-                            // );
                         ]}
                     />
                     <ReactModal className={"event-CRUD-modal"}
