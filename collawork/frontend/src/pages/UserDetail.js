@@ -6,6 +6,10 @@ import "../components/assest/css/UserDetail.css";
 const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
 
+  console.log("UserDetail - 전달된 currentUser:", currentUser);
+  console.log("UserDetail - 전달된 selectedUserId:", data?.id);
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
