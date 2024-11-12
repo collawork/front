@@ -99,11 +99,14 @@ const MyPage = () => {
         );
     }
 
+
+
     return (
         <>
             <div className="header">
                 <span className="hi-user-name">안녕하세요 {user.username || '사용자'}님, 좋은 아침이예요!</span>
                 {/* 로그인 정보를 바탕으로 이름을 조회하고 접속한 시간을 조회해서 해당하는 적당한 인사말을 넣어준다.*/}
+           
 
                 <span className="today">{currentDate}</span>
                 {/* 현재 날짜를 표시 */}

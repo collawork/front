@@ -46,7 +46,7 @@
 }
 
 /* 받은 메시지 스타일 */
-.message.recieved {
+.message.received { /* typo 수정: "recieved" -> "received" */
     background-color: #7289da; /* 보낸 메시지 배경과 동일 */
     color: #fff;
     text-align: left;
@@ -98,7 +98,7 @@
 
 /* 전송 버튼 호버 효과 */
 #sendBtn:hover {
-    background-color: #fefffe;
+    background-color: #a9a9ff; /* 호버시 배경색을 조금 더 밝게 */
 }
 
 /* 메인으로 돌아가기 버튼 */

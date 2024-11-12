@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
 
 const ChatRoom = () => {
-    const { chatRoomId } = useParams();  // URL 파라미터에서 chatRoomId 가져오기
-    const [messages, setMessages] = useState([]);  // 채팅 메시지 상태
-    const [messageInput, setMessageInput] = useState('');  // 메시지 입력 상태
-    const [webSocket, setWebSocket] = useState(null);  // WebSocket 상태
-    const [senderId, setSenderId] = useState('');  // 보낸 사람 ID 상태
-    const [username,setUsername] =useState('');
+    const { chatRoomId } = useParams();
+    const [messages, setMessages] = useState([]);
+    const [messageInput, setMessageInput] = useState('');
+    const [webSocket, setWebSocket] = useState(null);
+    const [senderId, setSenderId] = useState('');
+    const [username, setUsername] = useState('');
     const navigate = useNavigate();
+    const chatWindowRef = useRef(null); // 스크롤 위치 조정을 위한 ref
 
-    // 유저 정보 가져오기
+   
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
                     const response = await axios.get('http://localhost:8080/api/user/info', {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
                     setSenderId(response.data.id);
                     setUsername(response.data.username);
@@ -31,22 +30,29 @@ const ChatRoom = () => {
             }
         };
         fetchUserData();
-    }, []);
-
-    // 채팅방 메시지 가져오기
-    useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8080/api/chat/${chatRoomId}/messages`);
-                setMessages(response.data);
-            } catch (error) {
-                console.error("메시지 가져오기 오류:", error);
-            }
-        };
-        fetchMessages();
     }, [chatRoomId]);
 
-    // WebSocket 연결 설정
+    // 메시지를 가져오는 함수
+    const fetchMessages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/chat/${chatRoomId}/messages`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const formattedMessages = response.data.map(msg => ({
+                senderId: msg.senderId,
+                message: msg.content,
+                time: new Date(msg.createdAt).toLocaleTimeString(),
+                sort: msg.senderId === senderId ? 'sent' : 'received',
+                username: msg.sender.username 
+            }));
+            setMessages(formattedMessages);
+        } catch (error) {
+            console.error("메시지 가져오기 오류:", error);
+        }
+    };
+
+
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
         const wsURL = `${wsProtocol}localhost:8080/chattingServer/${chatRoomId}`;
@@ -54,15 +60,22 @@ const ChatRoom = () => {
 
         ws.onopen = () => {
             console.log("WebSocket 연결 성공");
+            fetchMessages(); // 초기 메시지 로딩
             const initialMessage = 'WebSocket 연결 성공';
-            setMessages(prev => [...prev, { type: 'info', message: initialMessage }]);
+            setMessages(prev => [...prev, { type: 'info', message: initialMessage, sort: 'info' }]);
             ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
         };
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
             const timestamp = new Date().toLocaleTimeString();
-            setMessages(prev => [...prev, { ...message, time: timestamp }]);
+            const messageWithSort = {
+                ...message,
+                time: timestamp,
+                sort: message.senderId === senderId ? 'sent' : 'received',
+                username: message.sender.username 
+            };
+            setMessages(prev => [...prev, messageWithSort]);
         };
 
         ws.onerror = (error) => {
@@ -75,20 +88,13 @@ const ChatRoom = () => {
 
         setWebSocket(ws);
 
-        // 컴포넌트 언마운트 시 WebSocket 종료
         return () => {
             if (ws) {
                 ws.send(JSON.stringify({ type: 'leave', senderId }));
                 ws.close();
             }
         };
-    }, [chatRoomId, senderId]);
-
-    // 페이지가 새로고침될 때 `sessionStorage`에서 메시지 가져오기
-    useEffect(() => {
-        const savedMessages = JSON.parse(sessionStorage.getItem(chatRoomId)) || [];
-        setMessages(savedMessages);
-    }, [chatRoomId]);
+    }, [chatRoomId, senderId, username]); 
 
     // 메시지 전송 함수
     const sendMessage = () => {
@@ -96,21 +102,23 @@ const ChatRoom = () => {
             const trimmedMessage = messageInput.trim();
             const timestamp = new Date().toLocaleTimeString();
             if (trimmedMessage !== '') {
-                webSocket.send(JSON.stringify({ type: 'text', senderId, message: trimmedMessage, time: timestamp ,chatRoomId:chatRoomId}));
-
-                setMessages(prev => [...prev, { type: 'sent', message: trimmedMessage, time: timestamp, senderId }]);
-
-                // `sessionStorage`에 메시지 저장
-                const savedMessages = JSON.parse(sessionStorage.getItem(chatRoomId)) || [];
-                savedMessages.push({ senderId, message: trimmedMessage, time: timestamp });
-                sessionStorage.setItem(chatRoomId, JSON.stringify(savedMessages));
-
-                setMessageInput('');  // 입력창 초기화
+                const sentMessage = {
+                    type: 'sent',
+                    message: trimmedMessage,
+                    time: timestamp,
+                    senderId,
+                    sort: 'sent',
+                    username: username  
+                };
+                webSocket.send(JSON.stringify({ type: 'text', senderId, message: trimmedMessage, time: timestamp, chatRoomId }));
+                setMessages(prev => [...prev, sentMessage]);
+                setMessageInput('');  
             }
         } else {
             console.log("웹소켓이 연결되지 않았습니다.");
         }
     };
+
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
@@ -118,26 +126,25 @@ const ChatRoom = () => {
         }
     };
 
+    
     const handlerBackToMain = () => {
         navigate("/");
     };
 
-    const handleCloseWebSocket = () => {
-        if (webSocket) {
-            webSocket.send(JSON.stringify({ type: 'leave', senderId }));
-            webSocket.close();
-            setWebSocket(null);
-            console.log('웹소켓이 종료되었습니다.');
+    // 최신 메시지로 스크롤
+    useEffect(() => {
+        if (chatWindowRef.current) {
+            chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
         }
-    };
+    }, [messages]);
 
     return (
         <div className="chat-container">
             <h2>{chatRoomId}번 프로젝트 채팅방</h2>
-            <div id="chatWindow" className="chat-window">
+            <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.type}`}>
-                        {msg.message}<br />
+                    <div key={index} className={`message ${msg.sort}`}>
+                        <strong>{msg.username}</strong>: {msg.message}<br />
                         <span>{msg.time}</span>
                     </div>
                 ))}
@@ -153,7 +160,6 @@ const ChatRoom = () => {
                 />
                 <button id="sendBtn" onClick={sendMessage}>전송</button>
                 <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
-                <button onClick={handleCloseWebSocket}>웹소켓 종료</button>
             </div>
         </div>
     );
