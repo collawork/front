@@ -63,7 +63,7 @@ const Project = () => {
 
             <div className="content-area">
 
-                {homeShow && <ProjectHome />}
+                {homeShow && <ProjectHome setHomeShow={setHomeShow}/>}
                 {chatShow && <ProjectChat />}
                 {calShow && <ProjectCalendar />}
                 {notiShow && <Notification />}

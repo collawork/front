@@ -1,4 +1,4 @@
-import { useState, useEffect, useHistory } from 'react';
+import { useState, useEffect } from 'react';
 import ReactModal from "react-modal";
 import ProjectService from "../services/ProjectService";
 import axios from 'axios';
@@ -8,12 +8,12 @@ import ProjectHome from './project/ProjectHome';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Aside = () => {
+    
     const [projectName, setProjectName] = useState([]);
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
     const { userId } = useUser();
-    const { show, setShow } = useState(false);
-    const history = useHistory();
+    // const { show, setShow } = useState(false);
 
     const [newShow, setNewShow] = useState(false);
 
@@ -80,9 +80,9 @@ const Aside = () => {
         setContext(e.target.value);
     };
 
-    const moveProjectHome = () => {
-        setShow(true);
-    };
+    // const moveProjectHome = () => {
+    //     setShow(true);
+    // };
 
     return (
         <>
@@ -139,13 +139,12 @@ const Aside = () => {
 
                 <div className="aside-bottom">
                     {projectName.map((project, index) => (
-                        <section key={index} onClick={moveProjectHome}>
+                        <section key={index} onClick={<ProjectHome userId={userId} />}>
                             <li>
                                 <span>{project}</span>
                             </li>
                         </section>
                     ))}
-                    {show && <ProjectHome userId={userId} />}
                 </div>
             </div>
         </>
