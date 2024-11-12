@@ -22,7 +22,7 @@ const registerSchedule = async(data)=>{
     
     console.log(formData);
     console.log(`${API_URL}`);
-    return await axios.post(`${API_URL}/api/calendar`, formData, {
+    return await axios.post(`${API_URL}/api/calendar/insert`, formData, {
         headers: {
             'Content-Type': 'application/json', // JSON 형식으로 전송
         }, withCredentials: true
