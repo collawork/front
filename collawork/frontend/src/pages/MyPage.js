@@ -32,11 +32,11 @@ const MyPage = () => {
     const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
 
     // 달력 관련 변수들..
-    let formData; // fullcalendar에서 지원해 주는 기능.
+    // let formData; // fullcalendar에서 지원해 주는 기능.
     const [title, setTitle] = useState("");
     const [start, setStart] = useState("");
     const [end, setEnd] = useState("")
-    let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
+    // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
     const [description , setDescription] = useState("");
     const [projectId, setProjectId] = useState("");
     const [createBy, setCreateBy] = useState("");
@@ -112,47 +112,42 @@ const MyPage = () => {
         setEventCRUDModal(false);
     }
 
-    const handleChange = e =>{
-        setTitle(e.target.value);
-        setStart(e.target.value);
-        setEnd(e.target.value);
-        setDescription(e.target.value);
-        setProjectId(); // mypage의 달력을 개인용 달력이니 여기선 넘길 값이 없다. 프로젝트 달력에서 보내보자.
+    useEffect(()=>{
+        // 개인 달력..
+        setProjectId(userId); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
         setCreateBy(userId);
-        
-        console.log(e.target.value);
+    },[projectId, createBy]);
 
+    const handleTitleChange = e =>{
+        setTitle(e.target.value);
+    };
 
-        // // 달력 관련 변수들..
-        // let formData; // fullcalendar에서 지원해 주는 기능.
-        // const [title, setTitle] = useState("");
-        // const [start, setStart] = useState("");
-        // const [end, setEnd] = useState("")
-        // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
-        // const [description , setDescription] = useState("");
-        // const [projectId, setProjectId] = useState("");
-        // const [createBy, setCreateBy] = useState("");
-        // // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
+    const handleStartChange = e =>{
+        setStart(e.target.value);
+    };
 
+    const handleEndChange = e => {
+        setEnd(e.target.value);
+    };
 
-
-
+    const handleDescriptionChange = e => {
+        setDescription(e.target.value);
     };
 
     const handleSubmit = async (e) => {
         
-        extendedProps = {description, projectId, createBy}
-        formData = {title , start, end, extendedProps};
+        // extendedProps = {description, projectId, createBy}
+        // formData = {title , start, end, extendedProps};
 
         e.preventDefault();
       
-        if (formData.title === '') { 
+        if (title === '') { 
             alert('일정의 타이틀을 입력해 주세요.');
             return;
         } 
 
         try{
-            await CalendarService.registerSchedule(formData);
+            await CalendarService.registerSchedule(title, start, end, description, projectId, createBy);
             alert('일정이 등록되었습니다.');
         }catch(error){
             console.error(error);
@@ -233,10 +228,10 @@ const MyPage = () => {
                         <h2>일정등록</h2>
                         {/* 입력부 */}
                         <form onSubmit={handleSubmit}>
-                            제목: <input type='text' name='tilte' placeholder='일정의 제목' onChange={handleChange}/>
-                            설명: <input type='text' name='description' placeholder='일정의 내용' onChange={handleChange}/>
-                            설명: <input type='date' name='start' placeholder='시작일' onChange={handleChange}/>
-                            설명: <input type='date' name='end' placeholder='종료일' onChange={handleChange}/>
+                            제목: <input type='text' name='tilte' placeholder='일정의 제목' onChange={handleTitleChange}/>
+                            설명: <input type='text' name='description' placeholder='일정의 내용' onChange={handleDescriptionChange }/>
+                            설명: <input type='date' name='start' placeholder='시작일' onChange={handleStartChange}/>
+                            설명: <input type='date' name='end' placeholder='종료일' onChange={handleEndChange}/>
                             {/* 스케쥴의 그룹인 프로젝트 아이디와 일정을 등록한 이의 아이디는 입력받지 않고 자동으로 */}
                             {/* 설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
                             기간 설정: 
