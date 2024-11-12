@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Aside from '../components/Aside';
 import Search from '../pages/Search';
@@ -8,13 +8,14 @@ import { useUser } from '../context/UserContext';
 
 const Layout = () => {
     const { userId } = useUser();
-    const [activeTab, setActiveTab] = useState('friends'); // friends 또는 participants 으로 설정 해야됨
+    const [activeTab, setActiveTab] = useState('friends'); // friends 또는 participants
 
     const renderList = () => {
         if (activeTab === 'friends') {
             return <FriendList userId={userId} />;
         } else {
-            // return <ParticipantList projectId={/* 프로젝트 ID 값 설정 */} />;    프로젝트 만드록 이거 수정 해야됨 저기에 프로젝트 id 값 가져와서 넣어야됨
+            // 나중에 프로젝트 참여자 목록을 만들고 아래와 같이 설정
+            // return <ParticipantList projectId={/* 프로젝트 ID 값 설정 */} />;
         }
     };
 
