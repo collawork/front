@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectList = () => {
     const [projectName, setProjectName] = useState([]);
     const { userId } = useUser();
+    const navigate = useNavigate();
     console.log("project list : " + userId);
 
     useEffect(() => {
+        console.log("ProjectList useEffect 호출됨");
         selectProjectName();
     }, []);
+    
 
     function selectProjectName() {
         const token = localStorage.getItem('token');
@@ -20,7 +24,7 @@ const ProjectList = () => {
         console.log("플젝리스트 userId:", userId);
         console.log("플젝리스트 userIdValue:", userIdValue);
         console.log("Authorization Token:", token);
-        console.log("프로젝트 이름 : " + projectName)
+        console.log("프로젝트 이름 : " + projectName);
     
         axios({
             url: `/api/user/projects/selectAll`,
@@ -41,11 +45,17 @@ const ProjectList = () => {
             console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
         });
     }
-    
+
+    const handleMoreClick = () => {
+        navigate('/project');
+    };
     
     return (
         <div className="project-list">
             <h3>프로젝트 목록</h3>
+            <button onClick={handleMoreClick} className="more-button">
+                + 더보기
+            </button>
             <ul>
                 {projectName.map((project, index) => (
                     <li key={index}>
