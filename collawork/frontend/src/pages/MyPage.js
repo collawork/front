@@ -40,6 +40,7 @@ const MyPage = () => {
     const [description , setDescription] = useState("");
     const [projectId, setProjectId] = useState("");
     const [createBy, setCreateBy] = useState("");
+    // const [projectName, setProjectName] = useState([]);
     // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
 
 
@@ -49,6 +50,26 @@ const MyPage = () => {
     //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
     //     scheduleStart: '', scheduleEnd: '', createdBy: '', createdAt: ''
     // });
+
+    // function selectProjectName(){
+    //     axios(
+    //         {
+    //             url:`${API_URL}/api/user/projects/selectAll`,
+    //             headers: {
+    //               'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //         },
+    //         method: 'post',
+    //         params: {userId},
+    //         baseURL:'http://localhost:8080',
+    //           withCredentials: true,
+    //     }
+    //     ).then(function(response){
+    //         console.log(response);
+    //         setProjectName(response.data);
+    //         console.log("Aside : " + response.data);
+    //     }
+    // )
+    // }
 
 
     const [errors, setErrors] = useState({});

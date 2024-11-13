@@ -6,10 +6,6 @@ import "../components/assest/css/UserDetail.css";
 const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
 
-  console.log("UserDetail - 전달된 currentUser:", currentUser);
-  console.log("UserDetail - 전달된 selectedUserId:", data?.id);
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,9 +31,11 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
     fetchData();
   }, [type, item, currentUser]);
 
-  console.log("UserDetail currentUser:", JSON.stringify(currentUser));
-
   if (!data) return <p>로딩 중...</p>;
+
+  // const profileImageUrl = data.profileImage && !data.profileImage.includes(':')
+  //   ? `http://localhost:8080/uploads/${data.profileImage}`
+  //   : '/default-profile.png';
 
   return (
     <div className="user-detail-modal">
@@ -47,7 +45,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
         <>
           <h3>사용자 정보</h3>
           <img
-            src={data.profileImage || '../components/assest/imges/default_image.png'}
+            src={data.profileImage ? `http://localhost:8080/uploads/${data.profileImage}` : '/default-profile.png'}
             alt={`${data.username || '사용자'}의 프로필 이미지`}
           />
           <p>이름: {data.username || '정보 없음'}</p>
