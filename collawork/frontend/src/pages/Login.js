@@ -6,7 +6,7 @@ import "../components/assest/css/Login.css";
 
 function Login() {
     const navigate = useNavigate();
-    const { setUserId } = useUser(); // UserContext의 setUserId 사용
+    const { setUserId } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
