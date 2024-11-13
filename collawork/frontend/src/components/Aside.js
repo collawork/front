@@ -14,66 +14,49 @@ const Aside = () => {
     const [show, setShow] = useState(false);
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
-
-    useEffect(() => {
-        console.log("프로젝트 목록 업데이트:", projectName);
-        selectProjectName();
-    }, []);
-
-
-        async function selectProjectName(projectName) {
-        const token = localStorage.getItem('token');
-
-        if (!projectName) {
-            console.error("프로젝트 이름이 설정되지 않았습니다.");
-            return;
-        }
-
-        try {
-            console.log("프로젝트 이름:", projectName);
-            console.log("Authorization Token:", token);
-
-            const response = await axios({
-                url: `http://localhost:8080/api/user/projects/projectselect`,
-                method: 'post',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                params: { projectName },
-                withCredentials: true,
-            });
-            console.log("프로젝트 선택 응답 데이터:", response.data);
-            return response.data;
-        } catch (error) {
-            console.error('프로젝트 선택 중 오류 발생:', error);
-        }
-    }
-
-
-    async function Send() {
+   
+    function selectProjectName() {
+        console.log("userId: " + userId);
         const token = localStorage.getItem('token');
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        console.log("userId: " + userId);
+        axios({
+            url: `${API_URL}/api/user/projects/selectAll`,
+            headers: { 'Authorization': `Bearer ${token}` ,
+                        'Content-Type': 'application/json',
+                    },
+            method: 'post',
+            params: { userId: userIdValue },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true,
+        }).then(function(response) {
+            console.log(response);
+            setProjectName(response.data);
+            console.log("Aside : " + response.data);
+        }).catch((error) => {
+            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
+        });
 
-        console.log("새 프로젝트 전송 - Title:", title);
-        console.log("새 프로젝트 전송 - Context:", context);
-        console.log("새 프로젝트 전송 - UserId:", userIdValue);
+    }
+    
+    useEffect(() => {
+        if (userId) selectProjectName();
+    }, []);
 
-        try {
-            const response = await axios({
-                url: `${API_URL}/api/user/projects/newproject`,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                method: 'post',
-                data: { title, context, userId: userIdValue }, // 데이터를 payload로 전달
-                withCredentials: true,
-            });
-            console.log("프로젝트 생성 응답 데이터:", response.data);
-        } catch (error) {
-            console.error('프로젝트 생성 중 오류 발생:', error);
-        }
+    function Send(){
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        axios({
+            url: `${API_URL}/api/user/projects/newproject`,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            method: 'post',
+            params: { title, context, userIdValue },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true,
+        }).then(function(response) {
+            console.log("Aside : " + response);
+            console.log("Aside : " + response.data);
+        });
+
     }
 
     const modalCloseHandler = () => {
