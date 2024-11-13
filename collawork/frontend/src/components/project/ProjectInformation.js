@@ -12,10 +12,7 @@ const ProjectImformation = () => {
     const [userData, setUserDate] = useState([]); // 유저 정보 데이터
     // const PlusProjectCreatedBy = projectStore(state => state.PlusProjectCreatedBy);
     const {projectName} = projectStore();
-    console.log("ProjectHome zustand : " + projectName);
-    
 
-    
     useEffect(() => {
         if(projectName){
             Send();  // projectName 으로 프로젝트 정보 조회
@@ -27,19 +24,17 @@ const ProjectImformation = () => {
 
     function manager(){ // 유저 정보 조회 
         const token = localStorage.getItem('token');
-        console.log(projectData.id);
-
+    
         axios({
             url: `${API_URL}/api/user/projects/projecthomeusers`,
             headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
-            params: { id : projectData.id },
+            params: { id : projectData.createdBy },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
+
             console.log("ProjectHome의 userdata: " + response.data);
-            console.log("ProjectHome의 username : " + response.data.username);
-            console.log("ProjectHome email : " + response.data.email);
             setUserDate(response.data);
            
           
@@ -58,15 +53,17 @@ const ProjectImformation = () => {
         }).then(function(response) {
 
             setProjectData(response.data[0]);
-            console.log(projectData);
+            console.log(response.data[0]);
         });
     }
     
     return (
         <>
         <h3>프로젝트 이름 : {projectData.projectName}</h3>
-        <h3>담당자 이름/ 일단 코드 : {projectData.createdBy}</h3> <h3>{userData.position}</h3>
+        <h5>- {projectData.projectCode}</h5>
+        <h3>담당자 이름 : {userData.username}</h3> <h3>직급 : {userData.position}</h3>
         <h3>이메일: {userData.email}</h3>
+        <h6>{projectData.createdAt}</h6>
         </>
     )
 
