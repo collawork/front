@@ -21,31 +21,42 @@ const Aside = () => {
     // const [clickProjectName, setClickProjectName] = useState();
     const addTitle = projectStore(state => state.PlusProjectName);
 
-    useEffect(() => {
-        selectProjectName();
-    }, []);
-
+   
     function selectProjectName() {
+        console.log("userId: " + userId);
+        const token = localStorage.getItem('token');
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        console.log("userId: " + userId);
         axios({
             url: `${API_URL}/api/user/projects/selectAll`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            headers: { 'Authorization': `Bearer ${token}` ,
+                        'Content-Type': 'application/json',
+                    },
             method: 'post',
-            params: { userId },
+            params: { userId: userIdValue },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
             console.log(response);
             setProjectName(response.data);
             console.log("Aside : " + response.data);
+        }).catch((error) => {
+            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
         });
     }
+    
+    useEffect(() => {
+        if (userId) selectProjectName();
+    }, []);
 
-    function Send() {
+
+    function Send(){
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
             url: `${API_URL}/api/user/projects/newproject`,
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             method: 'post',
-            params: { title, context, userId },
+            params: { title, context, userIdValue },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
