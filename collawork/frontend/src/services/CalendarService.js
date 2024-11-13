@@ -12,9 +12,9 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const registerSchedule = async(title, start, end, description, projectId, createBy)=>{
+const registerSchedule = async(title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt)=>{
 
-    
+    console.log("일정의 시작일 테스트 중@!!@@@" +start);
 
     console.log(`${API_URL}`);
 
@@ -26,8 +26,7 @@ const registerSchedule = async(title, start, end, description, projectId, create
                 'Content-Type': 'application/json', // JSON 형식으로 전송
             },
             method: 'post',
-            data: {title, start, end, description, projectId, createBy},
-            //params: { title, start, end, description, projectId, createBy },
+            data: {title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt},
             baseURL:'http://localhost:8080',
             withCredentials: true
 
@@ -35,6 +34,7 @@ const registerSchedule = async(title, start, end, description, projectId, create
     ).then(function(response){
         console.log("CalendarService : " + response);
         console.log("CalendarService : " + response.data);
+        return response;
       });
     // return await axios.post(`${API_URL}/api/calendar/insert`, formData, {
     //     headers: {
@@ -43,6 +43,7 @@ const registerSchedule = async(title, start, end, description, projectId, create
     //     },
     //     withCredentials: true
     // });
+    
 };
 
 const CalendarService = {

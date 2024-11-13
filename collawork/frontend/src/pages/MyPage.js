@@ -35,45 +35,15 @@ const MyPage = () => {
     // let formData; // fullcalendar에서 지원해 주는 기능.
     const [title, setTitle] = useState("");
     const [start, setStart] = useState("");
-    const [end, setEnd] = useState("")
+    const [end, setEnd] = useState("");
+    const [allDay, setAllDay] = useState(true);
     // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
     const [description , setDescription] = useState("");
-    const [projectId, setProjectId] = useState("");
-    const [createBy, setCreateBy] = useState("");
+    // const [projectId, setProjectId] = useState("");
+    const [createdBy, setCreatedBy] = useState("");
+    const [createdAt, setCreatedAt] = useState("");
     // const [projectName, setProjectName] = useState([]);
-    // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
 
-
-    // const []
-
-    // const [formData, setFormData] = useState({
-    //     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
-    //     scheduleStart: '', scheduleEnd: '', createdBy: '', createdAt: ''
-    // });
-
-    // function selectProjectName(){
-    //     axios(
-    //         {
-    //             url:`${API_URL}/api/user/projects/selectAll`,
-    //             headers: {
-    //               'Authorization': `Bearer ${localStorage.getItem('token')}`
-    //         },
-    //         method: 'post',
-    //         params: {userId},
-    //         baseURL:'http://localhost:8080',
-    //           withCredentials: true,
-    //     }
-    //     ).then(function(response){
-    //         console.log(response);
-    //         setProjectName(response.data);
-    //         console.log("Aside : " + response.data);
-    //     }
-    // )
-    // }
-
-
-    const [errors, setErrors] = useState({});
-    const [validations, setValidations] = useState({});
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -127,28 +97,71 @@ const MyPage = () => {
     const handleDateClick = (arg) => {
 
         setEventCRUDModal(true); // 모달창 오픈
+         // 개인 달력..
+        // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
+        setCreatedBy(userId);
+        const interval = setInterval(() => {
+            setCreatedAt(new Date);
+        }, 1000*60); // 1분마다 현재 시간을 업데이트
+        setStart(arg.Date) // 사용자가 클릭한 날짜를 스케쥴의 시작일로 담는다.
+        console.log("달력을 클릭할 때 클릭한 날짜가 최초에 담기는지 확인: "+arg.date);
+
+        return () => clearInterval(interval);
     };
 
     const closeModal = () => {
         setEventCRUDModal(false);
+        return setAllDay(true);
     }
 
-    useEffect(()=>{
-        // 개인 달력..
-        setProjectId(userId); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
-        setCreateBy(userId);
-    },[projectId, createBy]);
+    // useEffect(()=>{
+    //     // 개인 달력..
+    //     // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
+    //     setCreateBy(userId);
+    //     console.log("유저 아이디!!!! 이거 뭐야? 타입이 뭐야?? 읭????!!! "+userId);
+    //     const interval = setInterval(() => {
+    //         setCreatedAt(new Date);
+    //     }, 1000); // 1초마다 현재 시간을 업데이트
+
+    //     return () => clearInterval(interval); // 컴포넌트 언마운트 시 클리어
+
+        
+    // },[createdBy, createdAt]);
 
     const handleTitleChange = e =>{
         setTitle(e.target.value);
     };
 
+    const handleAllDayChange = () => {
+        setAllDay(!allDay);
+    }
+
     const handleStartChange = e =>{
-        setStart(e.target.value);
+        console.log("handleStartChange 이 함수 실행 되고 있는가?" );
+        const newStartStr = e.target.value; 
+        console.log("newStartStr 시작일 입력하면 바뀌는지 확인: "+newStartStr);
+        function hasTime(dateString) {
+            const dateObject = new Date(dateString);
+            return !isNaN(dateObject.getTime()) && dateObject.toTimeString().includes(':');
+        }
+        if(hasTime(newStartStr)){
+            setStart(`${newStartStr}T00:00`)
+        }else{
+            setStart(newStartStr)
+        }
     };
 
     const handleEndChange = e => {
-        setEnd(e.target.value);
+        const newEndStr = e.target.value; 
+        function hasTime(dateString) {
+            const dateObject = new Date(dateString);
+            return !isNaN(dateObject.getTime()) && dateObject.toTimeString().includes(':');
+        }
+        if(!hasTime(newEndStr)){
+            setEnd(`${newEndStr}T00:00`)
+        }else{
+            setEnd(newEndStr)
+        }
     };
 
     const handleDescriptionChange = e => {
@@ -156,36 +169,41 @@ const MyPage = () => {
     };
 
     const handleSubmit = async (e) => {
-        
-        // extendedProps = {description, projectId, createBy}
-        // formData = {title , start, end, extendedProps};
 
-        e.preventDefault();
-      
+        e.preventDefault();        
+        console.log("시분이 없는 스트링 형식 날짜에 씨붕을 붙였다! : "+start);
+
         if (title === '') { 
             alert('일정의 타이틀을 입력해 주세요.');
             return;
         } 
 
         try{
-            await CalendarService.registerSchedule(title, start, end, description, projectId, createBy);
-            alert('일정이 등록되었습니다.');
+            let response = await CalendarService.registerSchedule(title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt);
+            
+            if(response != null){
+                alert('일정이 등록되었습니다.');
+                console.log("응답: "+response);
+            };
+
         }catch(error){
-            console.error(error);
+            console.error("에러: "+error);
             alert('일정등록에 실패하였습니다.');
         };
+
+        return setAllDay(true);
     };
 
-    function renderEventContent(eventInfo) {
-        return (
-            <>
-                {/* 이벤트의 시작과 종료 시간 출력 */}
-                <b>{eventInfo.timeText}</b>
-                {/* 이벤트 타이틀 */}
-                <i>{eventInfo.event.title}</i>
-            </>
-        );
-    }
+    // function renderEventContent(eventInfo) {
+    //     return (
+    //         <>
+    //             {/* 이벤트의 시작과 종료 시간 출력 */}
+    //             <b>{eventInfo.timeText}</b>
+    //             {/* 이벤트 타이틀 */}
+    //             <i>{eventInfo.event.title}</i>
+    //         </>
+    //     );
+    // }
 
     return (
         <>
@@ -205,7 +223,7 @@ const MyPage = () => {
                     <FullCalendar
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                         dateClick={handleDateClick}
-                        eventContent={renderEventContent}
+                        // eventContent={renderEventContent}
                         key={currentView}
                         initialView={currentView}
                         headerToolbar={{
@@ -235,7 +253,7 @@ const MyPage = () => {
                             { title: 'event 1', start: '2024-11-15T23:00:00+09:00'},
                             { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12', groupId:'1'},
                             { title: 'event 3', date: '2024-11-06' },
-                            { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' },
+                            { title: 'event 4', start: '2024-11-05T10:00:00', end: '2024-11-06T08:00:00' },
                             { title: 'event 5', date:'2024-11-05', start: '2024-11-05T09:00:00+09:00', end: '2024-11-06T07:00:00+09:00' },
                             { title: 'event 6', date:'2024-11-13', start: '2024-11-08', end: '2024-11-13T00:00:00+09:00' }
 
@@ -251,8 +269,11 @@ const MyPage = () => {
                         <form onSubmit={handleSubmit}>
                             제목: <input type='text' name='tilte' placeholder='일정의 제목' onChange={handleTitleChange}/>
                             설명: <input type='text' name='description' placeholder='일정의 내용' onChange={handleDescriptionChange }/>
-                            설명: <input type='date' name='start' placeholder='시작일' onChange={handleStartChange}/>
-                            설명: <input type='date' name='end' placeholder='종료일' onChange={handleEndChange}/>
+                            세부 시간 설정: <input type='checkbox' name='allDay' onChange={handleAllDayChange}/>
+                            시작: <input type={allDay ? 'date' : 'datetime-local'} name='start' placeholder='시작일' onChange={handleStartChange}/>
+                            종료: <input type={allDay ? 'date' : 'datetime-local'} name='end' placeholder='종료일' onChange={handleEndChange}/>
+                            {/* 시작: <input type='datetime-local' name='start' placeholder='시작일' onChange={handleStartChange}/> */}
+                            {/* 종료: <input type='datetime-local' name='end' placeholder='종료일' onChange={handleEndChange}/> */}
                             {/* 스케쥴의 그룹인 프로젝트 아이디와 일정을 등록한 이의 아이디는 입력받지 않고 자동으로 */}
                             {/* 설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
                             기간 설정: 
