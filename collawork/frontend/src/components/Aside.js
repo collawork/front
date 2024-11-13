@@ -4,7 +4,9 @@ import ProjectService from "../services/ProjectService";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import ProjectHome from './project/ProjectHome';
+import {projectStore} from '../store'; 
 import Project from '../pages/Project';
+import ProjectImformation from './project/ProjectInformation';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -16,6 +18,8 @@ const Aside = () => {
     const { userId } = useUser();
     const [ show, setShow ] = useState(false);
     const [newShow, setNewShow] = useState(false);
+    // const [clickProjectName, setClickProjectName] = useState();
+    const addTitle = projectStore(state => state.PlusProjectName);
 
     useEffect(() => {
         selectProjectName();
@@ -80,9 +84,11 @@ const Aside = () => {
         setContext(e.target.value);
     };
 
-    const moveProjectHome = () => {
+    const moveProjectHome = (e) => {
+        // setClickProjectName(e.target.textContent);
+        addTitle(e.target.textContent);
+        console.log(e.target.textContent);
         setShow(true);
-        <projectName/>
     };
 
     return (
@@ -140,14 +146,14 @@ const Aside = () => {
 
                 <div className="aside-bottom">
                     {projectName.map((project, index) => (
-                        <section key={index} onClick={moveProjectHome}>
+                        <section key={index}>
                             <li>
-                                <span>{project}</span>
+                                <button onClick={(e)=> moveProjectHome(e)}>{project}</button>
+                                {/* css 로 버튼 디자인 제거하기 */}
                             </li>
                         </section>
                        
                     ))}
-                     {/* {show && <Project/>} */}
                 </div>
             </div>
         </>

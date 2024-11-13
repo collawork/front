@@ -7,12 +7,13 @@ const API_URL = process.env.REACT_APP_API_URL;
 const ProjectList = () => {
     const [projectName, setProjectName] = useState([]);
     const { userId } = useUser();
+    console.log("project list : " + userId);
 
     useEffect(() => {
         selectProjectName();
     }, []);
 
-    const selectProjectName = () => {
+    function selectProjectName(){
         axios({
             url: `${API_URL}/api/user/projects/selectAll`,
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
@@ -22,6 +23,7 @@ const ProjectList = () => {
             withCredentials: true,
         }).then((response) => {
             setProjectName(response.data);
+            console.log("projectList 의 프젝목록 :: " + response.data);
         });
     };
 
