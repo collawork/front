@@ -7,13 +7,14 @@ const ChatRoom = () => {
     const { chatRoomId } = useParams();
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
+    const [fileInput, setFileInput] = useState(null);
     const [webSocket, setWebSocket] = useState(null);
     const [senderId, setSenderId] = useState('');
     const [username, setUsername] = useState('');
+    const [ChatRoomName, setChatRoomName]=useState('');
     const navigate = useNavigate();
-    const chatWindowRef = useRef(null); // 스크롤 위치 조정을 위한 ref
+    const chatWindowRef = useRef(null);
 
-   
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -32,7 +33,24 @@ const ChatRoom = () => {
         fetchUserData();
     }, [chatRoomId]);
 
-    // 메시지를 가져오는 함수
+   //채팅방 이름 가지고 오는 함수  
+//    useEffect(() => {
+//     const fetchChatRoomName = async () => {
+//         try {
+//             const token = localStorage.getItem('token');
+//             const response = await axios.get(`http://localhost:8080/api/chat/chatroomName`, {
+//                 headers: { 'Authorization': `Bearer ${token}` }
+//             });
+//             setChatRoomName(response.data.roomName)
+            
+//         } catch (error) {
+//             console.error("채팅방이름  가지고 오기 실패", error);
+//         }
+    
+//     };
+//     fetchChatRoomName();
+// }, [chatRoomId]);
+
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -44,14 +62,16 @@ const ChatRoom = () => {
                 message: msg.content,
                 time: new Date(msg.createdAt).toLocaleTimeString(),
                 sort: msg.senderId === senderId ? 'sent' : 'received',
-                username: msg.sender.username 
+                username: msg.sender.username,
+                type: msg.messageType, 
+                fileUrl: msg.fileUrl 
             }));
+            console.log(formattedMessages);
             setMessages(formattedMessages);
         } catch (error) {
             console.error("메시지 가져오기 오류:", error);
         }
     };
-
 
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
@@ -60,7 +80,7 @@ const ChatRoom = () => {
 
         ws.onopen = () => {
             console.log("WebSocket 연결 성공");
-            fetchMessages(); // 초기 메시지 로딩
+            fetchMessages();
             const initialMessage = 'WebSocket 연결 성공';
             setMessages(prev => [...prev, { type: 'info', message: initialMessage, sort: 'info' }]);
             ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
@@ -73,7 +93,7 @@ const ChatRoom = () => {
                 ...message,
                 time: timestamp,
                 sort: message.senderId === senderId ? 'sent' : 'received',
-                username: message.sender.username 
+                username: message.sender.username
             };
             setMessages(prev => [...prev, messageWithSort]);
         };
@@ -94,31 +114,60 @@ const ChatRoom = () => {
                 ws.close();
             }
         };
-    }, [chatRoomId, senderId, username]); 
+    }, [chatRoomId, senderId, username]);
 
-    // 메시지 전송 함수
-    const sendMessage = () => {
+    const sendMessage = async (type = 'text') => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-            const trimmedMessage = messageInput.trim();
             const timestamp = new Date().toLocaleTimeString();
-            if (trimmedMessage !== '') {
+            if (type === 'text' && messageInput.trim() !== '') {
                 const sentMessage = {
-                    type: 'sent',
-                    message: trimmedMessage,
-                    time: timestamp,
-                    senderId,
-                    sort: 'sent',
-                    username: username  
+                senderId,
+                chatRoomId,
+                message: messageInput,
+                messageType: 'text',
+                fileUrl: '', 
+                time: timestamp,
+                sort:'sent',
+                username
                 };
-                webSocket.send(JSON.stringify({ type: 'text', senderId, message: trimmedMessage, time: timestamp, chatRoomId }));
+                webSocket.send(JSON.stringify(sentMessage));
                 setMessages(prev => [...prev, sentMessage]);
-                setMessageInput('');  
+                setMessageInput('');
+            } else if (type === 'file' && fileInput) {
+                const formData = new FormData();
+                formData.append('file', fileInput);
+                formData.append('senderId', senderId);
+                formData.append('chatRoomId', chatRoomId);
+                formData.append('timestamp',timestamp);
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await axios.post('http://localhost:8080/api/chat/upload', formData, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    const fileUrl = response.data.fileUrl;
+                    const sentMessage = {
+                        type: 'file',
+                        fileUrl:fileUrl,
+                        time: timestamp,
+                        senderId,
+                        sort: 'sent',
+                        username
+                    };
+
+                    webSocket.send(JSON.stringify({ type, senderId, fileUrl, chatRoomId }));
+                    setMessages(prev => [...prev, sentMessage]);
+                    setFileInput(null);
+
+                } catch (error) {
+                    console.error('파일 업로드 오류:', error);
+                }
             }
         } else {
             console.log("웹소켓이 연결되지 않았습니다.");
         }
     };
-
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
@@ -126,12 +175,14 @@ const ChatRoom = () => {
         }
     };
 
-    
-    const handlerBackToMain = () => {
-        navigate("/");
+    const handleFileChange = (event) => {
+        setFileInput(event.target.files[0]);
     };
 
-    // 최신 메시지로 스크롤
+    const handlerBackToMain = () => {
+        navigate("/main");
+    };
+
     useEffect(() => {
         if (chatWindowRef.current) {
             chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
@@ -144,7 +195,17 @@ const ChatRoom = () => {
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg, index) => (
                     <div key={index} className={`message ${msg.sort}`}>
-                        <strong>{msg.username}</strong>: {msg.message}<br />
+                        <strong>{msg.username}</strong>: 
+                        {msg.type === 'file' | msg.type === 'FILE' ? (
+                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img)$/i) ? (
+                                <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                            ) : (
+                                <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer"  download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
+                            )
+                        ) : (
+                            msg.message
+                        )}
+                        <br />
                         <span>{msg.time}</span>
                     </div>
                 ))}
@@ -158,7 +219,9 @@ const ChatRoom = () => {
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={handleKeyPress}
                 />
-                <button id="sendBtn" onClick={sendMessage}>전송</button>
+                <input type="file" onChange={handleFileChange} />
+                <button id="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                <button onClick={() => sendMessage('file')}>파일 전송</button>
                 <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
             </div>
         </div>
