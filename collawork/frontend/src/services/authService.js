@@ -55,6 +55,9 @@ const login = async (data) => {
         // 로그인 성공 시 응답에서 토큰과 사용자 ID를 로컬 스토리지에 저장
         if (response.data && response.data.token && response.data.userId && response.data.refreshToken) {
             localStorage.setItem('token', response.data.token); // 액세스 토큰
+            
+            console.log('token', response.data.token);
+
             localStorage.setItem('refreshToken', response.data.refreshToken); // 리프레시 토큰
             localStorage.setItem('userId', response.data.userId); // 사용자 ID 저장
             return { token: response.data.token, userId: response.data.userId };

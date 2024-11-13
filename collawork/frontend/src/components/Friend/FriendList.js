@@ -7,9 +7,17 @@ const FriendList = ({ userId }) => {
     const fetchFriends = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/friends/list', {
-                headers: { 'Authorization': `Bearer ${token}` },
-                params: { userId }
+            const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+            
+            console.log("친구 리스트 token:", token);
+            console.log("전달되는 userId 값:", userIdValue);
+    
+            const response = await axios.get(`http://localhost:8080/api/friends/list`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                params: { userId: userIdValue },
             });
             setFriends(response.data);
         } catch (error) {
