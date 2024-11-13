@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import UserDetail from '../../pages/UserDetail';
 
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
+    const [selectedFriend, setSelectedFriend] = useState(null);
 
     const fetchFriends = async () => {
         try {
@@ -43,20 +45,38 @@ const FriendList = ({ userId }) => {
         }
     };
 
+    const openFriendDetail = (friend) => {
+        setSelectedFriend(friend);
+    };
+
+    const closeFriendDetail = () => {
+        setSelectedFriend(null);
+    };
+
     return (
         <div className="friend-list">
             <h3>친구 목록</h3>
             <ul>
                 {friends.map(friend => (
                     <li key={friend.id}>
-                        {friend.requester.id === userId
-                            ? friend.responder.username
-                            : friend.requester.username}
+                        <button onClick={() => openFriendDetail(friend)}>
+                            {friend.requester.id === userId ? friend.responder.username : friend.requester.username}
+                        </button>
                         <button onClick={() => handleRemoveFriend(friend.id)}>삭제</button>
                     </li>
                 ))}
             </ul>
             {friends.length === 0 && <p>친구가 없습니다.</p>}
+
+            {/* 선택한 친구 정보 모달 */}
+            {selectedFriend && (
+                <UserDetail
+                    type="user"
+                    item={selectedFriend}
+                    closeModal={closeFriendDetail}
+                    currentUser={userId}
+                />
+            )}
         </div>
     );
 };
