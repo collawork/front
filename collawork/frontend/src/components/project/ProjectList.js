@@ -10,6 +10,7 @@ const ProjectList = () => {
     console.log("project list : " + userId);
 
     useEffect(() => {
+        
         selectProjectName();
     }, []);
 

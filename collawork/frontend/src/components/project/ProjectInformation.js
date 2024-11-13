@@ -12,21 +12,22 @@ const ProjectImformation = () => {
     const [projectTitle, setProjectTitle] = useState();
     const [managerEmail, setManagerEmail] = useState();
     const [managerName, setManagerName] = useState();
-    const [getUserId, setGetUserId] = useState(null);
+    const [getUserId, setGetUserId] = useState();
     const [managerPosition, setManagerPosition] = useState();
+    const { userId } = useUser();
     const {projectName} = projectStore();
     console.log("ProjectHome zustand : " + projectName);
     console.log("ProjectHome 불러온 title : " + projectTitle);
 
     
     useEffect(() => {
-        Send();  // projectName 으로 프로젝트 정보 조회
-        if(getUserId !== null){
-            manager(); // 프로젝트 생성자 Id 로 유저 정보 조회
+        if(projectName){
+            Send();  // projectName 으로 프로젝트 정보 조회
+            if(getUserId){
+                manager(); // 프로젝트 생성자 Id 로 유저 정보 조회
+            }
         }
-       
-        
-    }, [{projectName}]);
+    }, [projectName]);
 
     function manager(){ // 유저 정보 조회 
         axios({
@@ -47,7 +48,7 @@ const ProjectImformation = () => {
         });
     }
 
-    function Send() { // 프로젝트 정보 반환
+    function Send(){ // 프로젝트 정보 반환
         axios({
             url: `${API_URL}/api/user/projects/projectselect`,
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
