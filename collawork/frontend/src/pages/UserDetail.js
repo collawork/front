@@ -8,28 +8,27 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        let response;
-
-        if (type === 'user') {
-          response = await axios.get(`http://localhost:8080/api/user/detail`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            params: {
-              email: item?.email
-            }
-          });
-          setData(response.data);
-        } 
-      } catch (error) {
-        console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/user/detail`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    email: item?.email,
+                    // id: item?.id,
+                    // currentUserId: currentUser
+                }
+            });
+            setData(response.data);
+        } catch (error) {
+            console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
+        }
     };
 
     fetchData();
-  }, [type, item, currentUser]);
+}, [type, item, currentUser]);
+
 
   if (!data) return <p>로딩 중...</p>;
 
