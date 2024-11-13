@@ -149,6 +149,7 @@ const Aside = () => {
                     <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button>
                 </div>
 
+                
                 <div className="aside-bottom">
                     {projectName.map((project, index) => (
                         <section key={index}>
