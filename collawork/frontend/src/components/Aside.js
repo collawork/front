@@ -1,53 +1,63 @@
 import { useState, useEffect } from 'react';
 import ReactModal from "react-modal";
-import ProjectService from "../services/ProjectService";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
-import ProjectHome from './project/ProjectHome';
+import { projectStore } from '../store';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Aside = () => {
-    
     const [projectName, setProjectName] = useState([]);
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
     const { userId } = useUser();
-    // const { show, setShow } = useState(false);
-
+    const [show, setShow] = useState(false);
     const [newShow, setNewShow] = useState(false);
-
-    useEffect(() => {
-        selectProjectName();
-    }, []);
-
+    const addTitle = projectStore(state => state.PlusProjectName);
+   
     function selectProjectName() {
+        console.log("userId: " + userId);
+        const token = localStorage.getItem('token');
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        console.log("userId: " + userId);
         axios({
             url: `${API_URL}/api/user/projects/selectAll`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            headers: { 'Authorization': `Bearer ${token}` ,
+                        'Content-Type': 'application/json',
+                    },
             method: 'post',
-            params: { userId },
+            params: { userId: userIdValue },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
             console.log(response);
             setProjectName(response.data);
             console.log("Aside : " + response.data);
+        }).catch((error) => {
+            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
         });
-    }
 
-    function Send() {
+    }
+    
+    useEffect(() => {
+        if (userId) selectProjectName();
+    }, []);
+
+    function Send(){
+        const token = localStorage.getItem('token');
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
             url: `${API_URL}/api/user/projects/newproject`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
-            params: { title, context, userId },
+            params: { title:title, context:context, userId:userIdValue },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
             console.log("Aside : " + response);
             console.log("Aside : " + response.data);
         });
+
     }
 
     const modalCloseHandler = () => {
@@ -63,9 +73,9 @@ const Aside = () => {
             return;
         }
         try {
-            Send(title, context);
+            Send();
             alert('새 프로젝트가 생성되었습니다.');
-            selectProjectName();
+            selectProjectName(); // 프로젝트 목록 새로고침
             setNewShow(false);
         } catch (error) {
             alert('프로젝트 생성에 실패하였습니다.');
@@ -80,9 +90,11 @@ const Aside = () => {
         setContext(e.target.value);
     };
 
-    // const moveProjectHome = () => {
-    //     setShow(true);
-    // };
+    const moveProjectHome = (e) => {
+        addTitle(e.target.textContent);
+        console.log("선택된 프로젝트:", e.target.textContent);
+        setShow(true);
+    };
 
     return (
         <>
@@ -139,9 +151,9 @@ const Aside = () => {
 
                 <div className="aside-bottom">
                     {projectName.map((project, index) => (
-                        <section key={index} onClick={<ProjectHome userId={userId} />}>
+                        <section key={index}>
                             <li>
-                                <span>{project}</span>
+                                <button onClick={(e) => moveProjectHome(e)}>{project}</button>
                             </li>
                         </section>
                     ))}

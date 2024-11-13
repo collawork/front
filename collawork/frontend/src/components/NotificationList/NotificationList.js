@@ -8,13 +8,19 @@ const NotificationList = ({ userId }) => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
+                const token = localStorage.getItem('token');
+                const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+    
+                console.log("알림 요청 token:", token);
+                console.log("알림에서 전달되는 userId 값:", userIdValue);
+    
                 const response = await axios.get(`http://localhost:8080/api/notifications/unread`, {
-                    params: { userId },
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    params: { userId: userIdValue },
                 });
-                console.log("가져온 알림 목록:", response.data);  // 알림 목록 확인
                 setNotifications(response.data);
             } catch (error) {
                 console.error('알림을 불러오는 중 오류 발생:', error);
@@ -72,7 +78,7 @@ const NotificationList = ({ userId }) => {
         }
 
         try {
-            await axios.post(`http://localhost:8080/api/friends/reject`, null, {
+            await axios.post(`/api/friends/reject`, null, {
                 params: { 
                     requesterId: requesterId, 
                     responderId: responderId 
@@ -101,7 +107,7 @@ const NotificationList = ({ userId }) => {
                         <span>{notification.message}</span>
                         
                         {/* 'isActionCompleted'에 따라 버튼 표시 */}
-                        {notification.isActionCompleted ? (
+                        {notification.isActionCompleted || notification.message.includes("친구 요청을 수락했습니다") ? (
                             <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
                         ) : (
                             notification.type === 'FRIEND_REQUEST' && (
