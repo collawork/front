@@ -101,7 +101,7 @@ const NotificationList = ({ userId }) => {
                         <span>{notification.message}</span>
                         
                         {/* 'isActionCompleted'에 따라 버튼 표시 */}
-                        {notification.isActionCompleted ? (
+                        {notification.isActionCompleted || notification.message.includes("친구 요청을 수락했습니다") ? (
                             <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
                         ) : (
                             notification.type === 'FRIEND_REQUEST' && (
