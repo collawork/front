@@ -271,9 +271,9 @@ const MyPage = () => {
                             <span>현준의 첫 번째 프로젝트</span>
                         </div>
                     </div> */}
-                    <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
+                    {/* <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
                         <span className="text">프로젝트</span>  
-                    </div>
+                    </div> */}
                     {/* <div className="friends-mypage">
                         <span className="text">친구</span>
                         <img className="mypage-icon" alt="친구 아이콘" src='../image/icon/friend.png' />
@@ -285,7 +285,7 @@ const MyPage = () => {
                     </div> */}
 
                     {/* 프로젝트 목록 컴포넌트 */}
-                    <ProjectList />
+                    {userId && <ProjectList userId={userId} />}
 
                     {/* 친구 목록 컴포넌트 */}
                     {userId && <FriendList userId={userId} />}

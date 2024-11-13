@@ -7,43 +7,46 @@ import {projectStore} from '../../store';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectImformation = () => {
+
     // clickProjectName -> 클릭한 프로젝트 이름
     // const [managerUser, setManagerUser] = useState([]); // 가져온 담당자의 정보를 담 // 일단 사진 빼고..
-    const [projectTitle, setProjectTitle] = useState();
-    const [managerEmail, setManagerEmail] = useState();
-    const [managerName, setManagerName] = useState();
-    const [getUserId, setGetUserId] = useState();
-    const [managerPosition, setManagerPosition] = useState();
+    
     const { userId } = useUser();
+    const [data, setData] = useState([]);
+    const [userData, setUserDate] = useState([]);
+    const PlusProjectCreatedBy = projectStore(state => state.PlusProjectCreatedBy);
     const {projectName} = projectStore();
     console.log("ProjectHome zustand : " + projectName);
-    console.log("ProjectHome 불러온 title : " + projectTitle);
+    
 
     
     useEffect(() => {
         if(projectName){
             Send();  // projectName 으로 프로젝트 정보 조회
-            if(getUserId){
+            if(data.id){
                 manager(); // 프로젝트 생성자 Id 로 유저 정보 조회
             }
         }
     }, [projectName]);
 
     function manager(){ // 유저 정보 조회 
+        const token = localStorage.getItem('token');
+
         axios({
             url: `${API_URL}/api/user/projects/projecthomeusers`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
-            params: { getUserId },
+            params: { id : data.id },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
             // setManagerUser(response);
             console.log("ProjectHome의 username : " + response.data.username);
             console.log("ProjectHome email : " + response.data.email);
-            setManagerEmail(response.data.email);
-            setManagerName( response.data.username);
-            setManagerPosition(response.data.position);
+            // setUserDate(response.data.email);
+            // PlusManagerName(response.data.username);
+            setUserDate(response.data);
+           //  setManagerPosition(response.data.position); // 직급
           
         });
     }
@@ -57,26 +60,30 @@ const ProjectImformation = () => {
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
-            console.log(response);
-            console.log(response.data[0]);
-            console.log(response.data[0].projectName);
-            setProjectTitle(response.data[0].projectName);
-            setGetUserId(response.data[0].cretedBy);
-        
-            console.log("가져온 만든사람 : "  + response.data[0].id)
-            console.log("가져온 관리자 유저 아이디 :: " + response.data[0].createdBy);
+            // console.log(response.data[0]);
+            // console.log(response.data[0].projectName);
+            // PlusProjectName(response.data[0].projectName);
+            // PlusManagerEmail(response.data[0].email);
+            // PlusProjectCreatedBy(response.data[0].cretedBy);
+            // console.log("가져온 만든사람 : "  + response.data[0].id)
+            // console.log("managerName : " + managerName);
+            // console.log("managerEmail : " + managerEmail);
+            // console.log("가져온 관리자 유저 아이디 :: " + response.data[0].createdBy);
+            // console.log("가져온 관리자 유저 아이디 :: " +projectCreatedBy);
+
+            setData(response.data[0]);
+            console.log(data);
         });
     }
     
-
-    // 담당자 id 로 이름 조회 다시 해야댐 
-    return(
+    return (
         <>
-        <h3>프로젝트 이름 :{projectName}</h3>
-        <h3>담당자 : {managerName}</h3>
-        <h3>{managerEmail}{managerPosition}</h3> 
+        <h3>프로젝트 이름 : {data.projectName}</h3>
+        <h3>담당자 이름/ 일단 코드 : {data.createdBy}</h3>
+        {/* <h3>이메일: {userData.email}</h3> */}
         </>
     )
+
 
 }
 export default ProjectImformation;

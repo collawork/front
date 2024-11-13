@@ -10,12 +10,12 @@ import ProjectImformation from './project/ProjectInformation';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Aside = ({userId}) => {
+const Aside = () => {
     
     const [projectName, setProjectName] = useState([]);
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
-    // const { userId } = useUser();
+    const { userId } = useUser();
     const [ show, setShow ] = useState(false);
     const [newShow, setNewShow] = useState(false);
     // const [clickProjectName, setClickProjectName] = useState();
@@ -29,7 +29,7 @@ const Aside = ({userId}) => {
         console.log("userId: " + userId);
         axios({
             url: `${API_URL}/api/user/projects/selectAll`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` ,
+            headers: { 'Authorization': `Bearer ${token}` ,
                         'Content-Type': 'application/json',
                     },
             method: 'post',
@@ -40,6 +40,8 @@ const Aside = ({userId}) => {
             console.log(response);
             setProjectName(response.data);
             console.log("Aside : " + response.data);
+        }).catch((error) => {
+            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
         });
     }
     
