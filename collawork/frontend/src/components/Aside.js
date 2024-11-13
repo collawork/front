@@ -44,12 +44,13 @@ const Aside = () => {
     }, []);
 
     function Send(){
+        const token = localStorage.getItem('token');
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
             url: `${API_URL}/api/user/projects/newproject`,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
-            params: { title, context, userIdValue },
+            params: { title:title, context:context, userId:userIdValue },
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
@@ -72,7 +73,7 @@ const Aside = () => {
             return;
         }
         try {
-            await Send();
+            Send();
             alert('새 프로젝트가 생성되었습니다.');
             selectProjectName(); // 프로젝트 목록 새로고침
             setNewShow(false);
