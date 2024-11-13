@@ -4,6 +4,7 @@ import ProjectService from "../services/ProjectService";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import ProjectHome from './project/ProjectHome';
+import Project from '../pages/Project';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -13,8 +14,7 @@ const Aside = () => {
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
     const { userId } = useUser();
-    // const { show, setShow } = useState(false);
-
+    const [ show, setShow ] = useState(false);
     const [newShow, setNewShow] = useState(false);
 
     useEffect(() => {
@@ -80,9 +80,10 @@ const Aside = () => {
         setContext(e.target.value);
     };
 
-    // const moveProjectHome = () => {
-    //     setShow(true);
-    // };
+    const moveProjectHome = () => {
+        setShow(true);
+        <projectName/>
+    };
 
     return (
         <>
@@ -139,12 +140,14 @@ const Aside = () => {
 
                 <div className="aside-bottom">
                     {projectName.map((project, index) => (
-                        <section key={index} onClick={<ProjectHome userId={userId} />}>
+                        <section key={index} onClick={moveProjectHome}>
                             <li>
                                 <span>{project}</span>
                             </li>
                         </section>
+                       
                     ))}
+                     {/* {show && <Project/>} */}
                 </div>
             </div>
         </>
