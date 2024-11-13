@@ -19,6 +19,7 @@ import FriendList from '../components/Friend/FriendList';
 import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
+import ProjectList from '../components/project/ProjectList'
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -282,6 +283,9 @@ const MyPage = () => {
                             <span>똘똘핑프.서연</span>
                         </div>
                     </div> */}
+
+                    {/* 프로젝트 목록 컴포넌트 */}
+                    <ProjectList />
 
                     {/* 친구 목록 컴포넌트 */}
                     {userId && <FriendList userId={userId} />}
