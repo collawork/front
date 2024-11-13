@@ -27,3 +27,32 @@ export const projectStore = create((set, get)=> ({
 
 
 }))
+
+export const calendar = create((set, get) => ({
+
+    title : '',
+    start : '',
+    end : '',
+    allDay : '',
+    description : '',
+
+
+
+
+
+
+    // // 달력 관련 변수들..
+    // // let formData; // fullcalendar에서 지원해 주는 기능.
+    // const [title, setTitle] = useState("");
+    // const [start, setStart] = useState("");
+    // const [end, setEnd] = useState("");
+    // const [allDay, setAllDay] = useState(true);
+    // // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
+    // const [description , setDescription] = useState("");
+    // // const [projectId, setProjectId] = useState("");
+    // const [createdBy, setCreatedBy] = useState("");
+    // const [createdAt, setCreatedAt] = useState("");
+    // // const [projectName, setProjectName] = useState([]);
+
+    
+}))

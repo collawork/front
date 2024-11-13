@@ -139,13 +139,15 @@ const MyPage = () => {
 
     const handleStartChange = e =>{
         console.log("handleStartChange 이 함수 실행 되고 있는가?" );
-        const newStartStr = e.target.value; 
+        let newStartStr = e.target.value; 
         console.log("newStartStr 시작일 입력하면 바뀌는지 확인: "+newStartStr);
         function hasTime(dateString) {
+            console.log("1 dateString: "+dateString);
             const dateObject = new Date(dateString);
+            console.log("2 dateString: "+dateString);
             return !isNaN(dateObject.getTime()) && dateObject.toTimeString().includes(':');
         }
-        if(hasTime(newStartStr)){
+        if(!hasTime(newStartStr)){
             setStart(`${newStartStr}T00:00`)
         }else{
             setStart(newStartStr)
@@ -273,13 +275,6 @@ const MyPage = () => {
                             세부 시간 설정: <input type='checkbox' name='allDay' onChange={handleAllDayChange}/>
                             시작: <input type={allDay ? 'date' : 'datetime-local'} name='start' placeholder='시작일' onChange={handleStartChange}/>
                             종료: <input type={allDay ? 'date' : 'datetime-local'} name='end' placeholder='종료일' onChange={handleEndChange}/>
-                            {/* 시작: <input type='datetime-local' name='start' placeholder='시작일' onChange={handleStartChange}/> */}
-                            {/* 종료: <input type='datetime-local' name='end' placeholder='종료일' onChange={handleEndChange}/> */}
-                            {/* 스케쥴의 그룹인 프로젝트 아이디와 일정을 등록한 이의 아이디는 입력받지 않고 자동으로 */}
-                            {/* 설명: <input type='text' name='scheduleDesc' placeholder='상세한 내용' onChange={handleChange}/>
-                            기간 설정: 
-                            <input type='date' name='scheduleStart' placeholder='시작 시점' onChange={handleChange}/>
-                            <input type='date' name='scheduleEnd' placeholder='종료 시점' onChange={handleChange}/> */}
                             <button onClick={closeModal}>닫기</button>
                             <button type='submit'>일정등록</button>
                         </form>
@@ -287,27 +282,6 @@ const MyPage = () => {
                 </div>
 
                 <div className="horizontal-alignment">
-                    {/* <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
-                        <span className="text">프로젝트</span>
-                        <div className="project-list">
-                            <span>Collawork 프로젝트</span>
-                            <span>현준의 두 번째 프로젝트</span>
-                            <span>현준의 첫 번째 프로젝트</span>
-                        </div>
-                    </div> */}
-                    {/* <div className="projects-mypage" onClick={moveToProject} style={{ cursor: 'pointer' }}>
-                        <span className="text">프로젝트</span>  
-                    </div> */}
-                    {/* <div className="friends-mypage">
-                        <span className="text">친구</span>
-                        <img className="mypage-icon" alt="친구 아이콘" src='../image/icon/friend.png' />
-                        <div className="friend-list">
-                            <span>카리스마.동규</span>
-                            <span>애착인형.진우</span>
-                            <span>똘똘핑프.서연</span>
-                        </div>
-                    </div> */}
-
                     {/* 프로젝트 목록 컴포넌트 */}
                     {userId && <ProjectList userId={userId} />}
 
