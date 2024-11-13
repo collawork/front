@@ -8,12 +8,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectImformation = () => {
 
-    // clickProjectName -> 클릭한 프로젝트 이름
-    // const [managerUser, setManagerUser] = useState([]); // 가져온 담당자의 정보를 담 // 일단 사진 빼고..
-    
-    // const { userId } = useUser();
-    const [projectData, setProjectData] = useState([]);
-    const [userData, setUserDate] = useState([]);
+    const [projectData, setProjectData] = useState([]); // 프로젝트 정보 데이터
+    const [userData, setUserDate] = useState([]); // 유저 정보 데이터
     // const PlusProjectCreatedBy = projectStore(state => state.PlusProjectCreatedBy);
     const {projectName} = projectStore();
     console.log("ProjectHome zustand : " + projectName);
@@ -23,14 +19,15 @@ const ProjectImformation = () => {
     useEffect(() => {
         if(projectName){
             Send();  // projectName 으로 프로젝트 정보 조회
-            if(userData.id){
-                manager(); // 프로젝트 생성자 Id 로 유저 정보 조회
+            manager(); // 프로젝트 생성자 Id 로 유저 정보 조회
             }
-        }
+        
     }, [projectName]);
+    console.log(projectData.id);
 
     function manager(){ // 유저 정보 조회 
         const token = localStorage.getItem('token');
+        console.log(projectData.id);
 
         axios({
             url: `${API_URL}/api/user/projects/projecthomeusers`,
@@ -40,7 +37,7 @@ const ProjectImformation = () => {
             baseURL: 'http://localhost:8080',
             withCredentials: true,
         }).then(function(response) {
-            
+            console.log("ProjectHome의 userdata: " + response.data);
             console.log("ProjectHome의 username : " + response.data.username);
             console.log("ProjectHome email : " + response.data.email);
             setUserDate(response.data);
@@ -50,6 +47,7 @@ const ProjectImformation = () => {
     }
 
     function Send(){ // 프로젝트 정보 조회
+        console.log(projectData.id);
         axios({
             url: `${API_URL}/api/user/projects/projectselect`,
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
