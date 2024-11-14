@@ -11,7 +11,7 @@ const ChatRoom = () => {
     const [webSocket, setWebSocket] = useState(null);
     const [senderId, setSenderId] = useState('');
     const [username, setUsername] = useState('');
-    const [ChatRoomName, setChatRoomName]=useState('');
+    const[roomName,setRoomName] = useState('');
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
 
@@ -33,24 +33,6 @@ const ChatRoom = () => {
         fetchUserData();
     }, [chatRoomId]);
 
-   //채팅방 이름 가지고 오는 함수  
-//    useEffect(() => {
-//     const fetchChatRoomName = async () => {
-//         try {
-//             const token = localStorage.getItem('token');
-//             const response = await axios.get(`http://localhost:8080/api/chat/chatroomName`, {
-//                 headers: { 'Authorization': `Bearer ${token}` }
-//             });
-//             setChatRoomName(response.data.roomName)
-            
-//         } catch (error) {
-//             console.error("채팅방이름  가지고 오기 실패", error);
-//         }
-    
-//     };
-//     fetchChatRoomName();
-// }, [chatRoomId]);
-
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -63,15 +45,33 @@ const ChatRoom = () => {
                 time: new Date(msg.createdAt).toLocaleTimeString(),
                 sort: msg.senderId === senderId ? 'sent' : 'received',
                 username: msg.sender.username,
-                type: msg.messageType, 
-                fileUrl: msg.fileUrl 
+                type: msg.messageType,
+                fileUrl: msg.fileUrl || '', 
             }));
-            console.log(formattedMessages);
             setMessages(formattedMessages);
         } catch (error) {
             console.error("메시지 가져오기 오류:", error);
         }
+
     };
+
+
+    useEffect(()=>{
+    const fetchRoomName = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setRoomName(response.data);
+        } catch (error) {
+            console.error("채팅방 이름 가져오기 오류~:", error);
+        }
+    };
+            fetchRoomName();
+} ,[chatRoomId]);
+
+
 
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
@@ -93,7 +93,8 @@ const ChatRoom = () => {
                 ...message,
                 time: timestamp,
                 sort: message.senderId === senderId ? 'sent' : 'received',
-                username: message.sender.username
+                username: message.sender.username,
+                fileUrl: message.fileUrl || '', 
             };
             setMessages(prev => [...prev, messageWithSort]);
         };
@@ -121,14 +122,14 @@ const ChatRoom = () => {
             const timestamp = new Date().toLocaleTimeString();
             if (type === 'text' && messageInput.trim() !== '') {
                 const sentMessage = {
-                senderId,
-                chatRoomId,
-                message: messageInput,
-                messageType: 'text',
-                fileUrl: '', 
-                time: timestamp,
-                sort:'sent',
-                username
+                    senderId,
+                    chatRoomId,
+                    message: messageInput,
+                    messageType: 'text',
+                    fileUrl: '',
+                    time: timestamp,
+                    sort: 'sent',
+                    username
                 };
                 webSocket.send(JSON.stringify(sentMessage));
                 setMessages(prev => [...prev, sentMessage]);
@@ -138,18 +139,18 @@ const ChatRoom = () => {
                 formData.append('file', fileInput);
                 formData.append('senderId', senderId);
                 formData.append('chatRoomId', chatRoomId);
-                formData.append('timestamp',timestamp);
+                formData.append('timestamp', timestamp);
 
                 try {
                     const token = localStorage.getItem('token');
                     const response = await axios.post('http://localhost:8080/api/chat/upload', formData, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    
+
                     const fileUrl = response.data.fileUrl;
                     const sentMessage = {
                         type: 'file',
-                        fileUrl:fileUrl,
+                        fileUrl: fileUrl,
                         time: timestamp,
                         senderId,
                         sort: 'sent',
@@ -191,16 +192,16 @@ const ChatRoom = () => {
 
     return (
         <div className="chat-container">
-            <h2>{chatRoomId}번 프로젝트 채팅방</h2>
+            <h2>{roomName} </h2>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg, index) => (
                     <div key={index} className={`message ${msg.sort}`}>
                         <strong>{msg.username}</strong>: 
-                        {msg.type === 'file' | msg.type === 'FILE' ? (
+                        {msg.type === 'file' ? (
                             msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img)$/i) ? (
                                 <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
                             ) : (
-                                <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer"  download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
+                                <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
                             )
                         ) : (
                             msg.message

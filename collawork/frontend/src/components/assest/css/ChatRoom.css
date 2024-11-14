@@ -1,7 +1,6 @@
-/* 전체 채팅창 컨테이너 */
 .chat-container {
-    width: 500px;
-    height: 600px;
+    width: 600px; /* 채팅창 너비 확장 */
+    height: 800px; /* 채팅창 높이 확장 */
     background-color: #36393f; /* 디스코드의 어두운 배경 */
     color: #fff;
     border-radius: 8px;
