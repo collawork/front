@@ -43,9 +43,11 @@ const Search = ({ currentUser }) => {
             projects: response.data.projects.filter(project =>
                 project.projectName.includes(searchQuery)
             ),
-            chatRooms: response.data.chatRooms.filter(chatRoom =>
-                chatRoom.roomName.includes(searchQuery)
-            )
+            chatRooms: []
+            // chatRooms: response.data.chatRooms.filter(chatRoom =>
+            //     chatRoom.roomName.includes(searchQuery)
+            //  )
+            
         };
 
         const isEmptyResults = 
@@ -55,7 +57,7 @@ const Search = ({ currentUser }) => {
 
         setNoResults(isEmptyResults);
         setSearchResults(filteredResults);
-        setIsModalOpen(true); // 검색 후 모달 열기
+        setIsModalOpen(true);
     } catch (error) {
         console.error('검색 중 오류 발생: ', error);
         setNoResults(true);
@@ -65,7 +67,7 @@ const Search = ({ currentUser }) => {
 
   const handleResultClick = (type, item) => {
     setSelectedDetail({ type, item });
-    setIsDetailModalOpen(true); // 상세 정보 모달 열기
+    setIsDetailModalOpen(true);
   };
 
   const closeModal = () => {

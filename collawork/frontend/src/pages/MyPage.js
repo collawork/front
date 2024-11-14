@@ -20,6 +20,7 @@ import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList'
+import MyProfileIcon from '../pages/MyProfileIcon'
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -160,6 +161,9 @@ const MyPage = () => {
         }
     };
 
+    const go = ()=>{
+        navigate('/chattingServer/6');
+    }
 
     return (
         <>
@@ -167,6 +171,10 @@ const MyPage = () => {
                 <span className="hi-user-name">
                     안녕하세요 {user.username || '사용자'}님, {greeting}
                 </span>
+                
+                {/* 사용자 정보 컴포넌트 */}
+                <MyProfileIcon profileImage={user?.profileImage} user={user} />
+
                 <button className="logout-button" onClick={handleLogout}>
                     로그아웃
                 </button>
