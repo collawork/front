@@ -60,6 +60,24 @@ const Aside = () => {
 
     }
 
+    function saveChat(){ // 프로젝트 생성과 동시에 채팅방 생성
+        const token = localStorage.getItem('token');
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        axios({
+            url: `${API_URL}/api/user/chatrooms/ProjectChat`,
+            headers: { 'Authorization': `Bearer ${token}` },
+            method: 'post',
+            params: { roomName:title, createdBy:userIdValue },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true,
+        }).then(function(response) {
+            console.log("Aside : " + response);
+            console.log("Aside : " + response.data);
+        });
+
+    }
+
+
     const modalCloseHandler = () => {
         setNewShow(false);
         setTitle("");
@@ -74,6 +92,7 @@ const Aside = () => {
         }
         try {
             Send();
+            saveChat();
             alert('새 프로젝트가 생성되었습니다.');
             selectProjectName(); // 프로젝트 목록 새로고침
             setNewShow(false);
