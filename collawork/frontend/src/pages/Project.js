@@ -1,6 +1,6 @@
 import { useNavigate, useLocation} from 'react-router-dom';
 import ProjectHome from '../components/project/ProjectHome';
-import ProjectChat from "../components/project/ProjectChat";
+import ChatRoom from "../components/Chat/ChatRoom";
 import ProjectCalendar from "../components/project/ProjectCalendar";
 import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
@@ -84,7 +84,7 @@ const Project = () => {
             <div className="content-area">
 
                 {homeShow && <ProjectHome setHomeShow={setHomeShow}/>}
-                {chatShow && <ProjectChat />}
+                {chatShow && <ChatRoom />}
                 {calShow && <ProjectCalendar />}
                 {notiShow && <Board />}
                 {voting && <Voting/>}

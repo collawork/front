@@ -173,7 +173,7 @@ const MyPage = () => {
                 </span>
                 
                 {/* 사용자 정보 컴포넌트 */}
-                <MyProfileIcon />
+                <MyProfileIcon profileImage={user?.profileImage} user={user} />
 
                 <button className="logout-button" onClick={handleLogout}>
                     로그아웃

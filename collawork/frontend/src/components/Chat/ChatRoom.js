@@ -22,6 +22,7 @@ const ChatRoom = () => {
                 try {
                     const response = await axios.get('http://localhost:8080/api/user/info', {
                         headers: { 'Authorization': `Bearer ${token}` }
+                        
                     });
                     setSenderId(response.data.id);
                     setUsername(response.data.username);
