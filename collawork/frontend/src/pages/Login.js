@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { useUser } from '../context/UserContext';
 import "../components/assest/css/Login.css";
 
 function Login() {
     const navigate = useNavigate();
+    const { setUserId } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -12,8 +14,8 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = await authService.login({ email, password });
-            localStorage.setItem('token', token);
+            const userId = await authService.login({ email, password });
+            setUserId(userId); // 로그인 후 userId 설정
             navigate('/main');
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -25,7 +27,6 @@ function Login() {
             }
         }
     };
-    
 
     const handleSocialLogin = (provider) => {
         const providerUrls = {
@@ -35,7 +36,6 @@ function Login() {
         };
         window.location.href = providerUrls[provider];
     };
-    
 
     return (
         <div className="login-container">

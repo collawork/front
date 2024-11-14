@@ -2,9 +2,10 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+// 회원가입 요청 함수
 const registerUser = async (data) => {
     const formData = new FormData();
-    
+
     const signupRequest = {
         username: data.username,
         email: `${data.email}@${data.emailDomain}`,
@@ -14,7 +15,7 @@ const registerUser = async (data) => {
         phone: data.phone,
         fax: data.fax
     };
-    
+
     formData.append("signupRequest", new Blob([JSON.stringify(signupRequest)], {
         type: 'application/json'
     }));
@@ -23,19 +24,23 @@ const registerUser = async (data) => {
         formData.append("profileImage", data.profileImage);
     }
 
-    console.log(`${API_URL}`);
-    return await axios.post(`${API_URL}/api/auth/register`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true
-    });
+    try {
+        return await axios.post(`${API_URL}/api/auth/register`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true
+        });
+    } catch (error) {
+        console.error("회원가입 에러:", error);
+        throw error;
+    }
 };
 
+// 로그인 요청 함수
 const login = async (data) => {
     try {
         const loginData = {
-            username: data.username,
             email: data.email,
             password: data.password
         };
@@ -47,16 +52,17 @@ const login = async (data) => {
             withCredentials: true
         });
 
-        console.log("로그인 응답:", response.data);
-        console.log("data:", data);
+        // 로그인 성공 시 응답에서 토큰과 사용자 ID를 로컬 스토리지에 저장
+        if (response.data && response.data.token && response.data.userId && response.data.refreshToken) {
+            localStorage.setItem('token', response.data.token); // 액세스 토큰
+            
+            console.log('token', response.data.token);
 
-        const token = response.data.token;
-        if (token) {
-            localStorage.setItem('token', token);
-            return token;
+            localStorage.setItem('refreshToken', response.data.refreshToken); // 리프레시 토큰
+            localStorage.setItem('userId', response.data.userId); // 사용자 ID 저장
+            return { token: response.data.token, userId: response.data.userId };
         } else {
-            console.error("토큰이 응답에 없습니다:", response.data);
-            throw new Error("토큰이 응답에 없습니다.");
+            throw new Error('로그인 응답에 필요한 정보가 포함되지 않았습니다.');
         }
     } catch (error) {
         console.error("로그인 에러: ", error);
@@ -64,19 +70,23 @@ const login = async (data) => {
     }
 };
 
-
 // 중복 확인 요청 함수
 const checkDuplicates = async (username, email, phone) => {
     const token = localStorage.getItem('token');
-    return await axios.post(`${API_URL}/api/auth/check-duplicates`, {
-        username,
-        email,
-        phone,
-    }, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+    try {
+        return await axios.post(`${API_URL}/api/auth/check-duplicates`, {
+            username,
+            email,
+            phone,
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        console.error("중복 확인 에러: ", error);
+        throw error;
+    }
 };
 
 const authService = {

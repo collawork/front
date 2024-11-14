@@ -1,6 +1,13 @@
-const ProjectHome = ({setHomeShow}) => {
+import { useEffect } from "react";
+import ProjectImformation from "./ProjectInformation";
+
+const ProjectHome = () => {
+
     return(
-        <h2>프로젝트 홈- 기본 화면</h2>
+        <>
+        <ProjectImformation/>
+        </>
+
     )
 };
 export default ProjectHome;

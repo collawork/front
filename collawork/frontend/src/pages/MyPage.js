@@ -1,12 +1,11 @@
 /*
 작성자: 서현준
 작성일: 2024.10.31
-
 마이 페이지 겸 헤더랑 네비가 없는 메인 페이지
-
-날씨 AIP
+날씨 API
 fullcalendar API를 사용할 예정
 */
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
@@ -14,24 +13,47 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import ReactModal from "react-modal";
+import NotificationList from '../components/NotificationList/NotificationList';
+import FriendList from '../components/Friend/FriendList';
 import '../components/assest/css/MyPage.css';
+import { useUser } from '../context/UserContext';
+import CalendarService from '../services/CalendarService';
+import ProjectList from '../components/project/ProjectList'
 
 const MyPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: '' });
+    const { userId, setUserId } = useUser();
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
+    const [currentView, setCurrentView] = useState('dayGridMonth');
+    const [eventCRUDModal, setEventCRUDModal] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
+
+    // 달력 관련 변수들..
+    let formData; // fullcalendar에서 지원해 주는 기능.
+    const [title, setTitle] = useState("");
+    const [start, setStart] = useState("");
+    const [end, setEnd] = useState("")
+    let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
+    const [description , setDescription] = useState("");
+    const [projectId, setProjectId] = useState("");
+    const [createBy, setCreateBy] = useState("");
+    // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
+
+    const [errors, setErrors] = useState({});
+    const [validations, setValidations] = useState({});
+    const [friends, setFriends] = useState([]);
 
     useEffect(() => {
-        // URL에서 토큰 추출 및 저장
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
-    
+
         if (token) {
             localStorage.setItem('token', token);
         }
-    
-        // 사용자 정보 가져오기
+
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -41,51 +63,70 @@ const MyPage = () => {
                             'Authorization': `Bearer ${token}`
                         }
                     });
-                    console.log('반환된 유저 정보 :', response.data);
-                    setUser({
-                        username: response.data.username
-                    });
+                    setUser({ username: response.data.username });
+                    setUserId(response.data.id);
+                    console.log("Fetched userId:", response.data.id);
                 } catch (error) {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
                 }
             }
         };
-    
+
         fetchUserData();
 
-        // 현재 날짜 설정
         const date = new Date();
         const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
         setCurrentDate(formattedDate);
 
-        // 인사말을 설정하는 useEffect
         const currentHour = date.getHours();
-
-        if (currentHour < 11) {
-            setGreeting("좋은 아침이예요!");
-        } else {
-            setGreeting("어서오세요.");
-        }
-        
+        setGreeting(currentHour < 11 ? "좋은 아침이예요!" : "어서오세요.");
     }, []);
 
-    // 캘린더로 이동
-    const moveToCalender = () => {
-        navigate('/calender');
+    const changeView = (view) => {
+        setCurrentView(view);
     };
 
-    // 프로젝트로 이동
     const moveToProject = () => {
         navigate('/project');
     };
 
-    // 친구 페이지로 이동
-    const moveToFirend = () => {
-        navigate('/friend');
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
     };
 
     const handleDateClick = (arg) => {
-        alert(arg.dateStr); // 클릭한 해당 날짜를 알러트로 표시
+        setEventCRUDModal(true); // 모달창 오픈
+    };
+
+    const closeModal = () => {
+        setEventCRUDModal(false);
+    }
+
+    const handleChange = e => {
+        setTitle(e.target.value);
+        setDescription("1234");
+        console.log(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
+        extendedProps = {description, projectId, createBy};
+        formData = {title , start, end, extendedProps};
+
+        e.preventDefault();
+      
+        if (formData.title === '') { // title: 'sdf'
+            alert('일정의 타이틀을 입력해 주세요.');
+            return;
+        } 
+
+        try {
+            await CalendarService.registerSchedule(formData);
+            alert('일정이 등록되었습니다.');
+        } catch (error) {
+            console.error(error);
+            alert('일정등록에 실패하였습니다.');
+        }
     };
 
     function renderEventContent(eventInfo) {
@@ -100,69 +141,86 @@ const MyPage = () => {
     }
 
 
+    // 친구 목록 새로고침 함수 추가
+    const fetchFriends = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+            
+            const response = await axios.get(`http://localhost:8080/api/friends/list`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                params: { userId: userIdValue },
+            });
+            setFriends(response.data);
+        } catch (error) {
+            console.error('친구 목록을 불러오는 중 오류 발생:', error);
+        }
+    };
+
 
     return (
         <>
             <div className="header">
-                <span className="hi-user-name">안녕하세요 {user.username || '사용자'}님, 좋은 아침이예요!</span>
-                {/* 로그인 정보를 바탕으로 이름을 조회하고 접속한 시간을 조회해서 해당하는 적당한 인사말을 넣어준다.*/}
-           
-
+                <span className="hi-user-name">
+                    안녕하세요 {user.username || '사용자'}님, {greeting}
+                </span>
+                <button className="logout-button" onClick={handleLogout}>
+                    로그아웃
+                </button>
                 <span className="today">{currentDate}</span>
-                {/* 현재 날짜를 표시 */}
-                <img className="weather-icon" alt="날씨 아이콘" src="../image/icon/해당하는.png" />
             </div>
 
             <div className="centered-vertically">
                 <div className="calender-mypage">
                     <span className="text">달력</span>
-                    <img className="mypage-icon" alt="달력 아이콘" src='../image/icon/calender.png' />
                     <FullCalendar
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                        dateClick={handleDateClick} // 날짜 클릭 이벤트
+                        dateClick={handleDateClick}
                         eventContent={renderEventContent}
-                        initialView="dayGridMonth" // 초기 달력 화면
-                        views={{
-                            timeGridWeek: {
-                                duration: { weeks: 1 }, // 한번에 보여줄 주의 단위를 설정
-                                buttonText: '주간 계획' // 주별로 화면 전환 버튼 텍스트
-                            }
-                        }}
+                        key={currentView}
+                        initialView={currentView}
                         headerToolbar={{
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'timeGridWeek' // 달력 화면 전환 버튼
+                            right: 'custom,custom2'
+                        }}
+                        customButtons={{
+                            custom: {
+                                text: '주간 보기',
+                                click: () => changeView('timeGridWeek')
+                            },
+                            custom2: {
+                                text: '월간 보기',
+                                click: () => changeView('dayGridMonth')
+                            }
                         }}
                         weekends={true}
-                        events={[ // 이벤트 객체들
-                            { title: '현욱이 생일', date: '2024-11-05', textColor: 'red' },
-                            { title: 'event 2', date: '2024-11-01', start: '2024-11-10', end: '2024-11-12' },
-                            { title: 'event 3', date: '2024-11-06' },
-                            { title: 'event 4', start: '2024-11-05T10:00:00+09:00', end: '2024-11-06T08:00:00+09:00' }
-                        ]}
                     />
+                    <ReactModal className={"event-CRUD-modal"}
+                        isOpen={eventCRUDModal}
+                        contentLabel="일정 조회 등록 수정 삭제"
+                    >
+                        <h2>일정등록</h2>
+                        <form onSubmit={handleSubmit}>
+                            제목: <input type='text' name='Tilte' placeholder='일정의 제목' onChange={handleChange}/>
+                            <button onClick={closeModal}>닫기</button>
+                            <button type='submit'>일정등록</button>
+                        </form>
+                    </ReactModal>
                 </div>
 
                 <div className="horizontal-alignment">
-                    <div className="projects-mypage">
-                        <span className="text">프로젝트</span>
-                        <img className="mypage-icon" alt="프로젝트 아이콘" src='../image/icon/project.png' />
-                        <div className="project-list">
-                            <span>Collawork 프로젝트</span>
-                            <span>현준의 두 번째 프로젝트</span>
-                            <span>현준의 첫 번째 프로젝트</span>
-                        </div>
-                    </div>
+                    {/* 프로젝트 목록 컴포넌트 */}
+                    {userId && <ProjectList userId={userId} />}
 
-                    <div className="friends-mypage">
-                        <span className="text">친구</span>
-                        <img className="mypage-icon" alt="친구 아이콘" src='../image/icon/friend.png' />
-                        <div className="friend-list">
-                            <span>카리스마.동규</span>
-                            <span>애착인형.진우</span>
-                            <span>똘똘핑프.서연</span>
-                        </div>
-                    </div>
+                    {/* 친구 목록 컴포넌트 */}
+                    {userId && <FriendList userId={userId} fetchFriends={fetchFriends} />}
+
+                    {/* 알림 컴포넌트 */}
+                    {userId && <NotificationList userId={userId} fetchFriends={fetchFriends} />}
                 </div>
             </div>
         </>
