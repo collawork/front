@@ -14,7 +14,6 @@ import ChatRoom from './components/Chat/ChatRoom';
 import { UserProvider } from './context/UserContext';
 
 function App() {
-
     return (
         <UserProvider>
             <Router>
@@ -29,6 +28,7 @@ function App() {
                     <Route path="/api/kakao/user-info" element={<KakaoUserInfo />} />
                     <Route path="/main" element={<MyPage />} />
                     <Route path="/info" element={<UserProfile />} />
+                    <Route path="/chattingServer/:chatRoomId" element={<ChatRoom/>} />
                 </Routes>
             </Router>
         </UserProvider>

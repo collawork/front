@@ -140,6 +140,7 @@ const MyPage = () => {
         );
     }
 
+
     // 친구 목록 새로고침 함수 추가
     const fetchFriends = async () => {
         try {
@@ -158,6 +159,7 @@ const MyPage = () => {
             console.error('친구 목록을 불러오는 중 오류 발생:', error);
         }
     };
+
 
     return (
         <>
