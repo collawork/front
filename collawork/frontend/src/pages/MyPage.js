@@ -19,7 +19,8 @@ import FriendList from '../components/Friend/FriendList';
 import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
-import ProjectList from '../components/project/ProjectList'
+import ProjectList from '../components/project/ProjectList';
+import {calendarUser} from '../store';
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -194,7 +195,11 @@ const MyPage = () => {
             alert('일정등록에 실패하였습니다.');
         };
 
-        return setAllDay(true);
+        return (setAllDay(true));
+        
+        
+            
+        
     };
 
     // function renderEventContent(eventInfo) {
