@@ -7,7 +7,6 @@ export const projectStore = create((set, get)=> ({
     projectCreatedBy : '', // 프로젝트 생성자 
     managerEmail : '',  // 프로젝트 생성자 이메일
     managerName : '', // 프로젝트 생성자 이름
-
     
     PlusProjectName: (value) => {
         set({projectName: value})

@@ -27,15 +27,12 @@ const ProjectImformation = () => {
 
     function manager(){ // 유저 정보 조회  // 유저정보에서 첫 실행할 때 오류남
         const token = localStorage.getItem('token');
-        console.log(projectData.id);
     
         axios({
             url: `${API_URL}/api/user/projects/projecthomeusers`,
             headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
             params: { id : projectData.createdBy },
-            baseURL: 'http://localhost:8080',
-            withCredentials: true,
         }).then(function(response) {
 
             console.log(response);
@@ -43,6 +40,8 @@ const ProjectImformation = () => {
            
           
         });
+        console.log("projectData : " + projectData);
+        console.log("projectData.createdBy : " + projectData.createdBy);
     }
 
     function Send(){ // 프로젝트 정보 조회
