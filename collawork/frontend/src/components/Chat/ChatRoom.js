@@ -79,7 +79,7 @@ const ChatRoom = () => {
         };
     }, [chatRoomId, senderId, username]);
 
-    
+
 
     const fetchMessages = async () => {
         try {
@@ -226,9 +226,9 @@ const ChatRoom = () => {
                     onKeyDown={handleKeyPress}
                 />
                 <input type="file" onChange={handleFileChange} />
-                <button id="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                <button onClick={() => sendMessage('file')}>파일 전송</button>
-                <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
+                <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                <button  className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
+                <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
             </div>
         </div>
     );

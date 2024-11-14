@@ -4,8 +4,9 @@ import ProjectChat from "../components/project/ProjectChat";
 import ProjectCalendar from "../components/project/ProjectCalendar";
 import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
-import Notification from '../components/project/Board';
+import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
+import Voting from '../components/project/Voting';
 
 
 const Project = () => {
@@ -16,16 +17,18 @@ const Project = () => {
     const { userId } = useUser();
     console.log("Project 페이지의 userId: ", userId);
 
-    const [homeShow, setHomeShow] = useState(true);
-    const [chatShow, setChatShow] = useState(false);
-    const [calShow, setCalShow] = useState(false);
-    const [notiShow, setNotiShow] = useState(false);
+    const [homeShow, setHomeShow] = useState(true); // 피드
+    const [chatShow, setChatShow] = useState(false); // 채팅
+    const [calShow, setCalShow] = useState(false); // 캘린더
+    const [notiShow, setNotiShow] = useState(false); // 공지사항
+    const [voting, setVotig] = useState(false); // 투표
    
     const homeClickHandler = () => {
         setHomeShow(true);
         setChatShow(false);
         setCalShow(false);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const chatClickHandler = () => {
@@ -33,6 +36,7 @@ const Project = () => {
         setHomeShow(false);
         setCalShow(false);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const onClickHandler = () => {
@@ -40,6 +44,7 @@ const Project = () => {
         setChatShow(false);
         setCalShow(true);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const notiClickHandler = () => {
@@ -47,8 +52,22 @@ const Project = () => {
         setHomeShow(false);
         setChatShow(false);
         setCalShow(false);
+        setVotig(false);
 
     }
+
+    const AllOnClickHandler = () => {
+        setNotiShow(false);
+        setHomeShow(false);
+        setChatShow(false);
+        setCalShow(false);
+        setVotig(true);
+    }
+
+    // const clickHandler = (e) => {
+    //     setShow(e.target.c);
+
+    // }
 
 
     return (
@@ -59,6 +78,7 @@ const Project = () => {
                 <button onClick={notiClickHandler}>공지사항</button>
                 <button onClick={chatClickHandler}>채팅방</button>
                 <button onClick={onClickHandler}> 캘린더</button>
+                <button onClick={AllOnClickHandler}>투표</button>
             </div>
 
             <div className="content-area">
@@ -66,7 +86,8 @@ const Project = () => {
                 {homeShow && <ProjectHome setHomeShow={setHomeShow}/>}
                 {chatShow && <ProjectChat />}
                 {calShow && <ProjectCalendar />}
-                {notiShow && <Notification />}
+                {notiShow && <Board />}
+                {voting && <Voting/>}
             </div>
         </div>
     );

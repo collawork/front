@@ -29,7 +29,7 @@ const MyProfileIcon = ({ profileImage, user }) => {
     return (
         <div className="profile-icon-container">
             <img
-                src={profileImage || '/default-profile.png'}
+                src={profileImage || '../components/assest/images/default-profile.png'}
                 alt="프로필"
                 className="profile-icon"
                 onClick={toggleDropdown}
