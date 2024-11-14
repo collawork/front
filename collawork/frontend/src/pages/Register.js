@@ -13,23 +13,18 @@ function Register() {
     const [errors, setErrors] = useState({});
     const [validations, setValidations] = useState({});
     const [previewImage, setPreviewImage] = useState(null);
-    const [domains] = useState(['naver.com','gmail.com', 'daum.com', "yahoo.com" ]);
+    const [domains] = useState(['naver.com','gmail.com', 'daum.com', "yahoo.com", "nate.com" ]);
 
-    const validateUsername = useCallback(async () => {
+    const validateUsername = useCallback(() => {
         if (!formData.username) {
             setErrors(prev => ({ ...prev, username: '이름을 입력해주세요' }));
             setValidations(prev => ({ ...prev, username: false }));
         } else {
-            try {
-                await authService.checkDuplicates(formData.username, null, null);
-                setErrors(prev => ({ ...prev, username: '' }));
-                setValidations(prev => ({ ...prev, username: true }));
-            } catch (error) {
-                setErrors(prev => ({ ...prev, username: '아이디가 중복되었습니다.' }));
-                setValidations(prev => ({ ...prev, username: false }));
-            }
+            setErrors(prev => ({ ...prev, username: '' }));
+            setValidations(prev => ({ ...prev, username: true }));
         }
     }, [formData.username]);
+    
 
     const validateEmail = useCallback(async () => {
         if (!formData.email || !formData.emailDomain) {

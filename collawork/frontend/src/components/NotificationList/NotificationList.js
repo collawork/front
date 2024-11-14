@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const NotificationList = ({ userId }) => {
+const NotificationList = ({ userId, fetchFriends }) => {
     const [notifications, setNotifications] = useState([]);
 
     // 알림 목록 불러오기
@@ -10,10 +10,7 @@ const NotificationList = ({ userId }) => {
             try {
                 const token = localStorage.getItem('token');
                 const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
-    
-                console.log("알림 요청 token:", token);
-                console.log("알림에서 전달되는 userId 값:", userIdValue);
-    
+
                 const response = await axios.get(`http://localhost:8080/api/notifications/unread`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -26,31 +23,42 @@ const NotificationList = ({ userId }) => {
                 console.error('알림을 불러오는 중 오류 발생:', error);
             }
         };
-    
+
         fetchNotifications();
     }, [userId]);
 
     // 친구 요청 수락 핸들러
     const handleAcceptFriendRequest = async (notification) => {
-        const requestId = notification.requestId;
+        const { requestId } = notification;
+
+        if (!requestId || !userId) {
+            console.error("requestId 또는 responderId가 누락되었습니다:", { requestId, responderId: userId });
+            return;
+        }
 
         try {
             await axios.post(`http://localhost:8080/api/friends/accept`, null, {
-                params: { requestId },
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                params: {
+                    requestId,
+                    responderId: userId
                 }
             });
 
-            // 수락 후 알림을 읽음 처리하여 목록에서 제거
-            await handleMarkAsRead(notification.id);
             alert("친구 요청을 승인했습니다.");
+
+            // 알림을 읽음 처리하여 목록에서 제거
+            await handleMarkAsRead(notification.id);
+
+            // 친구 목록 새로고침
+            if (fetchFriends) fetchFriends();
+
         } catch (error) {
             console.error("친구 요청 승인 중 오류 발생:", error);
         }
     };
 
-    // 알림 읽음 처리 핸들러
+    // 알림 읽음 처리 함수
     const handleMarkAsRead = async (notificationId) => {
         try {
             await axios.post(`http://localhost:8080/api/notifications/markAsRead/${notificationId}`, {}, {
@@ -58,6 +66,7 @@ const NotificationList = ({ userId }) => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
+            // 읽음 처리 후 알림 목록에서 제거
             setNotifications(prevNotifications =>
                 prevNotifications.filter(notification => notification.id !== notificationId)
             );
@@ -71,14 +80,14 @@ const NotificationList = ({ userId }) => {
         const requesterId = notification.requestId;
         const responderId = userId;
 
-        if (requesterId === responderId) {
-            console.error("자기 자신에게 친구 요청을 거절할 수 없습니다.");
+        if (!requesterId || requesterId === responderId) {
+            console.error("잘못된 요청: 자기 자신에게 친구 요청을 거절할 수 없습니다.");
             alert("자기 자신에게 친구 요청을 거절할 수 없습니다.");
             return;
         }
 
         try {
-            await axios.post(`/api/friends/reject`, null, {
+            await axios.post(`http://localhost:8080/api/friends/reject`, null, {
                 params: { 
                     requesterId: requesterId, 
                     responderId: responderId 
@@ -88,11 +97,15 @@ const NotificationList = ({ userId }) => {
                 }
             });
 
-            // 거절 후 알림 목록에서 해당 알림 제거
             setNotifications(prevNotifications =>
                 prevNotifications.filter(noti => noti.id !== notification.id)
             );
+
             alert("친구 요청을 거절했습니다.");
+
+            // 친구 목록 새로고침
+            if (fetchFriends) fetchFriends();
+
         } catch (error) {
             console.error('친구 요청 거절 중 오류 발생:', error);
         }
@@ -106,7 +119,6 @@ const NotificationList = ({ userId }) => {
                     <li key={notification.id}>
                         <span>{notification.message}</span>
                         
-                        {/* 'isActionCompleted'에 따라 버튼 표시 */}
                         {notification.isActionCompleted || notification.message.includes("친구 요청을 수락했습니다") ? (
                             <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
                         ) : (
