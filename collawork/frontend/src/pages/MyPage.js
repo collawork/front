@@ -161,6 +161,9 @@ const MyPage = () => {
         }
     };
 
+    const go = ()=>{
+        navigate('/chattingServer/6');
+    }
 
     return (
         <>

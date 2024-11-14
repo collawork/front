@@ -33,46 +33,8 @@ const ChatRoom = () => {
         fetchUserData();
     }, [chatRoomId]);
 
-    const fetchMessages = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8080/api/chat/${chatRoomId}/messages`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const formattedMessages = response.data.map(msg => ({
-                senderId: msg.senderId,
-                message: msg.content,
-                time: new Date(msg.createdAt).toLocaleTimeString(),
-                sort: msg.senderId === senderId ? 'sent' : 'received',
-                username: msg.sender.username,
-                type: msg.messageType,
-                fileUrl: msg.fileUrl || '', 
-            }));
-            setMessages(formattedMessages);
-        } catch (error) {
-            console.error("메시지 가져오기 오류:", error);
-        }
 
-    };
-
-
-    useEffect(()=>{
-    const fetchRoomName = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setRoomName(response.data);
-        } catch (error) {
-            console.error("채팅방 이름 가져오기 오류~:", error);
-        }
-    };
-            fetchRoomName();
-} ,[chatRoomId]);
-
-
-
+    
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
         const wsURL = `${wsProtocol}localhost:8080/chattingServer/${chatRoomId}`;
@@ -116,6 +78,49 @@ const ChatRoom = () => {
             }
         };
     }, [chatRoomId, senderId, username]);
+
+
+
+    const fetchMessages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/chat/${chatRoomId}/messages`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const formattedMessages = response.data.map(msg => ({
+                senderId: msg.senderId,
+                message: msg.content,
+                time: new Date(msg.createdAt).toLocaleTimeString(),
+                sort: msg.senderId === senderId ? 'sent' : 'received',
+                username: msg.sender.username,
+                type: msg.messageType,
+                fileUrl: msg.fileUrl || '', 
+            }));
+            setMessages(formattedMessages);
+        } catch (error) {
+            console.error("메시지 가져오기 오류:", error);
+        }
+
+    };
+
+
+    useEffect(()=>{
+    const fetchRoomName = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setRoomName(response.data);
+        } catch (error) {
+            console.error("채팅방 이름 가져오기 오류~:", error);
+        }
+    };
+            fetchRoomName();
+} ,[chatRoomId]);
+
+
+
 
     const sendMessage = async (type = 'text') => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
@@ -221,11 +226,9 @@ const ChatRoom = () => {
                     onKeyDown={handleKeyPress}
                 />
                 <input type="file" onChange={handleFileChange} />
-                <div className='btn-chatArea'>
-                    <button id="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                    <button onClick={() => sendMessage('file')}>파일 전송</button>
-                    <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
-                </div>
+                <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                <button  className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
+                <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
             </div>
         </div>
     );
