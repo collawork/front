@@ -37,7 +37,7 @@ const ProjectImformation = () => {
 
     function Send(){ // 프로젝트 정보 조회
         const token = localStorage.getItem('token');
-
+      
         axios({
             url: `${API_URL}/api/user/projects/projectselect`,
             headers: { 'Authorization': `Bearer ${token}` },
@@ -53,6 +53,8 @@ const ProjectImformation = () => {
             }
             console.log(response);
         });
+        console.log("projectData : " + projectData);
+        console.log("projectData.createdBy : " + projectData.createdBy);
     }
 
     function manager(){ // 유저 정보 조회  // 유저정보에서 첫 실행할 때 오류남
