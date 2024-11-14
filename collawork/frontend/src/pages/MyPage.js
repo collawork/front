@@ -160,6 +160,9 @@ const MyPage = () => {
         }
     };
 
+    const go = ()=>{
+        navigate('/chattingServer/6');
+    }
 
     return (
         <>
@@ -167,6 +170,7 @@ const MyPage = () => {
                 <span className="hi-user-name">
                     안녕하세요 {user.username || '사용자'}님, {greeting}
                 </span>
+                <button onClick={go}>채팅방</button>
                 <button className="logout-button" onClick={handleLogout}>
                     로그아웃
                 </button>
