@@ -1,0 +1,56 @@
+.profile-icon-container {
+    display: inline-block;
+    position: relative;
+    margin-left: 50%;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #7a4bff;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 50px; /* 아이콘 바로 아래 위치 */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    width: 150px;
+    z-index: 1000;
+    text-align: center;
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    padding: 8px 0;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f2f2f2;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hi-user-name {
+    font-size: 16px;
+    color: #333;
+    margin-right: 20px;
+}
