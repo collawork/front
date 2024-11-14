@@ -7,8 +7,9 @@ export const projectStore = create((set, get)=> ({
     projectCreatedBy : '', // 프로젝트 생성자 
     managerEmail : '',  // 프로젝트 생성자 이메일
     managerName : '', // 프로젝트 생성자 이름
+    projectData : '',
+    userData : '',
 
-    
     PlusProjectName: (value) => {
         set({projectName: value})
     },
@@ -17,13 +18,21 @@ export const projectStore = create((set, get)=> ({
         set({projectCreatedBy: value})
     },
 
-    PlusManagerEmail : (value) => {
+    PlusManagerEmail: (value) => {
         set({managerEmail: value})
     },
 
-    PlusManagerName : (value) => {
+    PlusManagerName: (value) => {
         set({managerName: value})
     },
+
+    PlusProjectData: (value) => {
+        set({projectData: value})
+    },
+
+    PlusUserData: (value) => {
+        set({userData: value})
+    }
 
 
 

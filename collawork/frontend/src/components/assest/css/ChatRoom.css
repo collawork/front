@@ -1,0 +1,119 @@
+.chat-container {
+    width: 600px; /* 채팅창 너비 확장 */
+    height: 800px; /* 채팅창 높이 확장 */
+    background-color: #36393f; /* 디스코드의 어두운 배경 */
+    color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 채팅창 제목 */
+.chat-container h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* 메시지가 표시될 창 */
+.chat-window {
+    flex-grow: 1;
+    background-color: #2f3136; /* 디스코드의 기본 배경 */
+    color: #dcdcdc; /* 메시지 색상 */
+    padding: 15px;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    border-radius: 5px;
+    border: 1px solid #444;
+}
+
+/* 보낸 메시지 스타일 */
+.message.sent {
+    background-color: #7289da; /* 보낸 메시지 배경 */
+    color: #fff;
+    text-align: right;
+    margin-left: auto;
+    border-radius: 8px;
+    max-width: 70%;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    word-wrap: break-word;
+}
+
+/* 받은 메시지 스타일 */
+.message.received { /* typo 수정: "recieved" -> "received" */
+    background-color: #7289da; /* 보낸 메시지 배경과 동일 */
+    color: #fff;
+    text-align: left;
+    margin-right: auto; /* 받는 메시지 왼쪽 정렬 */
+    border-radius: 8px;
+    max-width: 70%;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    word-wrap: break-word;
+}
+
+/* 메시지 정보 (시간 표시) */
+.message span {
+    font-size: 10px;
+    color: #b9bbbe;
+    display: block;
+    margin-top: 5px;
+}
+
+/* 입력창 및 버튼 컨테이너 */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 텍스트 입력창 */
+#chatMessage {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #2f3136;
+    color: #fff;
+    font-size: 14px;
+}
+
+/* 전송 버튼 */
+.sendBtn {
+    padding: 10px;
+    background-color: #8788df; /* 디스코드의 전송 버튼 색상 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 전송 버튼 호버 효과 */
+.sendBtn:hover {
+    background-color: #a9a9ff; /* 호버시 배경색을 조금 더 밝게 */
+}
+
+/* 메인으로 돌아가기 버튼 */
+.back-to-main-button  {
+    padding: 10px;
+    background-color: #f7f7f7; /* 디스코드의 취소 버튼 색상 */
+    color: rgb(136, 84, 219);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 메인으로 돌아가기 버튼 호버 효과 */
+.back-to-main-button :hover {
+    background-color: #ffffff;
+}
+
+

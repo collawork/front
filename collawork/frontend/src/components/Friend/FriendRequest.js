@@ -5,11 +5,14 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
     const [friendshipStatus, setFriendshipStatus] = useState(null);
     const [isRequester, setIsRequester] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [requesterIdFromFriend, setRequesterIdFromFriend] = useState(null);
+    const [friendshipId, setFriendshipId] = useState(null);
 
     useEffect(() => {
         const fetchFriendStatus = async () => {
-            if (!currentUser?.id || !selectedUserId) return;
+            if (!currentUser?.id || !selectedUserId) {
+                setLoading(false);
+                return;
+            }
 
             try {
                 setLoading(true);
@@ -23,12 +26,10 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
                     }
                 });
 
-                console.log("백엔드에서 가져온 응답:", response.data);
-                const { status, isRequester: requesterStatus, requesterId } = response.data;
-
+                const { status, isRequester: requesterStatus, id } = response.data;
                 setFriendshipStatus(status);
                 setIsRequester(requesterStatus);
-                setRequesterIdFromFriend(requesterId);
+                setFriendshipId(id);
             } catch (error) {
                 console.error("친구 상태 확인 중 에러 발생:", error);
             } finally {
@@ -39,73 +40,81 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
         fetchFriendStatus();
     }, [currentUser, selectedUserId]);
 
-
-    const handleFriendRequest = async (requesterId, responderId) => {
+    // 친구 요청 기능
+    const handleFriendRequest = async () => {
         try {
             const response = await axios.post(
                 `http://localhost:8080/api/friends/request`,
-                { requesterId, responderId },
-                {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                }
+                { requesterId: currentUser.id, responderId: selectedUserId },
+                { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
             );
             
             setFriendshipStatus("PENDING");
-            setIsRequester(true); // 요청자임을 표시
+            setIsRequester(true);
             alert(response.data.message);
         } catch (error) {
             console.error('친구 요청 중 오류 발생:', error);
         }
     };
-    
 
+    // 친구 승인 기능
     const handleAcceptFriendRequest = async () => {
         try {
-            console.log("승인할 친구 요청 requesterId:", requesterIdFromFriend);
-            console.log("현재 사용자 responderId:", currentUser.id);
+            const token = localStorage.getItem('token');
+            if (!token) throw new Error("인증 토큰이 없습니다. 로그인 후 다시 시도하세요.");
 
-            const response = await axios.post(`http://localhost:8080/api/friends/accept`, null, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                params: {
-                    requesterId: requesterIdFromFriend,  // 친구 요청을 보낸 사용자 ID
-                    responderId: currentUser.id          // 현재 로그인된 사용자 ID
+            const response = await axios.post(
+                `http://localhost:8080/api/friends/accept`,
+                null,
+                {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    params: { requestId: friendshipId, responderId: currentUser.id }
                 }
-            });
-
-            console.log("친구 요청 승인 응답:", response.data);
+            );
 
             setFriendshipStatus("ACCEPTED");
+            if (fetchFriends) fetchFriends();
             alert("친구 요청을 승인했습니다.");
-
-            if (fetchFriends) {
-                fetchFriends();
-            }
         } catch (error) {
             console.error('친구 요청 수락 중 오류 발생:', error);
+            alert('친구 요청을 수락하는 중 오류가 발생했습니다.');
         }
     };
 
-
+    // 친구 거절 기능
     const handleRejectFriendRequest = async () => {
         try {
             await axios.post(`http://localhost:8080/api/friends/reject`, null, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                params: {
-                    requesterId: currentUser.id,          // 요청자 ID 설정
-                    responderId: selectedUserId           // 응답자 ID 설정
-                }
+                params: { requesterId: currentUser.id, responderId: selectedUserId }
             });
 
-            
-            // 친구 관계 상태를 초기화하여 '친구 추가' 버튼이 다시 나타나도록 설정
             setFriendshipStatus('NONE');
-            alert("친구 요청을 취소했습니다.");
+            alert("친구 요청을 거절했습니다.");
         } catch (error) {
             console.error('친구 요청 거절 중 오류 발생:', error);
         }
     };
 
+    // 친구 삭제 기능
+    const handleRemoveFriend = async () => {
+        if (!friendshipId) {
+            console.error('삭제할 친구의 requestId가 설정되지 않았습니다.');
+            return;
+        }
 
+        try {
+            await axios.delete('http://localhost:8080/api/friends/remove', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                params: { requestId: friendshipId }
+            });
+
+            setFriendshipStatus('NONE');
+            alert("친구가 삭제되었습니다.");
+        } catch (error) {
+            console.error('친구 삭제 중 오류 발생:', error);
+        }
+    };
 
     if (loading) return <p>로딩 중...</p>;
 
@@ -127,18 +136,14 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
             {friendshipStatus === 'ACCEPTED' && (
                 <div>
                     <p>친구 상태: 이미 친구입니다</p>
-                    <button onClick={() => setFriendshipStatus('NONE')}>친구 삭제</button>
+                    <button onClick={handleRemoveFriend}>친구 삭제</button>
                 </div>
             )}
-            {/* 친구 관계 상태가 NONE일 때 친구 추가 버튼 표시 */}
             {friendshipStatus === 'NONE' && (
-            <button onClick={() => handleFriendRequest(currentUser.id, selectedUserId)}>
-                친구 추가
-            </button>
-        )}
+                <button onClick={handleFriendRequest}>친구 추가</button>
+            )}
         </div>
     );
-
-}
+};
 
 export default FriendRequest;

@@ -1,13 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import UserInfoModal from '../layout/UserInfoModal';
 import UserEditModal from '../layout/UserEditModal';
 import { useNavigate } from 'react-router-dom';
+import defaultImage from '../components/assest/images/default-profile.png';
+import '../components/assest/css/MyProfileIcon.css';
 
-const MyProfileIcon = ({ profileImage, user }) => {
+const MyProfileIcon = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const dropdownRef = useRef();
+
+    const fetchUserInfo = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/api/user/info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setUser(response.data);
+        } catch (error) {
+            console.error('사용자 정보를 불러오는 중 에러 발생:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
 
     const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -26,10 +49,22 @@ const MyProfileIcon = ({ profileImage, user }) => {
         navigate('/');
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="profile-icon-container">
+        <div className="profile-icon-container" ref={dropdownRef}>
             <img
-                src={profileImage || '/default-profile.png'}
+                src={user?.profileImageUrl || defaultImage}
                 alt="프로필"
                 className="profile-icon"
                 onClick={toggleDropdown}

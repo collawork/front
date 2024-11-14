@@ -3,6 +3,10 @@ import ProjectImformation from "./ProjectInformation";
 
 const ProjectHome = () => {
 
+    // useEffect(() => {
+    //     setShow(true);
+    // },[])
+
     return(
         <>
         <ProjectImformation/>

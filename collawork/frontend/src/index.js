@@ -4,7 +4,11 @@ import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 2071f402578df4750c57dd0a443b61a3b783ad11
     <App />
 
 );

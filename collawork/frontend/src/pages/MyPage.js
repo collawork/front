@@ -2,7 +2,7 @@
 작성자: 서현준
 작성일: 2024.10.31
 마이 페이지 겸 헤더랑 네비가 없는 메인 페이지
-날씨 AIP
+날씨 API
 fullcalendar API를 사용할 예정
 */
 
@@ -21,12 +21,11 @@ import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList';
 import {calendarUserStore} from '../store';
-
+import MyProfileIcon from '../pages/MyProfileIcon'
 
 const MyPage = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState({ username: '' });
-    // const [userId, setUserId] = useState(null); // 유저 ID 저장
     const { userId, setUserId } = useUser();
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
@@ -57,6 +56,10 @@ const MyPage = () => {
     // // const [projectName, setProjectName] = useState([]);
 
 
+    const [errors, setErrors] = useState({});
+    const [validations, setValidations] = useState({});
+    const [friends, setFriends] = useState([]);
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
@@ -76,7 +79,7 @@ const MyPage = () => {
                         }
                     });
                     setUser({ username: response.data.username });
-                    setUserId(response.data.id); // 유저 ID 저장
+                    setUserId(response.data.id);
                     console.log("Fetched userId:", response.data.id);
                 } catch (error) {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
@@ -108,7 +111,6 @@ const MyPage = () => {
     };
 
     const handleDateClick = (arg) => {
-
         setEventCRUDModal(true); // 모달창 오픈
         // 개인 달력..
         // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
@@ -137,7 +139,7 @@ const MyPage = () => {
         return setAllDay(true);
     }
 
-    const handleTitleChange = e =>{
+    const handleChange = e => {
         setTitle(e.target.value);
         console.log(title);
     };
@@ -201,12 +203,40 @@ const MyPage = () => {
     //     );
     // }
 
+
+    // 친구 목록 새로고침 함수 추가
+    const fetchFriends = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+            
+            const response = await axios.get(`http://localhost:8080/api/friends/list`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                params: { userId: userIdValue },
+            });
+            setFriends(response.data);
+        } catch (error) {
+            console.error('친구 목록을 불러오는 중 오류 발생:', error);
+        }
+    };
+
+    const go = ()=>{
+        navigate('/chattingServer/6');
+    }
+
     return (
         <>
             <div className="header">
                 <span className="hi-user-name">
                     안녕하세요 {user.username || '사용자'}님, {greeting}
                 </span>
+                
+                {/* 사용자 정보 컴포넌트 */}
+                <MyProfileIcon profileImage={user?.profileImage} user={user} />
+
                 <button className="logout-button" onClick={handleLogout}>
                     로그아웃
                 </button>
@@ -258,10 +288,8 @@ const MyPage = () => {
                     <ReactModal className={"event-CRUD-modal"}
                         isOpen={eventCRUDModal}
                         contentLabel="일정 조회 등록 수정 삭제"
-
                     >
                         <h2>일정등록</h2>
-                        {/* 입력부 */}
                         <form onSubmit={handleSubmit}>
                             제목: <input type='text' name='tilte' placeholder='일정의 제목' onChange={handleTitleChange}/>
                             설명: <input type='text' name='description' placeholder='일정의 내용' onChange={handleDescriptionChange }/>
@@ -279,10 +307,10 @@ const MyPage = () => {
                     {userId && <ProjectList userId={userId} />}
 
                     {/* 친구 목록 컴포넌트 */}
-                    {userId && <FriendList userId={userId} />}
+                    {userId && <FriendList userId={userId} fetchFriends={fetchFriends} />}
 
                     {/* 알림 컴포넌트 */}
-                    {userId && <NotificationList userId={userId} />}
+                    {userId && <NotificationList userId={userId} fetchFriends={fetchFriends} />}
                 </div>
             </div>
         </>
