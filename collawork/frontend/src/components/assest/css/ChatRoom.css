@@ -101,7 +101,7 @@
 }
 
 /* 메인으로 돌아가기 버튼 */
-button {
+.btn-chatArea {
     padding: 10px;
     background-color: #f7f7f7; /* 디스코드의 취소 버튼 색상 */
     color: rgb(136, 84, 219);
@@ -112,6 +112,6 @@ button {
 }
 
 /* 메인으로 돌아가기 버튼 호버 효과 */
-button:hover {
+.btn-chatArea:hover {
     background-color: #ffffff;
 }

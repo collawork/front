@@ -221,9 +221,11 @@ const ChatRoom = () => {
                     onKeyDown={handleKeyPress}
                 />
                 <input type="file" onChange={handleFileChange} />
-                <button id="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                <button onClick={() => sendMessage('file')}>파일 전송</button>
-                <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
+                <div className='btn-chatArea'>
+                    <button id="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                    <button onClick={() => sendMessage('file')}>파일 전송</button>
+                    <button onClick={handlerBackToMain}>메인으로 돌아가기</button>
+                </div>
             </div>
         </div>
     );
