@@ -28,6 +28,7 @@ const Project = () => {
         setChatShow(false);
         setCalShow(false);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const chatClickHandler = () => {
@@ -35,6 +36,7 @@ const Project = () => {
         setHomeShow(false);
         setCalShow(false);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const onClickHandler = () => {
@@ -42,6 +44,7 @@ const Project = () => {
         setChatShow(false);
         setCalShow(true);
         setNotiShow(false);
+        setVotig(false);
     };
 
     const notiClickHandler = () => {
@@ -49,6 +52,7 @@ const Project = () => {
         setHomeShow(false);
         setChatShow(false);
         setCalShow(false);
+        setVotig(false);
 
     }
 
@@ -59,6 +63,11 @@ const Project = () => {
         setCalShow(false);
         setVotig(true);
     }
+
+    // const clickHandler = (e) => {
+    //     setShow(e.target.c);
+
+    // }
 
 
     return (

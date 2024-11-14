@@ -6,9 +6,13 @@
   
   .button-group {
     margin-bottom: 20px; /* Adds space between buttons and content */
+    display: flex;          /* 버튼들을 가로로 정렬 */
+    justify-content: space-between;  /* 버튼들 간의 간격을 일정하게 */
+    gap: 10px;     
   }
   
   .button-group button {
+    
     display: block;
     margin-bottom: 10px; /* Adds space between each button */
   }

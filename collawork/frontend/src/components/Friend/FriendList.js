@@ -5,15 +5,13 @@ import UserDetail from '../../pages/UserDetail';
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
     const fetchFriends = async () => {
         try {
             const token = localStorage.getItem('token');
             const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
             
-            console.log("친구 리스트 token:", token);
-            console.log("전달되는 userId 값:", userIdValue);
-    
             const response = await axios.get(`http://localhost:8080/api/friends/list`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -31,6 +29,12 @@ const FriendList = ({ userId }) => {
         if (userId) fetchFriends();
     }, [userId]);
 
+    const handleFriendClick = (friend) => {
+        const friendInfo = friend.requester.id === userId ? friend.responder : friend.requester;
+        setSelectedFriend(friendInfo);
+        setIsDetailModalOpen(true);
+    };
+
     const handleRemoveFriend = async (friendId) => {
         try {
             await axios.delete('http://localhost:8080/api/friends/remove', {
@@ -45,11 +49,8 @@ const FriendList = ({ userId }) => {
         }
     };
 
-    const openFriendDetail = (friend) => {
-        setSelectedFriend(friend);
-    };
-
-    const closeFriendDetail = () => {
+    const closeDetailModal = () => {
+        setIsDetailModalOpen(false);
         setSelectedFriend(null);
     };
 
@@ -59,24 +60,32 @@ const FriendList = ({ userId }) => {
             <ul>
                 {friends.map(friend => (
                     <li key={friend.id}>
-                        <button onClick={() => openFriendDetail(friend)}>
-                            {friend.requester.id === userId ? friend.responder.username : friend.requester.username}
-                        </button>
-                        <button onClick={() => handleRemoveFriend(friend.id)}>삭제</button>
+                        <span onClick={() => handleFriendClick(friend)}>
+                            {friend.requester.id === userId
+                                ? friend.responder.username
+                                : friend.requester.username}
+                        </span>
+                        {/* <button onClick={() => handleRemoveFriend(friend.id)}>삭제</button> */}
                     </li>
                 ))}
             </ul>
             {friends.length === 0 && <p>친구가 없습니다.</p>}
 
-            {/* 선택한 친구 정보 모달 */}
-            {selectedFriend && (
-                <UserDetail
-                    type="user"
-                    item={selectedFriend}
-                    closeModal={closeFriendDetail}
-                    currentUser={userId}
-                />
-            )}
+            {/* 친구 상세 정보 모달 */}
+            {isDetailModalOpen && selectedFriend && (
+            <div className="modal-overlay" onClick={closeDetailModal}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-button" onClick={closeDetailModal}>닫기</button>
+                    <UserDetail 
+                        type="user" 
+                        item={selectedFriend} 
+                        closeModal={closeDetailModal} 
+                        currentUser={userId} // 현재 사용자의 ID
+                    />
+                </div>
+            </div>
+        )}
+
         </div>
     );
 };
