@@ -30,23 +30,23 @@ export const projectStore = create((set, get)=> ({
 
 }))
 
-export const calendarUser = create((set, get) => ({
+export const calendarUserStore = create((set, get) => ({
 
     title : '',
     start : '',
     end : '',
-    allDay : '',
+    allDay : true,
     description : '',
     createdBy : '',
-    createdAt : '',
+    //createdAt : '',
 
-    PlusTitle : (value) => {set({title: value})},
-    PlusStart : (value) => {set({start: value})},
-    PlusEnd : (value) => {set({end: value})},
-    PlusAllDay : (value) => {set({allDay: value})},
-    PlusDescription : (value) => {set({description: value})},
-    PlusCreatedBy : (value) => {set({createdBy: value})},
-    PlusCreatedAt : (value) => {set({createdAt: value})}
+    setTitle : (value) => {set({title: value})},
+    setStart : (value) => {set({start: value})},
+    setEnd : (value) => {set({end: value})},
+    setAllDay : (value) => {set({allDay: value})},
+    setDescription : (value) => {set({description: value})},
+    setCreatedBy : (value) => {set({createdBy: value})},
+    //setCreatedAt : (value) => {set({createdAt: value})}
 
 }));
 
@@ -55,19 +55,19 @@ export const calendarProject = create((set, get) => ({
     title : '',
     start : '',
     end : '',
-    allDay : '',
+    allDay : true,
     description : '',
     projectId : '',
     createdBy : '',
-    createdAt : '',
+    //createdAt : '',
 
-    PlusTitle : (value) => {set({title: value})},
-    PlusStart : (value) => {set({start: value})},
-    PlusEnd : (value) => {set({end: value})},
-    PlusAllDay : (value) => {set({allDay: value})},
-    PlusDescription : (value) => {set({description: value})},
-    PlusProjectId : (value) => {set({projectId: value})},
-    PlusCreatedBy : (value) => {set({createdBy: value})},
-    PlusCreatedAt : (value) => {set({createdAt: value})}
+    setTitle : (value) => {set({title: value})},
+    setStart : (value) => {set({start: value})},
+    setEnd : (value) => {set({end: value})},
+    setAllDay : (value) => {set({allDay: value})},
+    setDescription : (value) => {set({description: value})},
+    setProjectId : (value) => {set({projectId: value})},
+    setCreatedBy : (value) => {set({createdBy: value})},
+    //setCreatedAt : (value) => {set({createdAt: value})}
 
 }));

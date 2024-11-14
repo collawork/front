@@ -4,10 +4,6 @@
 달력을 이용한 일정 등록 서비스 제공
 */
 
-// const [formData, setFormData] = useState({
-//     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
-//     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
-// });
 
 import axios from 'axios';
 
@@ -34,16 +30,8 @@ const registerSchedule = async(title, allDay, start, end, description, /*project
     ).then(function(response){
         console.log("CalendarService : " + response);
         console.log("CalendarService : " + response.data);
-        return response;
-      });
-    // return await axios.post(`${API_URL}/api/calendar/insert`, formData, {
-    //     headers: {
-    //         'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //         'Content-Type': 'application/json', // JSON 형식으로 전송
-    //     },
-    //     withCredentials: true
-    // });
-    
+        // return response;
+      });    
 };
 
 const CalendarService = {

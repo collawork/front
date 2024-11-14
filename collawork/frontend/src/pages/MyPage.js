@@ -20,7 +20,8 @@ import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList';
-import {calendarUser} from '../store';
+import {calendarUserStore} from '../store';
+
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -32,19 +33,28 @@ const MyPage = () => {
     const [currentView, setCurrentView] = useState('dayGridMonth');
     const [eventCRUDModal, setEventCRUDModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
+    
 
     // 달력 관련 변수들..
-    // let formData; // fullcalendar에서 지원해 주는 기능.
-    const [title, setTitle] = useState("");
-    const [start, setStart] = useState("");
-    const [end, setEnd] = useState("");
-    const [allDay, setAllDay] = useState(true);
-    // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
-    const [description , setDescription] = useState("");
-    // const [projectId, setProjectId] = useState("");
-    const [createdBy, setCreatedBy] = useState("");
-    const [createdAt, setCreatedAt] = useState("");
-    // const [projectName, setProjectName] = useState([]);
+
+    // const setStart = calendarUserStore(state => state.setStart);
+    // 
+    const {
+        title, start, end, allDay, description, createdBy,
+        setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy
+    } = calendarUserStore(); 
+
+    // // let formData; // fullcalendar에서 지원해 주는 기능.
+    // const [title, setTitle] = useState("");
+    // const [start, setStart] = useState("");
+    // const [end, setEnd] = useState("");
+    // const [allDay, setAllDay] = useState(true);
+    // // let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
+    // const [description , setDescription] = useState("");
+    // // const [projectId, setProjectId] = useState("");
+    // const [createdBy, setCreatedBy] = useState("");
+    // const [createdAt, setCreatedAt] = useState("");
+    // // const [projectName, setProjectName] = useState([]);
 
 
     useEffect(() => {
@@ -57,6 +67,7 @@ const MyPage = () => {
 
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
+            console.log("userId"+userId);
             if (token) {
                 try {
                     const response = await axios.get('http://localhost:8080/api/user/info', {
@@ -99,73 +110,50 @@ const MyPage = () => {
     const handleDateClick = (arg) => {
 
         setEventCRUDModal(true); // 모달창 오픈
-         // 개인 달력..
+        // 개인 달력..
         // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
         setCreatedBy(userId);
-        const interval = setInterval(() => {
-            setCreatedAt(new Date);
-        }, 1000*60); // 1분마다 현재 시간을 업데이트
-        setStart(arg.Date) // 사용자가 클릭한 날짜를 스케쥴의 시작일로 담는다.
-        console.log("달력을 클릭할 때 클릭한 날짜가 최초에 담기는지 확인: "+arg.date);
-
-        return () => clearInterval(interval);
+        let defaultStrZ = arg.date;
+        let defaultDate = new Date(defaultStrZ)
+        const options = {
+            timeZone: 'Asia/Seoul',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // 24시간 형식
+        };
+        let localKoreanTime = defaultDate.toLocaleString('ko-KR', options); // "2024. 11. 13. 00:00:00"
+        
+        setStart(localKoreanTime);
     };
+    console.log("아무것도 입력하지 않고 모달 창을 띄우기만 했을때의 초기값 : "+start);
+    // 모달 창을 띄우기만 했을때의 초기값 : Thu Nov 21 2024 00:00:00 GMT+0900 (한국 표준시)
 
     const closeModal = () => {
         setEventCRUDModal(false);
         return setAllDay(true);
     }
 
-    // useEffect(()=>{
-    //     // 개인 달력..
-    //     // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
-    //     setCreateBy(userId);
-    //     console.log("유저 아이디!!!! 이거 뭐야? 타입이 뭐야?? 읭????!!! "+userId);
-    //     const interval = setInterval(() => {
-    //         setCreatedAt(new Date);
-    //     }, 1000); // 1초마다 현재 시간을 업데이트
-
-    //     return () => clearInterval(interval); // 컴포넌트 언마운트 시 클리어
-
-        
-    // },[createdBy, createdAt]);
-
     const handleTitleChange = e =>{
         setTitle(e.target.value);
+        console.log(title);
     };
 
     const handleAllDayChange = () => {
         setAllDay(!allDay);
     }
 
-    const handleStartChange = e =>{
-        console.log("handleStartChange 이 함수 실행 되고 있는가?" );
-        let newStartStr = e.target.value; 
-        console.log("newStartStr 시작일 입력하면 바뀌는지 확인: "+newStartStr);
-        function hasTime(dateString) {
-            console.log("1 dateString: "+dateString);
-            const dateObject = new Date(dateString);
-            console.log("2 dateString: "+dateString);
-            return !isNaN(dateObject.getTime()) && dateObject.toTimeString().includes(':');
-        }
-        if(!hasTime(newStartStr)){
-            setStart(`${newStartStr}T00:00`)
-        }else{
-            setStart(newStartStr)
-        }
+    const handleStartChange = e => {
+        setStart(e.target.value);
+        console.log(e.target.value);
+        console.log("핸들 체인지 이후 일정 시작일의 변화 : "+start);        
     };
 
     const handleEndChange = e => {
-        const newEndStr = e.target.value; 
-        function hasTime(dateString) {
-            const dateObject = new Date(dateString);
-            return !isNaN(dateObject.getTime()) && dateObject.toTimeString().includes(':');
-        }
-        if(!hasTime(newEndStr)){
-            setEnd(`${newEndStr}T00:00`)
-        }else{
-            setEnd(newEndStr)
-        }
+        setEnd(e.target.value);
     };
 
     const handleDescriptionChange = e => {
@@ -183,7 +171,7 @@ const MyPage = () => {
         } 
 
         try{
-            let response = await CalendarService.registerSchedule(title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt);
+            let response = await CalendarService.registerSchedule(title, allDay, start, end, description, /*projectId,*/ createdBy);
             
             if(response != null){
                 alert('일정이 등록되었습니다.');
