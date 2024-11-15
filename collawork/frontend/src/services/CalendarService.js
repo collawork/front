@@ -8,7 +8,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const registerSchedule = async(title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt)=>{
+const registerSchedule = async(id, title, start, end, allDay, description, createdBy, createdAt, projectId,)=>{
 
     console.log("일정의 시작일 테스트 중@!!@@@" +start);
 
@@ -22,7 +22,7 @@ const registerSchedule = async(title, allDay, start, end, description, /*project
                 'Content-Type': 'application/json', // JSON 형식으로 전송
             },
             method: 'post',
-            data: {title, allDay, start, end, description, /*projectId,*/ createdBy, createdAt},
+            data: {id, title, start, end, allDay, description, createdBy, createdAt, projectId,},
             baseURL:'http://localhost:8080',
             withCredentials: true
 

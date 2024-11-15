@@ -20,7 +20,7 @@ import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList';
-import {calendarUserStore} from '../store';
+import {calendarEvents, projectStore} from '../store';
 import MyProfileIcon from '../pages/MyProfileIcon'
 
 const MyPage = () => {
@@ -39,9 +39,9 @@ const MyPage = () => {
     // const setStart = calendarUserStore(state => state.setStart);
     // 
     const {
-        title, start, end, allDay, description, createdBy,
-        setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy
-    } = calendarUserStore(); 
+        id, title, start, end, allDay, description, createdBy, createdAt, projectId,
+        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId 
+    } = calendarEvents(); 
 
     // // let formData; // fullcalendar에서 지원해 주는 기능.
     // const [title, setTitle] = useState("");
@@ -54,6 +54,11 @@ const MyPage = () => {
     // const [createdBy, setCreatedBy] = useState("");
     // const [createdAt, setCreatedAt] = useState("");
     // // const [projectName, setProjectName] = useState([]);
+
+    const {projectData} = projectStore(); // zustand 에 저장되어 있는 project data 묶음
+    console.log(projectData);
+    console.log(projectData.id);
+    console.log(projectData.projectName);
 
 
     const [errors, setErrors] = useState({});
@@ -85,6 +90,8 @@ const MyPage = () => {
                     console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
                 }
             }
+            const response = await axios.get('http://localhost:8080/api/user/info')
+            
         };
 
         fetchUserData();
@@ -112,26 +119,17 @@ const MyPage = () => {
 
     const handleDateClick = (arg) => {
         setEventCRUDModal(true); // 모달창 오픈
+        // 프로젝트 달력
+        //setProjectId(projectData.id); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
         // 개인 달력..
-        // setProjectId(); // mypage의 달력은 개인용 달력이니 여기선 받을 프로젝트아이디가 없다..
+        
         setCreatedBy(userId);
         let defaultStrZ = arg.date;
-        let defaultDate = new Date(defaultStrZ)
-        const options = {
-            timeZone: 'Asia/Seoul',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false // 24시간 형식
-        };
-        let localKoreanTime = defaultDate.toLocaleString('ko-KR', options); // "2024. 11. 13. 00:00:00"
-        
-        setStart(localKoreanTime);
+        console.log(defaultStrZ);
+        setStart(defaultStrZ);
     };
     console.log("아무것도 입력하지 않고 모달 창을 띄우기만 했을때의 초기값 : "+start);
+    console.log(userId);
     // 모달 창을 띄우기만 했을때의 초기값 : Thu Nov 21 2024 00:00:00 GMT+0900 (한국 표준시)
 
     const closeModal = () => {
@@ -139,7 +137,7 @@ const MyPage = () => {
         return setAllDay(true);
     }
 
-    const handleChange = e => {
+    const handleTitleChange = e => {
         setTitle(e.target.value);
         console.log(title);
     };
@@ -164,16 +162,15 @@ const MyPage = () => {
 
     const handleSubmit = async (e) => {
 
-        e.preventDefault();        
-        console.log("시분이 없는 스트링 형식 날짜에 씨붕을 붙였다! : "+start);
-
+        e.preventDefault(); // handleSubmit의 기본동작을 끄고..
+    
         if (title === '') { 
             alert('일정의 타이틀을 입력해 주세요.');
             return;
         } 
 
         try{
-            let response = await CalendarService.registerSchedule(title, allDay, start, end, description, /*projectId,*/ createdBy);
+            let response = await CalendarService.registerSchedule(id, title, start, end, allDay, description, createdBy, createdAt, projectId,);
             
             if(response != null){
                 alert('일정이 등록되었습니다.');
@@ -185,7 +182,7 @@ const MyPage = () => {
             alert('일정등록에 실패하였습니다.');
         };
 
-        return (setAllDay(true));
+        return (setTitle(""), setDescription(""),   setStart(""), setEnd(""), setCreatedBy(""),setAllDay(true));
         
         
             

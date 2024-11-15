@@ -39,44 +39,25 @@ export const projectStore = create((set, get)=> ({
 
 }))
 
-export const calendarUserStore = create((set, get) => ({
-
+export const calendarEvents = create((set, get) => ({
+    id : '',
     title : '',
     start : '',
     end : '',
     allDay : true,
     description : '',
     createdBy : '',
-    //createdAt : '',
-
-    setTitle : (value) => {set({title: value})},
-    setStart : (value) => {set({start: value})},
-    setEnd : (value) => {set({end: value})},
-    setAllDay : (value) => {set({allDay: value})},
-    setDescription : (value) => {set({description: value})},
-    setCreatedBy : (value) => {set({createdBy: value})},
-    //setCreatedAt : (value) => {set({createdAt: value})}
-
-}));
-
-export const calendarProject = create((set, get) => ({
-
-    title : '',
-    start : '',
-    end : '',
-    allDay : true,
-    description : '',
+    createdAt : '',
     projectId : '',
-    createdBy : '',
-    //createdAt : '',
 
+    setId : (value) => {set({id: value})},
     setTitle : (value) => {set({title: value})},
     setStart : (value) => {set({start: value})},
     setEnd : (value) => {set({end: value})},
     setAllDay : (value) => {set({allDay: value})},
     setDescription : (value) => {set({description: value})},
-    setProjectId : (value) => {set({projectId: value})},
     setCreatedBy : (value) => {set({createdBy: value})},
-    //setCreatedAt : (value) => {set({createdAt: value})}
+    setCreatedAt : (value) => {set({createdAt: value})},
+    setProjectId : (value) => {set({projectId: value})}
 
 }));
