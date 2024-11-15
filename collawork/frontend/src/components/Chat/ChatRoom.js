@@ -14,7 +14,7 @@ const ChatRoom = () => {
     const[roomName,setRoomName] = useState('');
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
-
+    
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
