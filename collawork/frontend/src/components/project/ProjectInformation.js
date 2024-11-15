@@ -89,6 +89,7 @@ const ProjectImformation = () => {
         <h3>직급 : {userData.position}</h3>
         <h3>이메일: {userData.email}</h3>
         <h6>{projectData.createdAt}</h6>
+        <p>+ 담당자 바꾸기,다가올 캘린더 속 일정 공지, +최근 공지사항? </p>
         </div>
         )} 
         </>

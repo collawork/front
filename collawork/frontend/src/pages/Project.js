@@ -7,6 +7,9 @@ import '../components/assest/css/Project.css';
 import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
 import Voting from '../components/project/Voting';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
+
 
 
 const Project = () => {
@@ -74,11 +77,11 @@ const Project = () => {
         
         <div className="project-container">
             <div className="button-group">
-                <button onClick={homeClickHandler}>피드</button>
-                <button onClick={notiClickHandler}>공지사항</button>
-                <button onClick={chatClickHandler}>채팅방</button>
-                <button onClick={onClickHandler}> 캘린더</button>
-                <button onClick={AllOnClickHandler}>투표</button>
+                <button onClick={homeClickHandler}><FontAwesomeIcon icon={faHouse}/> 피드</button>
+                <button onClick={notiClickHandler}><FontAwesomeIcon icon={faBell} /> 공지사항</button>
+                <button onClick={chatClickHandler}><FontAwesomeIcon icon={faComment} /> 채팅방</button>
+                <button onClick={onClickHandler}><FontAwesomeIcon icon={faCalendarDays} /> 캘린더</button>
+                <button onClick={AllOnClickHandler}><FontAwesomeIcon icon={faCheckToSlot} /> 투표</button>
             </div>
 
             <div className="content-area">

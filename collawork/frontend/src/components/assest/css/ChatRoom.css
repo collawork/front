@@ -112,10 +112,5 @@
     font-size: 14px;
 }
 
-/* 메인으로 돌아가기 버튼 호버 효과 */
-.back-to-main-button :hover {
-
-    background-color: #ffffff;
-}
 
 
