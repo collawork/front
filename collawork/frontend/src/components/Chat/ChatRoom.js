@@ -19,27 +19,36 @@ const ChatRoom = () => {
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
-
     const {projectData} = projectStore();
     console.log({projectData})
 
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await axios.get('http://localhost:8080/api/user/info', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    setSenderId(response.data.id);
-                    setUsername(response.data.username);
-                } catch (error) {
-                    console.error('사용자 정보를 불러오는 중 에러 발생:', error);
+            if (!token) {
+                console.error('토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.');
+                return;
+            }
+    
+            try {
+                const response = await axios.get('http://localhost:8080/api/user/info', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+    
+                if (response.data) {
+                    setSenderId(response.data.id || null);
+                    setUsername(response.data.username || '알 수 없음');
+                } else {
+                    console.error('서버로부터 사용자 정보를 가져오지 못했습니다.');
                 }
+            } catch (error) {
+                console.error('사용자 정보를 불러오는 중 에러 발생:', error);
             }
         };
+    
         fetchUserData();
     }, [chatRoomId]);
+    
 
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";

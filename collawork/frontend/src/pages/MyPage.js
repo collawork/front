@@ -57,21 +57,33 @@ const MyPage = () => {
 
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await axios.get('http://localhost:8080/api/user/info', {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
+            if (!token) {
+                console.error('토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.');
+                return;
+            }
+        
+            try {
+                const response = await axios.get('http://localhost:8080/api/user/info', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.data) {
                     setUser({ username: response.data.username });
                     setUserId(response.data.id);
                     console.log("Fetched userId:", response.data.id);
-                } catch (error) {
-                    console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
+                } else {
+                    console.error('서버로부터 사용자 정보를 가져오지 못했습니다.');
+                }
+            } catch (error) {
+                if (error.response?.status === 403) {
+                    console.error('인증 오류: 토큰이 만료되었거나 권한이 없습니다.');
+                } else {
+                    console.error('사용자 정보를 불러오는 중 에러 발생:', error);
                 }
             }
         };
+        
 
         fetchUserData();
 
@@ -150,6 +162,7 @@ const MyPage = () => {
             
             const response = await axios.get(`http://localhost:8080/api/friends/list`, {
                 headers: {
+                    
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
@@ -161,9 +174,6 @@ const MyPage = () => {
         }
     };
 
-    const go = ()=>{
-        navigate('/chattingServer/6');
-    }
 
     return (
         <>
