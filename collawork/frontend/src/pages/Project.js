@@ -1,30 +1,28 @@
-import { useNavigate, useLocation} from 'react-router-dom';
 import ProjectHome from '../components/project/ProjectHome';
 import ChatRoom from "../components/Chat/ChatRoom";
 import ProjectCalendar from "../components/project/ProjectCalendar";
-import { useState } from 'react';
 import '../components/assest/css/Project.css'; 
 import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
-import Voting from '../components/project/Voting';
+import { stateValue } from '../store';
+import Voting from '../components/project/Voting/NewVoting';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
 
 
 
 const Project = () => {
+
     
     const token = localStorage.getItem("token");
     console.log("현재 로그인한 사용자의 token : " + token);
 
     const { userId } = useUser();
     console.log("Project 페이지의 userId: ", userId);
+    const {homeShow,chatShow,calShow, notiShow,voting,
+        setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig
+    } = stateValue();
 
-    const [homeShow, setHomeShow] = useState(true); // 피드
-    const [chatShow, setChatShow] = useState(false); // 채팅
-    const [calShow, setCalShow] = useState(false); // 캘린더
-    const [notiShow, setNotiShow] = useState(false); // 공지사항
-    const [voting, setVotig] = useState(false); // 투표
    
     const homeClickHandler = () => {
         setHomeShow(true);
@@ -67,12 +65,6 @@ const Project = () => {
         setVotig(true);
     }
 
-    // const clickHandler = (e) => {
-    //     setShow(e.target.c);
-
-    // }
-
-
     return (
         
         <div className="project-container">
@@ -86,7 +78,7 @@ const Project = () => {
 
             <div className="content-area">
 
-                {homeShow && <ProjectHome setHomeShow={setHomeShow}/>}
+                {homeShow && <ProjectHome />}
                 {chatShow && <ChatRoom />}
                 {calShow && <ProjectCalendar />}
                 {notiShow && <Board />}
