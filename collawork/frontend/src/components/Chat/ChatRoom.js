@@ -17,7 +17,6 @@ const ChatRoom = () => {
     const [selectedMessages, setSelectedMessages] = useState([]);
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
-
     const {projectData} = projectStore();
     console.log({projectData})
 

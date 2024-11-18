@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ReactModal from "react-modal";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { stateValue } from '../store';
 import { projectStore } from '../store';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -14,6 +15,9 @@ const Aside = () => {
     const [show, setShow] = useState(false);
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
+    const {
+        setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig
+    } = stateValue();
    
     function selectProjectName() {
         console.log("userId: " + userId);
@@ -113,6 +117,11 @@ const Aside = () => {
         addTitle(e.target.textContent);
         console.log("선택된 프로젝트:", e.target.textContent);
         setShow(true);
+        setHomeShow(true);
+        setChatShow(false);
+        setCalShow(false);
+        setNotiShow(false);
+        setVotig(false);
     };
 
     return (
