@@ -30,8 +30,8 @@ const FriendList = ({ userId }) => {
     
             // 응답 데이터 검증 로그 추가
             response.data.forEach((friend, index) => {
-                console.log(`friend[${index}] requester:`, friend.requester);
-                console.log(`friend[${index}] responder:`, friend.responder);
+                // console.log(`friend[${index}] requester:`, friend.requester);
+                // console.log(`friend[${index}] responder:`, friend.responder);
             });
     
             // 필터링 로직
@@ -40,10 +40,10 @@ const FriendList = ({ userId }) => {
                     console.log("friend.requester.id:", friend.requester.id, "friend.responder.id:", friend.responder.id, "userId:", userId);
     
                     if (String(friend.requester.id) === String(userId)) {
-                        console.log(`친구로 선택된 responder:`, friend.responder);
+                        //console.log(`친구로 선택된 responder:`, friend.responder);
                         return friend.responder;
                     } else if (String(friend.responder.id) === String(userId)) {
-                        console.log(`친구로 선택된 requester:`, friend.requester);
+                        //console.log(`친구로 선택된 requester:`, friend.requester);
                         return friend.requester;
                     }
                     console.warn("유효하지 않은 friend 객체:", friend);
@@ -51,7 +51,7 @@ const FriendList = ({ userId }) => {
                 })
                 .filter(Boolean);
     
-            console.log("필터링된 친구 목록:", filteredFriends);
+            //console.log("필터링된 친구 목록:", filteredFriends);
             setFriends(filteredFriends);
         } catch (error) {
             console.error('친구 목록을 불러오는 중 오류 발생:', error);
