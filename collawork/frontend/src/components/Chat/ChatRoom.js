@@ -15,6 +15,8 @@ const ChatRoom = () => {
     const [roomName, setRoomName] = useState('');
     const [isDeleteMode, setIsDeleteMode] = useState(false);
     const [selectedMessages, setSelectedMessages] = useState([]);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
     const {projectData} = projectStore();
@@ -70,6 +72,8 @@ const ChatRoom = () => {
                 fileUrl: message.fileUrl || '',
             };
             setMessages(prev => [...prev, messageWithSort]);
+
+            
         };
 
         ws.onerror = (error) => {
@@ -127,6 +131,19 @@ const ChatRoom = () => {
         fetchRoomName();
     }, [chatRoomId]);
 
+    // 체크 풀기
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!event.target.closest('.message') && !event.target.closest('.dropdown-menu')) {
+                handleCancelDelete();
+            }
+        };
+        document.addEventListener('click', handleOutsideClick);
+        return () => {
+            document.removeEventListener('click', handleOutsideClick);
+        };
+    }, []);
+
     const sendMessage = async (type = 'text') => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
             const timestamp = new Date().toLocaleTimeString();
@@ -141,9 +158,14 @@ const ChatRoom = () => {
                     sort: 'sent',
                     username
                 };
+
+
                 webSocket.send(JSON.stringify(sentMessage));
                 setMessages(prev => [...prev, sentMessage]);
                 setMessageInput('');
+                fetchMessages();
+
+
             } else if (type === 'file' && fileInput) {
                 const formData = new FormData();
                 formData.append('file', fileInput);
@@ -170,6 +192,7 @@ const ChatRoom = () => {
                     webSocket.send(JSON.stringify({ type, senderId, fileUrl, chatRoomId }));
                     setMessages(prev => [...prev, sentMessage]);
                     setFileInput(null);
+                    fetchMessages();
 
                 } catch (error) {
                     console.error('파일 업로드 오류:', error);
@@ -206,7 +229,7 @@ const ChatRoom = () => {
             const token = localStorage.getItem('token');
             await axios.delete(`http://localhost:8080/api/chat/deleteMessages`, {
                 headers: { 'Authorization': `Bearer ${token}` },
-                data: { messageIds: selectedMessages },
+                data: { messageIds: selectedMessages }
             });
             setMessages((prevMessages) => prevMessages.filter((msg) => !selectedMessages.includes(msg.messageId)));
             setSelectedMessages([]);
@@ -216,10 +239,19 @@ const ChatRoom = () => {
         }
     };
 
-    const rightClick = (event) => {
+    const rightClick = (event, messageId) => {
         event.preventDefault();
-        setIsDeleteMode(true);
+        setDropdownVisible(true);
+        setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
+
+    const handleDropdownSelect = (action) => {
+        if (action === 'delete') {
+            setIsDeleteMode(true);
+        }
+        setDropdownVisible(false);
+    };
+
     const handleCheckboxChange = (messageId) => {
         setSelectedMessages((prevSelected) =>
             prevSelected.includes(messageId)
@@ -228,12 +260,17 @@ const ChatRoom = () => {
         );
     };
 
+    const handleCancelDelete = () => {
+        setSelectedMessages([]);  
+        setIsDeleteMode(false);    
+    };
+
     return (
         <div className="chat-container">
             <h2>{roomName}</h2>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg) => (
-                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={rightClick}>
+                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
                          {isDeleteMode && (
                             <input
                                 type="checkbox"
@@ -249,12 +286,20 @@ const ChatRoom = () => {
                                 <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
                             )
                         ) : (
-                            msg.message
+                            msg.message 
                         )}
                         <br />
                         <span>{msg.time}</span>
                     </div>
                 ))}
+                       {dropdownVisible && (
+                    <ul
+                        className="dropdown-menu"
+                        style={{ top: dropdownPosition.y, left: dropdownPosition.x }}
+                    >
+                        <li onClick={() => handleDropdownSelect('delete')}>삭제</li>
+                    </ul>
+                )}
             </div>
             <div className="input-container">
                 <input
@@ -268,7 +313,6 @@ const ChatRoom = () => {
                 <input type="file" onChange={handleFileChange} />
                 <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
                 <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
-                <button onClick={() => setIsDeleteMode(false)}>취소</button>
                 {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
                 <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
             </div>
