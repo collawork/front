@@ -22,6 +22,8 @@ const customStyles = {
 
 export const TestCalendar = () => {
 
+    const [currentView, setCurrentView] = useState('dayGridMonth');
+
     const {
         id, title, start, end, allDay, description, createdBy, createdAt, projectId,
         setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId
@@ -32,7 +34,7 @@ export const TestCalendar = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState();
 
-    
+
 
 
 
@@ -91,8 +93,8 @@ export const TestCalendar = () => {
     return (
         <div>
             <FullCalendar
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
+                plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+                initialView={currentView}
                 weekends={true}
                 editable={true}
                 selectable={true}
@@ -104,9 +106,25 @@ export const TestCalendar = () => {
                     return true; // 또는 특정 조건에 따라 허용 여부를 결정
                 }}
                 droppable={true}
-            // selectAllow={(info) => {
-            //     return info.start >= new Date(); // 오늘 이후의 날짜만 선택 가능하도록 제한
-            // }}
+                // selectAllow={(info) => {
+                //     return info.start >= new Date(); // 오늘 이후의 날짜만 선택 가능하도록 제한
+                // }}
+                headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'custom,custom2'
+                }}
+                customButtons={{
+                    custom: {
+                        text: '주간 보기',
+                        click: () => setCurrentView('timeGridWeek')
+                        // click: () => changeView('timeGridWeek')
+                    },
+                    custom2: {
+                        text: '월간 보기',
+                        click: () => setCurrentView('dayGridMonth')
+                    }
+                }}
 
             />
             <ReactModal
@@ -120,8 +138,8 @@ export const TestCalendar = () => {
                     설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} />
                     {/* 해당 이벤트에 마우스를 올리면 설명이 1초 뒤에 보이도록 해보자..! */}
                 </form>
-                <DatePicker selected={start} onChange={(date) => setStart(date)} style={{width: 200, marginRight: 10}} />
-                <DatePicker selected={end} onChange={(date) => setEnd(date)} style={{width: 200, marginRight: 10}} />
+                <DatePicker selected={start} onChange={(date) => setStart(date)} style={{ width: 200, marginRight: 10 }} />
+                <DatePicker selected={end} onChange={(date) => setEnd(date)} style={{ width: 200, marginRight: 10 }} />
                 <button onClick={handleSaveEvent}>저장</button>
                 <button onClick={handleModalClose}>취소</button>
             </ReactModal>
