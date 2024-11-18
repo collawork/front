@@ -36,13 +36,13 @@ const Aside = () => {
                 params: { userId },
             });
     
-            console.log("친구 목록 데이터:", response.data);
+            //console.log("친구 목록 데이터:", response.data);
     
             // 필터링 로직 디버깅
             const filteredFriends = response.data.reduce((acc, friend, index) => {
-                console.log(`friend[${index}].requester.id: ${friend.requester.id}`);
-                console.log(`friend[${index}].responder.id: ${friend.responder.id}`);
-                console.log(`friend[${index}].status: ${friend.status}`);
+                // console.log(`friend[${index}].requester.id: ${friend.requester.id}`);
+                // console.log(`friend[${index}].responder.id: ${friend.responder.id}`);
+                // console.log(`friend[${index}].status: ${friend.status}`);
     
                 if (friend.status !== 'ACCEPTED') {
                     console.warn(`friend[${index}]가 ACCEPTED 상태가 아닙니다.`);
@@ -67,7 +67,7 @@ const Aside = () => {
                 return acc;
             }, []);
     
-            console.log("필터링된 친구 목록:", filteredFriends);
+            //console.log("필터링된 친구 목록:", filteredFriends);
     
             setFriends(filteredFriends);
         } catch (error) {
@@ -78,25 +78,39 @@ const Aside = () => {
 
     // 프로젝트 목록 가져오기
     const selectProjectName = async () => {
-        const token = localStorage.getItem('token');
-        if (!token || !userId) return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다.");
+            return;
+        }
 
         try {
-            const response = await axios({
-                url: `${API_URL}/api/user/projects/selectAll`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                method: 'post',
-                params: { userId },
-                withCredentials: true,
-            });
-            setProjectName(response.data);
+            const response = await axios.post(
+                `${API_URL}/api/user/projects/selectAll`,
+                { userId: Number(userId) },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            console.log("프로젝트 목록:", response.data);
+
+            if (Array.isArray(response.data)) {
+                setProjectName(response.data);
+            } else {
+                console.warn("API 응답이 배열이 아닙니다. 빈 배열로 설정합니다.");
+                setProjectName([]);
+            }
         } catch (error) {
-            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
+            console.error("프로젝트 목록을 불러오는 중 오류 발생:", error);
+            setProjectName([]); // 오류 발생 시 빈 배열로 초기화
         }
     };
+
+    
 
     // 초기 데이터 로드
     useEffect(() => {
@@ -163,30 +177,39 @@ const Aside = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title) {
-            alert("프로젝트의 이름을 입력해주세요.");
-            return;
-        }
-        const token = localStorage.getItem('token');
+    
+        const token = localStorage.getItem("token");
         const participantIds = participants.map((participant) => participant.id);
+    
+        console.log("전송 데이터 확인:", {
+            title,
+            context,
+            userId,
+            participants: participantIds, // 숫자 배열인지 확인해야됨
+        });
+    
         try {
-            await axios.post(`${API_URL}/api/user/projects/newproject`, {
-                title,
-                context,
-                userId,
-                participants: participantIds,
-            }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            alert('새 프로젝트가 생성되었습니다.');
-            selectProjectName();
-            setNewShow(false);
-            modalCloseHandler();
+            const response = await axios.post(
+                `${API_URL}/api/user/projects/newproject`,
+                {
+                    title,
+                    context,
+                    userId,
+                    participants: participantIds,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+    
+            alert("프로젝트가 생성되었습니다.");
         } catch (error) {
-            console.error('프로젝트 생성 중 오류 발생:', error);
-            alert('프로젝트 생성에 실패하였습니다.');
+            console.error("프로젝트 생성 중 오류 발생:", error.response?.data || error.message);
+            alert("프로젝트 생성에 실패하였습니다.");
         }
     };
+    
+    
 
     const modalCloseHandler = () => {
         setNewShow(false);

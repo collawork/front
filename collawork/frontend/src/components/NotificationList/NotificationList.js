@@ -111,6 +111,35 @@ const NotificationList = ({ userId, fetchFriends }) => {
         }
     };
 
+    const handleRespondToProjectInvitation = async (notification, action) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `http://localhost:8080/api/notifications/${notification.id}/respond`,
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: { action },
+                }
+            );
+    
+            alert(`프로젝트 초대를 ${action === "accept" ? "승인" : "거절"}했습니다.`);
+    
+            // 알림 목록 새로고침
+            setNotifications((prevNotifications) =>
+                prevNotifications.filter((noti) => noti.id !== notification.id)
+            );
+    
+            // 친구 목록 또는 프로젝트 참여자 목록 새로고침
+            if (fetchFriends) fetchFriends();
+        } catch (error) {
+            console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
+        }
+    };
+    
+
     return (
         <div className="notification-list">
             <h3>새로운 알림</h3>
@@ -121,20 +150,28 @@ const NotificationList = ({ userId, fetchFriends }) => {
                         
                         {notification.isActionCompleted || notification.message.includes("친구 요청을 수락했습니다") ? (
                             <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
-                        ) : (
-                            notification.type === 'FRIEND_REQUEST' && (
-                                <>
-                                    <button onClick={() => handleAcceptFriendRequest(notification)}>승인</button>
-                                    <button onClick={() => handleRejectFriendRequest(notification)}>거절</button>
-                                    <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
-                                </>
-                            )
-                        )}
+                        ) : notification.type === 'FRIEND_REQUEST' ? (
+                            <>
+                                <button onClick={() => handleAcceptFriendRequest(notification)}>승인</button>
+                                <button onClick={() => handleRejectFriendRequest(notification)}>거절</button>
+                                <button onClick={() => handleMarkAsRead(notification.id)}>읽음 처리</button>
+                            </>
+                        ) : notification.type === 'PROJECT_INVITATION' ? (
+                            <>
+                                <button onClick={() => handleRespondToProjectInvitation(notification, 'accept')}>
+                                    초대 수락
+                                </button>
+                                <button onClick={() => handleRespondToProjectInvitation(notification, 'decline')}>
+                                    초대 거절
+                                </button>
+                            </>
+                        ) : null}
                     </li>
                 ))}
             </ul>
         </div>
     );
+    
 };
 
 export default NotificationList;
