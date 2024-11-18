@@ -3,6 +3,7 @@ import ReactModal from "react-modal";
 import axios from 'axios';
 import {projectStore} from '../../../store';
 import { useUser } from '../../../context/UserContext';
+import ShowVoting from './ShowVoting';
 
 
     // -- 고민 해볼것들 --  
@@ -150,6 +151,7 @@ const Voting = () => {
 
             <h3>투표 페이지</h3>
             <button onClick={onClickVotingHandler}>+ 새 투표</button>
+            <ShowVoting/>
 
         </>
         

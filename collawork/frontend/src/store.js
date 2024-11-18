@@ -59,7 +59,6 @@ export const calendarEvents = create((set, get) => ({
 
 }));
 
-}))
 
 export const stateValue = create((set, get)=> ({
     // projectPages의 show state 들 관리
