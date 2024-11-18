@@ -59,35 +59,6 @@ export const calendarEvents = create((set, get) => ({
 
 }));
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 4961340f0c51eb624928a805e5478f068fa1803c
-}))
-
-export const calendarEvents = create((set, get) => ({
-    id : '',
-    title : '',
-    start : '',
-    end : '',
-    allDay : true,
-    description : '',
-    createdBy : '',
-    createdAt : '',
-    projectId : '',
-
-    setId : (value) => {set({id: value})},
-    setTitle : (value) => {set({title: value})},
-    setStart : (value) => {set({start: value})},
-    setEnd : (value) => {set({end: value})},
-    setAllDay : (value) => {set({allDay: value})},
-    setDescription : (value) => {set({description: value})},
-    setCreatedBy : (value) => {set({createdBy: value})},
-    setCreatedAt : (value) => {set({createdAt: value})},
-    setProjectId : (value) => {set({projectId: value})}
-
-}));
 
 
 export const stateValue = create((set, get)=> ({
@@ -119,4 +90,4 @@ export const stateValue = create((set, get)=> ({
         set({voting : value})
     }
 
-}))
+}));
