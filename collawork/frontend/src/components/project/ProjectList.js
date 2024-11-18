@@ -39,7 +39,7 @@ const ProjectList = () => {
         })
         .then((response) => {
             setProjectName(response.data);
-            console.log("프로젝트 목록 ::", response.data); 
+            console.log("프로젝트 목록 ::"+ response.data); 
         })
         .catch((error) => {
             console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);

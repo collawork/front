@@ -5,7 +5,7 @@ import '../components/assest/css/Project.css';
 import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
 import { stateValue } from '../store';
-import Voting from '../components/project/Voting/NewVoting';
+import Voting from '../components/project/Voting/ShowVoting';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
 

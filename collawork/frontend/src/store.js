@@ -9,6 +9,7 @@ export const projectStore = create((set, get)=> ({
     managerName : '', // 프로젝트 생성자 이름
     projectData : '', // ProjectInformation 에서 불러온 project 관련 data 묶음
     userData : '', // ProjectInformation 에서 불러온 프로젝트 관리자의 data 묶음
+    voteList:[], // 입력받은 투표 항목 배열
 
     PlusProjectName: (value) => {
         set({projectName: value})
@@ -32,6 +33,10 @@ export const projectStore = create((set, get)=> ({
 
     PlusUserData: (value) => {
         set({userData: value})
+    },
+
+    PlusVoteList: (value) => {
+        set({voteList: value})
     }
 
 }))

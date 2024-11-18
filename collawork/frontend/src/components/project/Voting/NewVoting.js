@@ -13,19 +13,24 @@ import ShowVoting from './ShowVoting';
     // 4. 투표 결과 나만 보기 
 
 const API_URL = process.env.REACT_APP_API_URL;
-const Voting = () => {
 
-    const [show, setShow] = useState(false);
+const Voting = ({setModalShow}) => {
+
+    const [show, setShow] = useState(true);
+    // const [voteShow, setVoteShow] = useState(false);
     const [title, setTitle] = useState(""); // 투표 제목
     const [context, setContext] = useState(""); // 투표 설명
     const { userId } = useUser();
     const nextID = useRef(1);
     const {projectData} = projectStore(); 
     const [inputItems, setInputItems] = useState([{id:0, voteOption: ''}]); // id 와 배열 담을 변수
+    const [voteList, setVoteList] = useState([]);
+    const [voteData, setVoteData] = useState([]); // 투표 response 담기
+    let arr = [];
 
-    const onClickVotingHandler = () => {
-        setShow(true);
-    }
+    // const onClickVotingHandler = () => {
+    //     setShow(true);
+    // }
 
     // 투표 항목 추가
     function addInput(){ 
@@ -35,6 +40,7 @@ const Voting = () => {
         };
 
         setInputItems([...inputItems, input]);
+
         nextID.current += 1; 
     }
 
@@ -62,29 +68,73 @@ const Voting = () => {
     }
 
     function send(){ // voting insert 요청
+        
+
+        console.log(arr);
         const token = localStorage.getItem('token');
+        const url = `/api/user/projects/newvoting?votingName=aaa&projectId=14&createdUser=3&contents%5B%5D=${encodeURIComponent('sss')}`;
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
-            url: `${API_URL}/api/user/projects/newvoting`,
+            url: `${url}/api/user/projects/newvoting`,
             headers: { 'Authorization': `Bearer ${token}` },
             method: 'post',
-            params: { votingName:title, projectId:projectData.id, createdUser:userIdValue },
+            params: { votingName:title, projectId:projectData.id, createdUser:userIdValue, contents:arr},
             baseURL: 'http://localhost:8080',
-            withCredentials: true,
+
         }).then(function(response) {
 
-            console.log("newVoting : " + response);
-            console.log("newVoting : " + response.data);
+            console.log(response.data[0]);
+            console.log(response.data);
+            setVoteData(response.data[0]); // vote 정보 담음
         });
 
     }
 
+    // function contextSend(){
+
+    //     const token = localStorage.getItem('token');
+    //     const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+    //     axios({
+    //         url: `${API_URL}/api/user/projects/votecontents`,
+    //         headers: { 'Authorization': `Bearer ${token}` },
+    //         method: 'post',
+    //         params: { id: setVoteData.id , contents:inputItems},
+    //         baseURL: 'http://localhost:8080',
+    //         withCredentials: true,
+    //     }).then(function(response) {
+
+    //         console.log(response.data[0]);
+    //         console.log(response.data);
+    //         setVoteData(response.data[0]); 
+    //     });
+    // }
+
+
     const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log( title, context, inputItems);
-        console.log(title);
+        e.preventDefault();
+
+        // inputItems.map((inputItems)=>{
+        //     PlusVoteList(inputItems.voteOption)
+        // })
+        // console.log(voteList);
+       
+        for(var i=0; i<inputItems.length;i++){
+            // setVoteList((prev)=> [...prev, inputItems[i].voteOption]);
+            arr[i] = inputItems[i].voteOption;
+            console.log(inputItems[i].voteOption);
+            console.log(voteList);
+        }
+        console.log(arr);
+        setVoteList(arr);
+
+    
+       
+
         send();
-     
+       
+        // contextSend();
+        setShow(false);
+        setModalShow(false);
     }
 
 
@@ -149,16 +199,13 @@ const Voting = () => {
 
            </ReactModal>
 
-            <h3>투표 페이지</h3>
-            <button onClick={onClickVotingHandler}>+ 새 투표</button>
-            <ShowVoting/>
+            {/* {voteShow && <ShowVoting/>} */}
 
         </>
         
 
     )
-
-
-
 }
+
+
 export default Voting;
