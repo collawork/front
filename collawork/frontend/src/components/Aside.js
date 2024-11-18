@@ -179,13 +179,14 @@ const Aside = () => {
         e.preventDefault();
     
         const token = localStorage.getItem("token");
-        const participantIds = participants.map((participant) => participant.id);
-    
+
+        const participantIds = participants.map(participant => participant.id || participant);
+
         console.log("전송 데이터 확인:", {
             title,
             context,
             userId,
-            participants: participantIds, // 숫자 배열인지 확인해야됨
+            participants: participantIds, // 숫자 배열인지 확인
         });
     
         try {
@@ -202,6 +203,8 @@ const Aside = () => {
                 }
             );
     
+            console.log("전송 데이터 확인:", { title, context, userId, participants: participantIds });
+
             alert("프로젝트가 생성되었습니다.");
         } catch (error) {
             console.error("프로젝트 생성 중 오류 발생:", error.response?.data || error.message);
