@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import axios from 'axios';
+import '../components/assest/css/UserEditModal.css'
 
-const UserEditModal = ({ user, onClose }) => {
+const UserEditModal = ({ user, onClose, onUpdate }) => {
     const [editData, setEditData] = useState({
         username: user.username || '',
         company: user.company || '',
@@ -20,10 +21,12 @@ const UserEditModal = ({ user, onClose }) => {
         const token = localStorage.getItem('token');
 
         try {
-            await axios.put('http://localhost:8080/api/user/update', editData, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await axios.put('http://localhost:8080/api/user/update', editData, {
+                headers: { Authorization: `Bearer ${token}` },
             });
+
             alert('프로필이 성공적으로 업데이트되었습니다.');
+            onUpdate(editData); // 변경된 정보를 부모(MyProfileIcon.js)로 전달
             onClose();
         } catch (error) {
             console.error('프로필 업데이트 중 오류 발생:', error);
@@ -32,7 +35,13 @@ const UserEditModal = ({ user, onClose }) => {
     };
 
     return (
-        <ReactModal isOpen={true} onRequestClose={onClose} contentLabel="프로필 수정">
+        <ReactModal
+            isOpen={true}
+            onRequestClose={onClose}
+            contentLabel="프로필 수정"
+            className="ReactModal__Content"
+            overlayClassName="ReactModal__Overlay"
+        >
             <h2>프로필 수정</h2>
             <form onSubmit={handleSubmit}>
                 <label>이름</label>
@@ -64,7 +73,9 @@ const UserEditModal = ({ user, onClose }) => {
                     onChange={handleChange}
                 />
                 <button type="submit">저장</button>
-                <button onClick={onClose}>취소</button>
+                <button type="button" onClick={onClose}>
+                    취소
+                </button>
             </form>
         </ReactModal>
     );

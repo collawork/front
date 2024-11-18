@@ -8,16 +8,24 @@ import { useUser } from '../context/UserContext';
 
 const Layout = () => {
     const { userId } = useUser();
-    const [activeTab, setActiveTab] = useState('friends'); // friends 또는 participants
+    const [activeTab, setActiveTab] = useState('friends');
 
     const renderList = () => {
+        if (!userId) {
+            console.warn("userId가 아직 초기화되지 않았습니다.");
+            return <p>로딩 중...</p>;
+        }
+        console.log("activeTab : " + activeTab);
         if (activeTab === 'friends') {
             return <FriendList userId={userId} />;
         } else {
-            // 나중에 프로젝트 참여자 목록을 만들고 아래와 같이 설정
-            // return <ParticipantList projectId={/* 프로젝트 ID 값 설정 */} />;
+            return <p>참여자 목록 준비 중...</p>;
         }
     };
+
+    useEffect(() => {
+        console.log("Layout에서의 userId:", userId);
+    }, [userId]);
 
     return (
         <div className="layout-container">
@@ -27,9 +35,7 @@ const Layout = () => {
                 <div className="outlet-content">
                     <Outlet />
                 </div>
-                
                 <div className="participants">
-                    {/* 탭 버튼 */}
                     <div className="tab-buttons">
                         <button 
                             onClick={() => setActiveTab('friends')} 
@@ -44,13 +50,7 @@ const Layout = () => {
                             참여자 목록
                         </button>
                     </div>
-
-                    {/* 선택된 탭에 따라 렌더링되는 컴포넌트 */}
-                    <div className="friend-list-modal">
-                        {renderList()}
-                    </div>
-                    
-                    <div>Pagination or other content here</div>
+                    <div className="friend-list-modal">{renderList()}</div>
                 </div>
             </div>
         </div>
