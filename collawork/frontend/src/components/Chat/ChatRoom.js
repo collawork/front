@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
+import {projectStore} from '../../store';
 
 const ChatRoom = () => {
     const { chatRoomId } = useParams();
@@ -11,10 +12,14 @@ const ChatRoom = () => {
     const [webSocket, setWebSocket] = useState(null);
     const [senderId, setSenderId] = useState('');
     const [username, setUsername] = useState('');
-    const[roomName,setRoomName] = useState('');
+    const [roomName, setRoomName] = useState('');
+    const [isDeleteMode, setIsDeleteMode] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState([]);
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
-    
+    const {projectData} = projectStore();
+    console.log({projectData})
+
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -26,15 +31,13 @@ const ChatRoom = () => {
                     setSenderId(response.data.id);
                     setUsername(response.data.username);
                 } catch (error) {
-                    console.error('사용자 정보를 불러오는 중 에러 발생 : ', error);
+                    console.error('사용자 정보를 불러오는 중 에러 발생:', error);
                 }
             }
         };
         fetchUserData();
     }, [chatRoomId]);
 
-
-    
     useEffect(() => {
         const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
         const wsURL = `${wsProtocol}localhost:8080/chattingServer/${chatRoomId}`;
@@ -43,8 +46,6 @@ const ChatRoom = () => {
         ws.onopen = () => {
             console.log("WebSocket 연결 성공");
             fetchMessages();
-            const initialMessage = 'WebSocket 연결 성공';
-            setMessages(prev => [...prev, { type: 'info', message: initialMessage, sort: 'info' }]);
             ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
         };
 
@@ -56,7 +57,7 @@ const ChatRoom = () => {
                 time: timestamp,
                 sort: message.senderId === senderId ? 'sent' : 'received',
                 username: message.sender.username,
-                fileUrl: message.fileUrl || '', 
+                fileUrl: message.fileUrl || '',
             };
             setMessages(prev => [...prev, messageWithSort]);
         };
@@ -79,8 +80,6 @@ const ChatRoom = () => {
         };
     }, [chatRoomId, senderId, username]);
 
-
-
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -88,39 +87,35 @@ const ChatRoom = () => {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const formattedMessages = response.data.map(msg => ({
+                messageId: msg.id,
                 senderId: msg.senderId,
                 message: msg.content,
                 time: new Date(msg.createdAt).toLocaleTimeString(),
                 sort: msg.senderId === senderId ? 'sent' : 'received',
                 username: msg.sender.username,
                 type: msg.messageType,
-                fileUrl: msg.fileUrl || '', 
+                fileUrl: msg.fileUrl || ''
             }));
             setMessages(formattedMessages);
         } catch (error) {
             console.error("메시지 가져오기 오류:", error);
         }
-
     };
 
-
-    useEffect(()=>{
-    const fetchRoomName = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setRoomName(response.data);
-        } catch (error) {
-            console.error("채팅방 이름 가져오기 오류~:", error);
-        }
-    };
-            fetchRoomName();
-} ,[chatRoomId]);
-
-
-
+    useEffect(() => {
+        const fetchRoomName = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setRoomName(response.data);
+            } catch (error) {
+                console.error("채팅방 이름 가져오기 오류:", error);
+            }
+        };
+        fetchRoomName();
+    }, [chatRoomId]);
 
     const sendMessage = async (type = 'text') => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
@@ -195,15 +190,50 @@ const ChatRoom = () => {
         }
     }, [messages]);
 
+
+    const deleteSelectedMessages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:8080/api/chat/deleteMessages`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                data: { messageIds: selectedMessages },
+            });
+            setMessages((prevMessages) => prevMessages.filter((msg) => !selectedMessages.includes(msg.messageId)));
+            setSelectedMessages([]);
+            setIsDeleteMode(false);
+        } catch (error) {
+            console.error("메시지 삭제 오류:", error);
+        }
+    };
+
+    const rightClick = (event) => {
+        event.preventDefault();
+        setIsDeleteMode(true);
+    };
+    const handleCheckboxChange = (messageId) => {
+        setSelectedMessages((prevSelected) =>
+            prevSelected.includes(messageId)
+                ? prevSelected.filter((id) => id !== messageId)
+                : [...prevSelected, messageId]
+        );
+    };
+
     return (
         <div className="chat-container">
-            <h2>{roomName} </h2>
+            <h2>{roomName}</h2>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
-                {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sort}`}>
+                {messages.map((msg) => (
+                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={rightClick}>
+                         {isDeleteMode && (
+                            <input
+                                type="checkbox"
+                                checked={selectedMessages.includes(msg.messageId)}
+                                onChange={() => handleCheckboxChange(msg.messageId)}
+                            />
+                        )}
                         <strong>{msg.username}</strong>: 
                         {msg.type === 'file' ? (
-                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img)$/i) ? (
+                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img|jfif)$/i) ? (
                                 <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
                             ) : (
                                 <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
@@ -227,7 +257,9 @@ const ChatRoom = () => {
                 />
                 <input type="file" onChange={handleFileChange} />
                 <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                <button  className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
+                <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
+                <button onClick={() => setIsDeleteMode(false)}>취소</button>
+                {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
                 <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
             </div>
         </div>
