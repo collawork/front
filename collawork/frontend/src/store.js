@@ -7,8 +7,8 @@ export const projectStore = create((set, get)=> ({
     projectCreatedBy : '', // 프로젝트 생성자 
     managerEmail : '',  // 프로젝트 생성자 이메일
     managerName : '', // 프로젝트 생성자 이름
-    projectData : '',
-    userData : '',
+    projectData : '', // ProjectInformation 에서 불러온 project 관련 data 묶음
+    userData : '', // ProjectInformation 에서 불러온 프로젝트 관리자의 data 묶음
 
     PlusProjectName: (value) => {
         set({projectName: value})
@@ -61,3 +61,35 @@ export const calendarEvents = create((set, get) => ({
     setProjectId : (value) => {set({projectId: value})}
 
 }));
+
+
+export const stateValue = create((set, get)=> ({
+    // projectPages의 show state 들 관리
+
+    homeShow : '',
+    chatShow : '',
+    calShow : '',
+    notiShow : '',
+    voting : '',
+
+    setHomeShow : (value) => {
+        set({homeShow : value})
+    },
+
+    setChatShow : (value) => {
+        set({chatShow : value})
+    },
+
+    setCalShow : (value) => {
+        set({calShow : value})
+    },
+
+    setNotiShow : (value) => {
+        set({notiShow : value})
+    },
+
+    setVotig : (value) => {
+        set({voting : value})
+    }
+
+}))
