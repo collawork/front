@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserInfoModal from '../layout/UserInfoModal';
 import UserEditModal from '../layout/UserEditModal';
@@ -12,15 +12,14 @@ const MyProfileIcon = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const dropdownRef = useRef();
 
     const fetchUserInfo = async () => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get('http://localhost:8080/api/user/info', {
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                },
             });
             setUser(response.data);
         } catch (error) {
@@ -49,20 +48,15 @@ const MyProfileIcon = () => {
         navigate('/');
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+    const handleUpdate = (updatedData) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            ...updatedData,
+        }));
+    };
 
     return (
-        <div className="profile-icon-container" ref={dropdownRef}>
+        <div className="profile-icon-container">
             <img
                 src={user?.profileImageUrl || defaultImage}
                 alt="프로필"
@@ -77,7 +71,13 @@ const MyProfileIcon = () => {
                 </div>
             )}
             {isInfoModalOpen && <UserInfoModal user={user} onClose={() => setIsInfoModalOpen(false)} />}
-            {isEditModalOpen && <UserEditModal user={user} onClose={() => setIsEditModalOpen(false)} />}
+            {isEditModalOpen && (
+                <UserEditModal
+                    user={user}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onUpdate={handleUpdate} // 상태 업데이트 콜백 전달
+                />
+            )}
         </div>
     );
 };
