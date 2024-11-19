@@ -21,7 +21,7 @@ const Aside = () => {
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
-
+    
     // 친구 목록 가져오기
     const fetchFriends = async () => {
         const token = localStorage.getItem('token');
