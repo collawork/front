@@ -28,9 +28,6 @@ const Voting = ({setModalShow}) => {
     const [voteData, setVoteData] = useState([]); // 투표 response 담기
     let arr = [];
 
-    // const onClickVotingHandler = () => {
-    //     setShow(true);
-    // }
 
     // 투표 항목 추가
     function addInput(){ 
@@ -98,33 +95,10 @@ const Voting = ({setModalShow}) => {
 
     }
 
-    // function contextSend(){
-
-    //     const token = localStorage.getItem('token');
-    //     const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
-    //     axios({
-    //         url: `${API_URL}/api/user/projects/votecontents`,
-    //         headers: { 'Authorization': `Bearer ${token}` },
-    //         method: 'post',
-    //         params: { id: setVoteData.id , contents:inputItems},
-    //         baseURL: 'http://localhost:8080',
-    //         withCredentials: true,
-    //     }).then(function(response) {
-
-    //         console.log(response.data[0]);
-    //         console.log(response.data);
-    //         setVoteData(response.data[0]); 
-    //     });
-    // }
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // inputItems.map((inputItems)=>{
-        //     PlusVoteList(inputItems.voteOption)
-        // })
-        // console.log(voteList);
        
         for(var i=0; i<inputItems.length;i++){
             // setVoteList((prev)=> [...prev, inputItems[i].voteOption]);
@@ -135,7 +109,6 @@ const Voting = ({setModalShow}) => {
         console.log(arr);
         setVoteList(arr);
         send();
-        // contextSend();
         setShow(false);
         setModalShow(false);
     }
@@ -201,8 +174,6 @@ const Voting = ({setModalShow}) => {
          
 
            </ReactModal>
-
-            {/* {voteShow && <ShowVoting/>} */}
 
         </>
         
