@@ -29,7 +29,16 @@ const ProjectList = () => {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            data: { userId: userIdValue },
+
+            params: { userId: userIdValue, projectName: projectName}, 
+            withCredentials: true,
+        })
+        .then((response) => {
+            setProjectName(response.data);
+            console.log("프로젝트 목록 ::"+ response.data); 
+
+            //data: { userId: userIdValue },
+
         })
             .then((response) => {
                 // 응답이 배열인지 확인
