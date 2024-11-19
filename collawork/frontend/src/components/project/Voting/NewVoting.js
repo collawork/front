@@ -28,9 +28,6 @@ const Voting = ({setModalShow}) => {
     const [voteData, setVoteData] = useState([]); // 투표 response 담기
     let arr = [];
 
-    // const onClickVotingHandler = () => {
-    //     setShow(true);
-    // }
 
     // 투표 항목 추가
     function addInput(){ 
@@ -72,51 +69,36 @@ const Voting = ({setModalShow}) => {
 
         console.log(arr);
         const token = localStorage.getItem('token');
-        const url = `/api/user/projects/newvoting?votingName=aaa&projectId=14&createdUser=3&contents%5B%5D=${encodeURIComponent('sss')}`;
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
-            url: `${url}/api/user/projects/newvoting`,
-            headers: { 'Authorization': `Bearer ${token}` },
+            url: `${API_URL}/api/user/projects/newvoting`,
+            headers: { 'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
             method: 'post',
-            params: { votingName:title, projectId:projectData.id, createdUser:userIdValue, contents:arr},
-            baseURL: 'http://localhost:8080',
+            // body:{contents:arr},
+            data:{
+                votingName:title,
+                projectId:String(projectData.id), 
+                createdUser:String(userIdValue), 
+                contents:arr
+            },
 
         }).then(function(response) {
 
             console.log(response.data[0]);
             console.log(response.data);
             setVoteData(response.data[0]); // vote 정보 담음
+        }) .catch(function(error) {
+            console.error("Error during API request:", error.response || error.message);
         });
 
     }
-
-    // function contextSend(){
-
-    //     const token = localStorage.getItem('token');
-    //     const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
-    //     axios({
-    //         url: `${API_URL}/api/user/projects/votecontents`,
-    //         headers: { 'Authorization': `Bearer ${token}` },
-    //         method: 'post',
-    //         params: { id: setVoteData.id , contents:inputItems},
-    //         baseURL: 'http://localhost:8080',
-    //         withCredentials: true,
-    //     }).then(function(response) {
-
-    //         console.log(response.data[0]);
-    //         console.log(response.data);
-    //         setVoteData(response.data[0]); 
-    //     });
-    // }
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // inputItems.map((inputItems)=>{
-        //     PlusVoteList(inputItems.voteOption)
-        // })
-        // console.log(voteList);
        
         for(var i=0; i<inputItems.length;i++){
             // setVoteList((prev)=> [...prev, inputItems[i].voteOption]);
@@ -126,13 +108,7 @@ const Voting = ({setModalShow}) => {
         }
         console.log(arr);
         setVoteList(arr);
-
-    
-       
-
         send();
-       
-        // contextSend();
         setShow(false);
         setModalShow(false);
     }
@@ -198,8 +174,6 @@ const Voting = ({setModalShow}) => {
          
 
            </ReactModal>
-
-            {/* {voteShow && <ShowVoting/>} */}
 
         </>
         
