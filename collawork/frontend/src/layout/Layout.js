@@ -7,12 +7,14 @@ import PendingInvitations from "../components/project/PendingInvitations";
 import axios from "axios";
 import "../components/assest/css/Layout.css";
 import { useUser } from "../context/UserContext";
+import {stateValue} from "../store";
 
 const Layout = () => {
     const { userId } = useUser();
     const [activeTab, setActiveTab] = useState("friends");
     const [participants, setParticipants] = useState([]);
-    const [selectedProject, setSelectedProject] = useState(null);
+    const [selectedProject, setSelectedProject] = useState(null); 
+    const {setHomeShow,setChatShow, setCalShow,setNotiShow,setVotig} = stateValue();
 
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -99,11 +101,20 @@ const Layout = () => {
         }
     };
 
+    // const onClickHandler = () => {
+    //     setHomeShow(''),
+    //     setChatShow(''),
+    //     setCalShow(''),
+    //     setNotiShow(''),
+    //     setVotig('')
+    // }
+
     return (
         <div className="layout-container">
             <Search currentUser={{ id: userId }} />
-            <div className="main-content">
-                <Aside
+                <div className="main-content">
+                    {/* <button onClick={onClickHandler}>홈</button> */}
+                    <Aside
                     currentUser={{ id: userId }}
                     onProjectSelect={(project) => {
                         console.log("선택된 프로젝트 업데이트:", project);
