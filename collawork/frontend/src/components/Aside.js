@@ -7,7 +7,7 @@ import '../components/assest/css/Aside.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Aside = () => {
+const Aside = ({ onProjectSelect }) => {
     const [projectName, setProjectName] = useState([]);
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
@@ -21,6 +21,7 @@ const Aside = () => {
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+
     
     // 친구 목록 가져오기
     const fetchFriends = async () => {
@@ -111,7 +112,6 @@ const Aside = () => {
             setProjectName([]); // 오류 발생 시 빈 배열로 초기화
         }
     };
-
     
 
     // 초기 데이터 로드
@@ -216,7 +216,7 @@ const Aside = () => {
     
     
 
-    const modalCloseHandler = () => {
+    const modalCloseHandler = (project) => {
         setNewShow(false);
         setTitle("");
         setContext("");
@@ -225,6 +225,8 @@ const Aside = () => {
         setSelectedParticipants([]);
         setIsAllFriendsSelected(false);
         setIsAllParticipantsSelected(false);
+        onProjectSelect(project);
+        console.log("선택된 프로젝트:", project);
         fetchFriends();
     };
 
@@ -356,7 +358,9 @@ const Aside = () => {
                     {projectName.map((project, index) => (
                         <section key={index}>
                             <li>
-                                <button onClick={() => moveProjectHome(project)}>{project}</button>
+                                <button onClick={() => moveProjectHome(project)}>
+                                    {project || "이름 없음"} {/* 프로젝트 이름 표시 */}
+                                </button>
                             </li>
                         </section>
                     ))}
