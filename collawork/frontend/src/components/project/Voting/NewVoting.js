@@ -72,20 +72,28 @@ const Voting = ({setModalShow}) => {
 
         console.log(arr);
         const token = localStorage.getItem('token');
-        const url = `/api/user/projects/newvoting?votingName=aaa&projectId=14&createdUser=3&contents%5B%5D=${encodeURIComponent('sss')}`;
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
-            url: `${url}/api/user/projects/newvoting`,
-            headers: { 'Authorization': `Bearer ${token}` },
+            url: `${API_URL}/api/user/projects/newvoting`,
+            headers: { 'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
             method: 'post',
-            params: { votingName:title, projectId:projectData.id, createdUser:userIdValue, contents:arr},
-            baseURL: 'http://localhost:8080',
+            // body:{contents:arr},
+            data:{
+                votingName:title,
+                projectId:String(projectData.id), 
+                createdUser:String(userIdValue), 
+                contents:arr
+            },
 
         }).then(function(response) {
 
             console.log(response.data[0]);
             console.log(response.data);
             setVoteData(response.data[0]); // vote 정보 담음
+        }) .catch(function(error) {
+            console.error("Error during API request:", error.response || error.message);
         });
 
     }
@@ -126,12 +134,7 @@ const Voting = ({setModalShow}) => {
         }
         console.log(arr);
         setVoteList(arr);
-
-    
-       
-
         send();
-       
         // contextSend();
         setShow(false);
         setModalShow(false);
