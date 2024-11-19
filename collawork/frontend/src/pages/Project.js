@@ -1,6 +1,6 @@
 import ProjectHome from '../components/project/ProjectHome';
 import ChatRoom from "../components/Chat/ChatRoom";
-import ProjectCalendar from "../components/project/ProjectCalendar";
+//import ProjectCalendar from "../components/project/ProjectCalendar";
 import '../components/assest/css/Project.css'; 
 import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
@@ -8,6 +8,7 @@ import { stateValue } from '../store';
 import Voting from '../components/project/Voting/ShowVoting';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
+import { TestCalendar } from '../calendarTest/TestCalendar';
 
 
 
@@ -80,7 +81,8 @@ const Project = () => {
 
                 {homeShow && <ProjectHome />}
                 {chatShow && <ChatRoom />}
-                {calShow && <ProjectCalendar />}
+                {calShow && <TestCalendar />}
+                {/* {calShow && <ProjectCalendar />} */}
                 {notiShow && <Board />}
                 {voting && <Voting/>}
             </div>
