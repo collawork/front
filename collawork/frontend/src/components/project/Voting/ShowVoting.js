@@ -7,11 +7,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const VotingList = () => {  
     const [votingData, setVotingData] = useState([]);  
-    const [contentsData, setContentsData] = useState({}); // Store contents by votingId  
+    const [contentsData, setContentsData] = useState({});  
     const [modalShow, setModalShow] = useState(false);  
     const { projectData } = projectStore();  
 
-    // Fetch voting data
+   
     const Send = async () => {  
         try {  
             const token = localStorage.getItem('token');  
@@ -28,7 +28,7 @@ const VotingList = () => {
         }  
     };  
 
-    // Fetch contents data for a specific votingId
+  
     const contentsSend = async (votingId) => {  
         try {  
             const token = localStorage.getItem('token');  
@@ -41,21 +41,20 @@ const VotingList = () => {
             return response.data;  
         } catch (error) {  
             console.error(`Error fetching contents for votingId ${votingId}:`, error);  
-            return []; // Return an empty array on failure
+            return []; 
         }  
     };  
 
-    // Fetch both voting data and contents for each votingId
+    
     const handler = async () => {  
         try {  
             const votingResponse = await Send();  
 
             if (votingResponse && votingResponse.length > 0) {  
-                const allContents = {};  
-                // Fetch contents for each votingId
+                const allContents = {}; 
                 for (const vote of votingResponse) {  
                     const contents = await contentsSend(vote.id);  
-                    allContents[vote.id] = contents; // Store contents by votingId
+                    allContents[vote.id] = contents; 
                 }  
                 setContentsData(allContents);  
             } else {  
@@ -66,9 +65,9 @@ const VotingList = () => {
         }  
     };  
 
-         const onClickHandler = (e) => {
+    const onClickHandler = (e) => {
           console.log(e.target.value);
-         };
+    };
 
     return (  
         <>  
