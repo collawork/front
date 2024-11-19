@@ -22,7 +22,6 @@ const Aside = ({ onProjectSelect }) => {
     const addTitle = projectStore(state => state.PlusProjectName);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
 
-    
     // 친구 목록 가져오기
     const fetchFriends = async () => {
         const token = localStorage.getItem('token');
@@ -84,8 +83,7 @@ const Aside = ({ onProjectSelect }) => {
             console.error("토큰이 없습니다.");
             return;
         }
-        
-
+    
         try {
             console.log("전송할 데이터:", { userId: Number(userId) });
             const response = await axios.post(
@@ -98,9 +96,9 @@ const Aside = ({ onProjectSelect }) => {
                     },
                 }
             );
-
+    
             console.log("프로젝트 목록:", response.data);
-
+    
             if (Array.isArray(response.data)) {
                 setProjectName(response.data);
             } else {
@@ -109,9 +107,10 @@ const Aside = ({ onProjectSelect }) => {
             }
         } catch (error) {
             console.error("프로젝트 목록을 불러오는 중 오류 발생:", error);
-            setProjectName([]); // 오류 발생 시 빈 배열로 초기화
+            setProjectName([]);
         }
     };
+    
     
 
     // 초기 데이터 로드
@@ -216,7 +215,7 @@ const Aside = ({ onProjectSelect }) => {
     
     
 
-    const modalCloseHandler = (project) => {
+    const modalCloseHandler = () => {
         setNewShow(false);
         setTitle("");
         setContext("");
@@ -225,21 +224,25 @@ const Aside = ({ onProjectSelect }) => {
         setSelectedParticipants([]);
         setIsAllFriendsSelected(false);
         setIsAllParticipantsSelected(false);
-        onProjectSelect(project);
-        console.log("선택된 프로젝트:", project);
         fetchFriends();
     };
 
     // 프로젝트 선택 시 피드에 정보 띄우는 함수
-    const moveProjectHome = (projectName) => {
-        addTitle(projectName); // 전역 상태에 프로젝트 이름 저장
+    const moveProjectHome = (project) => {
+        console.log("선택된 프로젝트:", project); 
+        if (!project || !project.id || !project.name) {
+            console.error("프로젝트 데이터가 유효하지 않습니다:", project);
+            return;
+        }
+        addTitle(project.name); // 전역 상태에 프로젝트 이름 저장
         setHomeShow(true); // 홈 화면 상태 변경
         setChatShow(false);
         setCalShow(false);
         setNotiShow(false);
         setVotig(false);
-        console.log("선택된 프로젝트 이름:", projectName);
+        onProjectSelect(project);
     };
+    
 
     return (
         <>
@@ -355,12 +358,10 @@ const Aside = ({ onProjectSelect }) => {
                 </div>
 
                 <div className="aside-bottom">
-                    {projectName.map((project, index) => (
-                        <section key={index}>
+                    {projectName.map((project) => (
+                        <section key={project.id}>
                             <li>
-                                <button onClick={() => moveProjectHome(project)}>
-                                    {project || "이름 없음"} {/* 프로젝트 이름 표시 */}
-                                </button>
+                                <button onClick={() => moveProjectHome(project)}>{project.name}</button>
                             </li>
                         </section>
                     ))}
