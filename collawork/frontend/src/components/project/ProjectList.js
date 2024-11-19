@@ -21,39 +21,34 @@ const ProjectList = () => {
         const token = localStorage.getItem('token');
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
     
-        axios({
-            url: `/api/user/projects/selectAll`,
-            method: 'post',
-            baseURL: API_URL,
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-
-            params: { userId: userIdValue, projectName: projectName}, 
-            withCredentials: true,
-        })
+        axios.post(
+            `/api/user/projects/selectAll`,
+            { userId: userIdValue }, // 데이터를 JSON 형식으로 전송
+            {
+                baseURL: API_URL,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
         .then((response) => {
-            setProjectName(response.data);
-            console.log("프로젝트 목록 ::"+ response.data); 
-
-            //data: { userId: userIdValue },
-
+            console.log("프로젝트 목록:", response.data);
+    
+            // 응답이 배열인지 확인
+            if (Array.isArray(response.data)) {
+                setProjectName(response.data);
+            } else {
+                console.warn("API 응답이 배열이 아닙니다:", response.data);
+                setProjectName([]); // 배열이 아니면 빈 배열로 초기화
+            }
         })
-            .then((response) => {
-                // 응답이 배열인지 확인
-                if (Array.isArray(response.data)) {
-                    setProjectName(response.data);
-                } else {
-                    console.warn("API 응답이 배열이 아닙니다:", response.data);
-                    setProjectName([]); // 배열이 아니면 빈 배열로 초기화
-                }
-            })
-            .catch((error) => {
-                console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
-                setProjectName([]); // 오류 발생 시 빈 배열로 초기화
-            });
+        .catch((error) => {
+            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
+            setProjectName([]); // 오류 발생 시 빈 배열로 초기화
+        });
     };
+    
     
     
 
