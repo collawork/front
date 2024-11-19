@@ -14,7 +14,7 @@ const registerSchedule = async(id, title, start, end, allDay, description, creat
 
     console.log(`${API_URL}`);
 
-    axios(
+    await axios(
         {
             url:`${API_URL}/api/calendar/insert`,
             headers: {
