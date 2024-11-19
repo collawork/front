@@ -112,16 +112,13 @@ const NotificationList = ({ userId, fetchFriends }) => {
     };
 
     const handleRespondToProjectInvitation = async (notification, action) => {
-        console.log('Notification ID:', notification.id);
         try {
             const token = localStorage.getItem('token');
             if (!token) {
                 alert("로그인이 필요합니다.");
                 return;
             }
-
-            console.log('Token:', token);
-
+    
             const response = await axios.post(
                 `http://localhost:8080/api/notifications/${notification.id}/respond`,
                 null,
@@ -146,6 +143,7 @@ const NotificationList = ({ userId, fetchFriends }) => {
             console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
         }
     };
+    
     
     
 
