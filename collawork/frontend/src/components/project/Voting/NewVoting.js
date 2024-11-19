@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import axios from 'axios';
 import {projectStore} from '../../../store';
 import { useUser } from '../../../context/UserContext';
-import ShowVoting from './ShowVoting';
+// import ShowVoting from './ShowVoting';
 
 
     // -- 고민 해볼것들 --  
@@ -19,7 +19,10 @@ const Voting = ({setModalShow}) => {
     const [show, setShow] = useState(true);
     // const [voteShow, setVoteShow] = useState(false);
     const [title, setTitle] = useState(""); // 투표 제목
-    const [context, setContext] = useState(""); // 투표 설명
+    const [detail, setDetail] = useState(""); // 투표 설명
+    const [state, setState] = useState(""); // 투표 마감일 설정
+    const [dateShow, setDateShow] = useState(false); // 날짜 입력 창 show
+    const [selectedOption, setSelectedOption] = useState(null);
     const { userId } = useUser();
     const nextID = useRef(1);
     const {projectData} = projectStore(); 
@@ -59,13 +62,12 @@ const Voting = ({setModalShow}) => {
     const cancleHandler = () => {
         setShow(false);
         setTitle('');
-        setContext('');
+        setDetail('');
         setInputItems([{ id: 0, voteOption: '' }]);
         nextID.current = 1;
     }
 
     function send(){ // voting insert 요청
-        
 
         console.log(arr);
         const token = localStorage.getItem('token');
@@ -81,6 +83,7 @@ const Voting = ({setModalShow}) => {
                 votingName:title,
                 projectId:String(projectData.id), 
                 createdUser:String(userIdValue), 
+                detail:detail,
                 contents:arr
             },
 
@@ -113,8 +116,6 @@ const Voting = ({setModalShow}) => {
         setModalShow(false);
     }
 
-
-
     return(
         <>
         <ReactModal
@@ -141,9 +142,7 @@ const Voting = ({setModalShow}) => {
             >
             <form onSubmit={handleSubmit}>
             <input placeholder="제목을 입력하세요." type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
-            <br/>
-            {/* <br/>
-            <input placeholder="투표에 관한 설명 입력" value={context} onChange={(e) => setContext(e.target.value)} required /> */}
+            <input placeholder="투표에 관한 설명 입력" value={detail} onChange={(e) => setDetail(e.target.value)} required />
             <br/>
             <br/>
             {inputItems.map((item, index) => ( <>
@@ -162,10 +161,36 @@ const Voting = ({setModalShow}) => {
              )}
              </label>
           </>))}
-                <br/>
-                <br/>
+                <div className="radio-group">
+
                 <label>투표 마감일</label>
-                <input type="date" />
+                <div>
+                 <input 
+                    className="radio-item"
+                    type="radio"
+                    value={1}
+                    checked={selectedOption === 1}
+                    onChange={() => {
+                        setSelectedOption(1);
+                        setDateShow(true);
+                    }}/>
+                    <label>날짜 지정</label>
+
+                    <input 
+                    className="radio-item"
+                    type="radio"
+                    value={2}
+                    checked={selectedOption === 2}
+                    onChange={() => {
+                        setSelectedOption(2);
+                        setDateShow(false);
+                    }}/>
+                    <label>사용자 별도 지정</label> 
+                    </div>
+                    {dateShow && <input type="date" />}
+                    </div>
+
+                    
                 <br/>
                 <br/>
                 <button type="submit">저장</button>
