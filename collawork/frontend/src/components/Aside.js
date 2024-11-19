@@ -83,8 +83,10 @@ const Aside = () => {
             console.error("토큰이 없습니다.");
             return;
         }
+        
 
         try {
+            console.log("전송할 데이터:", { userId: Number(userId) });
             const response = await axios.post(
                 `${API_URL}/api/user/projects/selectAll`,
                 { userId: Number(userId) },

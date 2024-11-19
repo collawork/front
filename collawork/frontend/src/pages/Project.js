@@ -13,7 +13,6 @@ import { TestCalendar } from '../calendarTest/TestCalendar';
 
 
 const Project = () => {
-
     
     const token = localStorage.getItem("token");
     console.log("현재 로그인한 사용자의 token : " + token);
