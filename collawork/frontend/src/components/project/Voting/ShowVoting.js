@@ -24,7 +24,7 @@ const API_URL = process.env.REACT_APP_API_URL;
         }, [modalShow, userId,setModalShow ]);
 
     const handleModalClose = () => {
-        setModalShow(false); 
+        setModalShow(false);
         handler(); 
           };
 
@@ -86,15 +86,13 @@ const API_URL = process.env.REACT_APP_API_URL;
                 console.log("요청 오류");
                 return null;
               }
-
-       
         } catch (error) {
         console.error(`vote_record 데이터 오류 ${voteId}:`, error);
         return null;  
         }
     };
 
-    // 각 투표 별 정보 조회 handler(1. 기본 투표 정보  2.투표 항목  )
+    // 각 투표 별 정보 조회 handler(1. 기본 투표 정보  2.투표 항목 )
     const handler = async () => {
     const votingResponse = await Send(); // 1
     console.log(votingResponse);
@@ -133,6 +131,21 @@ const API_URL = process.env.REACT_APP_API_URL;
         });
     }
 
+    // // (투표 후) 항목들에 대한 유저들의 투표 정보들
+    // function optionSend(voteId){
+    //     const token = localStorage.getItem('token');
+    //     console.log("봐야되는 부분 :: " + voteId);
+    //     axios({
+    //     url: `${API_URL}/api/user/projects/VoteOptionUsers`,
+    //     headers: { 'Authorization': `Bearer ${token}` },
+    //     method: 'post',
+    //     params: {votingId: voteId}, // 투표 고유 id, 투표 항목 id, 사용자id
+    //     }).then(function (response) {
+    //         console.log(response);
+    //         console.log(response.data);
+    //     });
+    // }
+
     // 투표하기! 를 누른 후 handlerSubmit
     const handleSubmit = (e, voteId) => {
         e.preventDefault();
@@ -141,12 +154,12 @@ const API_URL = process.env.REACT_APP_API_URL;
        
         console.log('투표한 vote.id:', voteId); // 투표하기를 누른 voteId
         console.log("선택 option:", state); // 투표할 항목인 contentsId
-
         userVote(voteId); // 투표 항목 저장
 
         localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: state }));
 
-        handler(voteId); // 
+        handler(voteId); 
+        // optionSend(voteId); // 다른 유저들의 투표정보들 까지도 불러옴
         alert("투표가 완료되었습니다!");
     };
 
@@ -191,7 +204,7 @@ const API_URL = process.env.REACT_APP_API_URL;
                                     name={`vote-${vote.id}`}
                                     onChange={(e) => setState(e.target.value)}
                                     value={content.id}
-                                    disabled={!!userVotes[vote.id]} // Disable radio if already voted
+                                    disabled={!!userVotes[vote.id]} 
                                     style={{ marginRight: "8px" }}
                                   />
                                   {content.votingContents}
@@ -201,7 +214,7 @@ const API_URL = process.env.REACT_APP_API_URL;
                           })}
                           <button
                             type="submit"
-                            disabled={!!userVotes[vote.id]} // Disable button if already voted
+                            disabled={!!userVotes[vote.id]} 
                             style={{
                               backgroundColor: !!userVotes[vote.id]
                                 ? "gray"
