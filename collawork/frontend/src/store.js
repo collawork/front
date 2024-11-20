@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { create } from "zustand";
 
 export const projectStore = create((set, get)=> ({
@@ -51,6 +52,8 @@ export const calendarEvents = create((set, get) => ({
     createdBy : '',
     createdAt : '',
     groupId : '',
+    editable : true,
+    color : '',
 
     setId : (value) => {set({id: value})},
     setTitle : (value) => {set({title: value})},
@@ -60,7 +63,9 @@ export const calendarEvents = create((set, get) => ({
     setDescription : (value) => {set({description: value})},
     setCreatedBy : (value) => {set({createdBy: value})},
     setCreatedAt : (value) => {set({createdAt: value})},
-    setGroupId : (value) => {set({groupId: value})}
+    setGroupId : (value) => {set({groupId: value})},
+    setEdiable : (value) => {set({editable: value})},
+    setColor : (value) => {set({color: value})}
 
 }));
 

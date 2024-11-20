@@ -35,10 +35,12 @@ export const TestCalendar = () => {
         id, title, start, end, allDay, description, createdBy, createdAt, groupId,
         setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setGroupId
     } = calendarEvents();
+    const editable = true
 
     const [events, setEvents] = useState([]);
     const [isEventAdded, setIsEventAdded] = useState(false);
-    const [selectedEvent, setSelectedEvent] = useState();
+    const [selectedEvent, setSelectedEvent] = useState({});
+
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -47,20 +49,18 @@ export const TestCalendar = () => {
 
     useEffect(() => {
 
-        setAllDay(true);
-
         const fetchProjectId = async () => {
             setSelectedProjectId(projectData.id);
             console.log(projectData);
         };
         fetchProjectId();
-        console.log("선택된 프로젝트 아이디 값 = " + selectedProjectId);
+        console.log("선택된 프로젝트 아이디 값 = ", selectedProjectId);
 
         const fetchUserInfo = async () => {
             setCreatedBy(userId);
         };
         fetchUserInfo();
-        console.log("createdBy = " + createdBy);
+        console.log("createdBy = ", createdBy);
 
         // 모든 일정 조회
         const fetchEvents = async () => {
@@ -103,33 +103,38 @@ export const TestCalendar = () => {
         setIsEventAdded(false);
 
     }, [selectedProjectId, userId, isEventAdded]);
-    console.log("이거 좀 보세요!!!! 이벤트 객체들이예요~!!!!!!", events);
-    console.log("이거시가 선택된 프로젝트 아이디!!!!!!!!", selectedProjectId);
+
 
     //// userId와 projectId 필터를 거친 모든 일정 조회
     const filterEventsByProjectId = (events, selectedProjectId) => {
-        return events.filter(event => event.groupId === selectedProjectId);
+
+
+        return events.filter(event => event.groupId == selectedProjectId);
     };
 
     const changeView = () => {
         setCurrentView(currentView === 'dayGridMonth' ? 'timeGridWeek' : 'dayGridMonth');
-        setAllDay(currentView === 'dayGridMonth' ? true : false)
-        console.log("지금이니..?!!~!!! " + allDay);
-        console.log("현재 뷰 " + currentView);
-        console.log("현재 allday 여부 " + allDay);
-
     };
-    console.log("현재 뷰 " + currentView);
-    console.log("현재 allday 여부 " + allDay);
 
     const handleModalClose = () => {
         setModalIsOpen(false);
     };
 
     const handleDateSelect = async (info) => {
+
+        let allDay;
+        if (info.startStr.length < 11) {
+            allDay = true;
+
+        } else {
+            allDay = false;
+
+        }
+        console.log("날짜 길이가 짧으면 allDay true고, 길면 false : ", allDay); // 근데 시점이.. 문제네..
+
         // 드래그하여 선택한 영역에 대한 정보를 받습니다.
-         const newEvent = {
-            title: '새로운 일정',
+        const newEvent = {
+            title: "",
             start: info.startStr,
             end: info.endStr,
             allDay: allDay,
@@ -139,54 +144,70 @@ export const TestCalendar = () => {
         };
         console.log("시분이 있고 없는 데이터의 길이를 확인해 보자!! ", info.startStr);
         console.log("!!!새로운 이벤트 객체의 올데이 여부 : " + newEvent.allDay);
-        // setEvents([...events, newEvent]);
-        if (info.startStr.length < 11) {
-            setAllDay(true);
-        } else setAllDay(false);
-        console.log("날짜 길이가 짧으면 allDay true고, 길면 false : ",allDay); // 근데 시점이.. 문제네..
 
-        await CalendarService.registerSchedule(newEvent);
+
+        let result = await CalendarService.registerSchedule(newEvent);
         setIsEventAdded(true);
-        console.log("testttt")
+
         // 선택 영역을 해제합니다.
         info.view.calendar.unselect();
+        if (result == false) {
+            alert("일정 등록에 실패하였습니다.")
+        }
+        handleModalClose();
 
     };
 
-    // 일정의 제목 설명 update ------- 진행 중
+    // 특정 일정의 제목 설명을 가져오는 함수
     const handleEventClick = (info) => {
-        setSelectedEvent(info.event);
+
+        setId(info.event.id);
+        setTitle(info.event.title);
+        setDescription(info.event.extendedProps.description);
+
         setModalIsOpen(true);
+
+
     };
+
+    // 일정 업데이트
+    const updateSelectedEvent = async (e) => {
+
+        e.preventDefault();
+
+        let result = await CalendarService.updateEvent(id, title, description);
+        if (result == false) {
+            alert("일정 변경에 실패하였습니다.")
+        }
+        setIsEventAdded(true);
+        handleModalClose();
+    }
 
     // 일정 update ------ 진행 중 
-    const handleSaveEvent = () => {
+    // const handleSaveEvent = () => {
 
-        if (selectedEvent) {
-            const updatedEvents = events.map(event => {
-                if (event.id === selectedEvent.id) {
-                    return { ...event, ...selectedEvent };
-                }
-                return event;
-            });
-            setEvents(updatedEvents);
-            handleModalClose();
-        };
-    };
+    //     if (selectedEvent) {
+    //         const updatedEvents = events.map(event => {
+    //             if (event.id === selectedEvent.id) {
+    //                 return { ...event, ...selectedEvent };
+    //             }
+    //             return event;
+    //         });
+    //         setEvents(updatedEvents);
+    //         handleModalClose();
+    //     };
+    // };
 
     // 일정의 날짜 updata ---- 진행 중
     const handleEventDrop = (info) => {
-        const updatedEvents = events.map(event => {
-            if (event.id === info.event.id) {
-                return {
-                    ...event,
-                    start: info.event.startStr
-                };
-            }
-            return event;
+        const updatedEvents = events.map((event) => {
+          if (event.id === info.event.id) {
+            return { ...event, start: info.event.startStr }; // 변경된 시작 시간으로 업데이트
+          }
+          return event; // 다른 이벤트는 그대로 유지
         });
         setEvents(updatedEvents);
-    };
+      };
 
     return (
         <div>
@@ -195,7 +216,7 @@ export const TestCalendar = () => {
                 key={currentView}
                 initialView={currentView}
                 weekends={true}
-                editable={true}
+                editable={false}
                 selectable={true}
                 select={handleDateSelect}
                 eventClick={handleEventClick}
@@ -231,15 +252,17 @@ export const TestCalendar = () => {
                 style={customStyles}
                 contentLabel="Example Modal"
             >
-                <form>
-                    제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} />
-                    설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} />
+                <form onSubmit={updateSelectedEvent}>
+                    제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' />
+                    설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} value={description} placeholder='일정의 상세 설명을 입력해 주세요.' />
+
+                    <button type='submit'>저장</button>
                     {/* 해당 이벤트에 마우스를 올리면 설명이 1초 뒤에 보이도록 해보자..! */}
                 </form>
                 {/* <DatePicker selected={start} onChange={(date) => setStart(date)} style={{ width: 200, marginRight: 10 }} />
                 <DatePicker selected={end} onChange={(date) => setEnd(date)} style={{ width: 200, marginRight: 10 }} />  날짜 변경은 풀캘린더에서 제공해주는 방법을 이용.. */}
-                <button onClick={handleSaveEvent}>저장</button>
-                <button onClick={handleModalClose}>취소</button>
+                {/* <button onClick={handleSaveEvent}>저장</button> */}
+                {/* <button onClick={handleModalClose}>취소</button> */}
             </ReactModal>
         </div>
 
