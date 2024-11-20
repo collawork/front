@@ -98,19 +98,24 @@ const InviteModal = ({
             const participantIds = invites.map((invite) => invite.id);
             const token = localStorage.getItem("token");
     
-            await axios.post(
+            const response = await axios.post(
                 `${API_URL}/api/user/projects/${selectedProject.id}/participants/invite`,
                 { participants: participantIds },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
     
-            alert("초대가 성공적으로 발송되었습니다.");
+            alert(response.data);
             onClose();
         } catch (error) {
-            console.error("초대 실패:", error);
-            alert("초대에 실패했습니다.");
+            if (error.response && error.response.data.includes("이미 참여 중")) {
+                setWarningMessage(error.response.data);
+            } else {
+                alert("초대에 실패했습니다.");
+            }
         }
     };
+    
+    
     
 
     const addParticipants = () => {
