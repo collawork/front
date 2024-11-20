@@ -14,8 +14,8 @@ const API_URL = process.env.REACT_APP_API_URL;
     const [state, setState] = useState();
     const { userId } = useUser();
     const [endVotingId, setEndVotingId] = useState(); // 투표 한 유저의 투표 한 투표id
-    const [endVotingContents, setEndVotingContents] = useState(); // 투표 한 유저의 투표 한 항목
     const [userVotes, setUserVotes] = useState({}); // 각 투표별로 상태를 관리하기 위한 상태 객체 추가
+    const [use, setUse] = useState();
 
     useEffect(() => {
         if(userId){
@@ -105,14 +105,11 @@ const API_URL = process.env.REACT_APP_API_URL;
             console.log(contents);
             allContents[vote.id] = contents;
             const userVoteContents = await userVoteSend(vote.id); // 3(유저의 투표한 정보 불러오기) // 투표 별
+           
             console.log(userVoteContents);
 
         if (userVoteContents !== null) {
             // 만약 투표를 한 유저면,
-        // localStorage.setItem(`userVote_${vote.id}`, JSON.stringify(userVoteContents));
-          // setEndVotingId(userVoteContents[0]); // 투표 id
-          // setEndVotingContents(userVoteContents[1]); // 투표 한 항목 id
-
           setUserVotes(prev => ({
             ...prev,
             [vote.id]: {contentsId:userVoteContents[1], voteId:userVoteContents[0] }
@@ -140,18 +137,12 @@ const API_URL = process.env.REACT_APP_API_URL;
     const handleSubmit = (e, voteId) => {
         e.preventDefault();
 
-    // 투표를 한 사용자가 다시 투표하기 버튼을 누른다면
-        if (endVotingId === voteId) {
-         alert("이미 진행하신 투표입니다.");
-        return; 
-        }
-
+         // 투표를 한 사용자가 다시 투표하기 버튼을 누른다면
+       
         console.log('투표한 vote.id:', voteId); // 투표하기를 누른 voteId
         console.log("선택 option:", state); // 투표할 항목인 contentsId
 
         userVote(voteId); // 투표 항목 저장
-        // setEndVotingId(voteId);
-        // setEndVotingContents(state);
 
         localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: state }));
 
@@ -159,60 +150,84 @@ const API_URL = process.env.REACT_APP_API_URL;
         alert("투표가 완료되었습니다!");
     };
 
-    return ( 
-        <> 
-            <h3>투표 페이지</h3> 
-            <button onClick={() => setModalShow(true)}>+ 새 투표</button> 
-
-            {modalShow && <NewVoting setModalShow={setModalShow} handleModalClose={handleModalClose} />} 
-
-            <div> 
-                {Array.isArray(votingData) && votingData.map((vote) => ( 
-                    <section key={vote.id}> 
-                        <h3>투표 이름: {vote.votingName}</h3> 
-                        <h5>- {vote.votingDetail}</h5> 
-                        <ul style={{ listStyleType: "none", padding: 0 }}> 
-                            <li><strong>ID:</strong> {vote.id}</li> 
-                            <li><strong>작성자:</strong> {vote.createdUser}</li> 
-                            <li>작성일: {new Date(vote.createdAt).toLocaleDateString()}</li> 
-                            <li> 
-                                <strong>투표 항목:</strong> 
-                                {Array.isArray(contentsData[vote.id]) && contentsData[vote.id].length > 0 ? ( 
-                                    <form onSubmit={(e) => handleSubmit(e, vote.id)}> 
-                                        {contentsData[vote.id].map((content, idx) => { 
-                                            const isVoted = userVotes[vote.id]?.contentsId === content.id; 
-                                            return ( 
-                                                <div key={idx} style={{ marginBottom: '8px' }}> 
-                                                    <label 
-                                                        style={{ color: isVoted ? 'red' : 'black' }} 
-                                                    > 
-                                                        <input 
-                                                            type="radio" 
-                                                            name={`vote-${vote.id}`} 
-                                                            onChange={(e) => setState(e.target.value)} 
-                                                            value={content.id} 
-                                                            disabled={isVoted} 
-                                                            style={{ marginRight: '8px' }} 
-                                                        /> 
-                                                        {content.votingContents} 
-                                                    </label> 
-                                                </div> 
-                                            ); 
-                                        })} 
-                                        <button type="submit" disabled={!!userVotes[vote.id]}>투표하기</button> 
-                                    </form> 
-                                ) : ( 
-                                    <p>내용이 없습니다.</p> 
-                                )} 
-                            </li> 
-                        </ul> 
-                        <br /> 
-                        <br /> 
-                    </section> 
-                ))} 
-            </div> 
-        </> 
-    ); 
-}; 
-
-export default VotingList;
+    return (
+        <>
+          <h3>투표 페이지</h3>
+          <button onClick={() => setModalShow(true)}>+ 새 투표</button>
+    
+          {modalShow && (
+            <NewVoting setModalShow={setModalShow} handleModalClose={handleModalClose} />
+          )}
+    
+          <div>
+            {Array.isArray(votingData) &&
+              votingData.map((vote) => (
+                <section key={vote.id}>
+                  <h3>투표 이름: {vote.votingName}</h3>
+                  <h5>- {vote.votingDetail}</h5>
+                  <ul style={{ listStyleType: "none", padding: 0 }}>
+                    <li>
+                      <strong>ID:</strong> {vote.id}
+                    </li>
+                    <li>
+                      <strong>작성자:</strong> {vote.createdUser}
+                    </li>
+                    <li>작성일: {new Date(vote.createdAt).toLocaleDateString()}</li>
+                    <li>
+                      <strong>투표 항목:</strong>
+                      {Array.isArray(contentsData[vote.id]) &&
+                      contentsData[vote.id].length > 0 ? (
+                        <form onSubmit={(e) => handleSubmit(e, vote.id)}>
+                          {contentsData[vote.id].map((content, idx) => {
+                            const isVoted =
+                              userVotes[vote.id]?.contentsId === content.id;
+                            return (
+                              <div key={idx} style={{ marginBottom: "8px" }}>
+                                <label
+                                  style={{ color: isVoted ? "red" : "black" }}
+                                >
+                                  <input
+                                    type="radio"
+                                    name={`vote-${vote.id}`}
+                                    onChange={(e) => setState(e.target.value)}
+                                    value={content.id}
+                                    disabled={!!userVotes[vote.id]} // Disable radio if already voted
+                                    style={{ marginRight: "8px" }}
+                                  />
+                                  {content.votingContents}
+                                </label>
+                              </div>
+                            );
+                          })}
+                          <button
+                            type="submit"
+                            disabled={!!userVotes[vote.id]} // Disable button if already voted
+                            style={{
+                              backgroundColor: !!userVotes[vote.id]
+                                ? "gray"
+                                : "#007bff",
+                              color: "white",
+                              padding: "8px 16px",
+                              border: "none",
+                              borderRadius: "4px",
+                              cursor: !!userVotes[vote.id] ? "not-allowed" : "pointer",
+                            }}
+                          >
+                            투표하기
+                          </button>
+                        </form>
+                      ) : (
+                        <p>내용이 없습니다.</p>
+                      )}
+                    </li>
+                  </ul>
+                  <br />
+                  <br />
+                </section>
+              ))}
+          </div>
+        </>
+      );
+    };
+    
+    export default VotingList;
