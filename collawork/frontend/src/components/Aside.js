@@ -34,7 +34,10 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     
         try {
             const response = await axios.get(`${API_URL}/api/friends/list`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
                 params: { userId },
             });
     
@@ -130,8 +133,6 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
             );
 
             setUserRole(response.data.role);
-            console.log("----------------projectId : ", projectId);
-            console.log("----------------userRole : ",userRole);
         } catch (error) {
             console.error("사용자의 프로젝트 역할을 가져오는 중 오류 발생:", error);
         }
