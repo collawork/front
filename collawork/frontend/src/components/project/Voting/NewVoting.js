@@ -14,7 +14,7 @@ import { useUser } from '../../../context/UserContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Voting = ({setModalShow}) => {
+const Voting = ({setModalShow,handleModalClose }) => {
 
     const [show, setShow] = useState(true);
     // const [voteShow, setVoteShow] = useState(false);
@@ -107,13 +107,13 @@ const Voting = ({setModalShow}) => {
             // setVoteList((prev)=> [...prev, inputItems[i].voteOption]);
             arr[i] = inputItems[i].voteOption;
             console.log(inputItems[i].voteOption);
-            console.log(voteList);
         }
         console.log(arr);
         setVoteList(arr);
         send();
         setShow(false);
         setModalShow(false);
+        handleModalClose();
     }
 
     return(
