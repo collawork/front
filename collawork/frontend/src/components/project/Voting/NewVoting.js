@@ -3,6 +3,7 @@ import ReactModal from "react-modal";
 import axios from 'axios';
 import {projectStore} from '../../../store';
 import { useUser } from '../../../context/UserContext';
+// import ShowVoting from './ShowVoting';
 
 
     // -- 고민 해볼것들 --  
@@ -12,19 +13,24 @@ import { useUser } from '../../../context/UserContext';
     // 4. 투표 결과 나만 보기 
 
 const API_URL = process.env.REACT_APP_API_URL;
-const Voting = () => {
 
-    const [show, setShow] = useState(false);
+const Voting = ({setModalShow}) => {
+
+    const [show, setShow] = useState(true);
+    // const [voteShow, setVoteShow] = useState(false);
     const [title, setTitle] = useState(""); // 투표 제목
-    const [context, setContext] = useState(""); // 투표 설명
+    const [detail, setDetail] = useState(""); // 투표 설명
+    const [state, setState] = useState(""); // 투표 마감일 설정
+    const [dateShow, setDateShow] = useState(false); // 날짜 입력 창 show
+    const [selectedOption, setSelectedOption] = useState(null);
     const { userId } = useUser();
     const nextID = useRef(1);
     const {projectData} = projectStore(); 
     const [inputItems, setInputItems] = useState([{id:0, voteOption: ''}]); // id 와 배열 담을 변수
+    const [voteList, setVoteList] = useState([]);
+    const [voteData, setVoteData] = useState([]); // 투표 response 담기
+    let arr = [];
 
-    const onClickVotingHandler = () => {
-        setShow(true);
-    }
 
     // 투표 항목 추가
     function addInput(){ 
@@ -34,6 +40,7 @@ const Voting = () => {
         };
 
         setInputItems([...inputItems, input]);
+
         nextID.current += 1; 
     }
 
@@ -55,38 +62,59 @@ const Voting = () => {
     const cancleHandler = () => {
         setShow(false);
         setTitle('');
-        setContext('');
+        setDetail('');
         setInputItems([{ id: 0, voteOption: '' }]);
         nextID.current = 1;
     }
 
     function send(){ // voting insert 요청
+
+        console.log(arr);
         const token = localStorage.getItem('token');
         const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         axios({
             url: `${API_URL}/api/user/projects/newvoting`,
-            headers: { 'Authorization': `Bearer ${token}` },
+            headers: { 'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
             method: 'post',
-            params: { votingName:title, projectId:projectData.id, createdUser:userIdValue },
-            baseURL: 'http://localhost:8080',
-            withCredentials: true,
+            // body:{contents:arr},
+            data:{
+                votingName:title,
+                projectId:String(projectData.id), 
+                createdUser:String(userIdValue), 
+                detail:detail,
+                contents:arr
+            },
+
         }).then(function(response) {
 
-            console.log("newVoting : " + response);
-            console.log("newVoting : " + response.data);
+            console.log(response.data[0]);
+            console.log(response.data);
+            setVoteData(response.data[0]); // vote 정보 담음
+        }) .catch(function(error) {
+            console.error("Error during API request:", error.response || error.message);
         });
 
     }
 
+
     const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log( title, context, inputItems);
-        console.log(title);
+        e.preventDefault();
+
+       
+        for(var i=0; i<inputItems.length;i++){
+            // setVoteList((prev)=> [...prev, inputItems[i].voteOption]);
+            arr[i] = inputItems[i].voteOption;
+            console.log(inputItems[i].voteOption);
+            console.log(voteList);
+        }
+        console.log(arr);
+        setVoteList(arr);
         send();
-     
+        setShow(false);
+        setModalShow(false);
     }
-
-
 
     return(
         <>
@@ -114,9 +142,7 @@ const Voting = () => {
             >
             <form onSubmit={handleSubmit}>
             <input placeholder="제목을 입력하세요." type="text" value={title} onChange={(e) => setTitle(e.target.value)} required/>
-            <br/>
-            {/* <br/>
-            <input placeholder="투표에 관한 설명 입력" value={context} onChange={(e) => setContext(e.target.value)} required /> */}
+            <input placeholder="투표에 관한 설명 입력" value={detail} onChange={(e) => setDetail(e.target.value)} required />
             <br/>
             <br/>
             {inputItems.map((item, index) => ( <>
@@ -135,10 +161,36 @@ const Voting = () => {
              )}
              </label>
           </>))}
-                <br/>
-                <br/>
+                <div className="radio-group">
+
                 <label>투표 마감일</label>
-                <input type="date" />
+                <div>
+                 <input 
+                    className="radio-item"
+                    type="radio"
+                    value={1}
+                    checked={selectedOption === 1}
+                    onChange={() => {
+                        setSelectedOption(1);
+                        setDateShow(true);
+                    }}/>
+                    <label>날짜 지정</label>
+
+                    <input 
+                    className="radio-item"
+                    type="radio"
+                    value={2}
+                    checked={selectedOption === 2}
+                    onChange={() => {
+                        setSelectedOption(2);
+                        setDateShow(false);
+                    }}/>
+                    <label>사용자 별도 지정</label> 
+                    </div>
+                    {dateShow && <input type="date" />}
+                    </div>
+
+                    
                 <br/>
                 <br/>
                 <button type="submit">저장</button>
@@ -148,15 +200,11 @@ const Voting = () => {
 
            </ReactModal>
 
-            <h3>투표 페이지</h3>
-            <button onClick={onClickVotingHandler}>+ 새 투표</button>
-
         </>
         
 
     )
-
-
-
 }
+
+
 export default Voting;
