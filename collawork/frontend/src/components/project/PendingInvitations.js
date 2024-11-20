@@ -44,17 +44,17 @@ const PendingInvitations = ({ projectId, onInvitationChange }) => {
         fetchPendingInvitations();
     }, [projectId]);
 
-    const handleAccept = async (invitation) => {
-        // 승인 처리
-        console.log("승인 요청:", invitation);
-        onInvitationChange(); // 상태 변경 후 목록 갱신
-    };
+    // const handleAccept = async (invitation) => {
+    //     // 승인 처리
+    //     console.log("승인 요청:", invitation);
+    //     onInvitationChange(); // 상태 변경 후 목록 갱신
+    // };
 
-    const handleReject = async (invitation) => {
-        // 거절 처리
-        console.log("거절 요청:", invitation);
-        onInvitationChange(); // 상태 변경 후 목록 갱신
-    };
+    // const handleReject = async (invitation) => {
+    //     // 거절 처리
+    //     console.log("거절 요청:", invitation);
+    //     onInvitationChange(); // 상태 변경 후 목록 갱신
+    // };
 
     return (
         <div>
