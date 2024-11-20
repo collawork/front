@@ -145,7 +145,7 @@ const InviteModal = ({
             setWarningMessage("");
         }
     }, [isOpen]);
-
+    
     if (!isOpen) return null;
 
     return (
@@ -194,7 +194,7 @@ const InviteModal = ({
                         <button onClick={removeParticipants}>{'<<'}</button>
                     </div>
 
-                    {/* 초대 목록 */}
+                    {/* 초대 목록 asdasdasd*/}
                     <div className="invites-list">
                         <h4>
                             초대 목록
