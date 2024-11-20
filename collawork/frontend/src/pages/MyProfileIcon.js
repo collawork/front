@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import UserInfoModal from '../layout/UserInfoModal';
 import UserEditModal from '../layout/UserEditModal';
@@ -11,6 +11,7 @@ const MyProfileIcon = () => {
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
     const fetchUserInfo = async () => {
@@ -55,6 +56,23 @@ const MyProfileIcon = () => {
         }));
     };
 
+    const handleClickOutside = (event) => {
+        if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target) &&
+            !event.target.closest('.profile-icon')
+        ) {
+            setIsDropdownOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="profile-icon-container">
             <img
@@ -64,7 +82,7 @@ const MyProfileIcon = () => {
                 onClick={toggleDropdown}
             />
             {isDropdownOpen && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu" ref={dropdownRef}>
                     <button onClick={handleViewProfile}>내 정보 보기</button>
                     <button onClick={handleEditProfile}>정보 변경</button>
                     <button onClick={handleLogout}>로그아웃</button>
@@ -75,7 +93,7 @@ const MyProfileIcon = () => {
                 <UserEditModal
                     user={user}
                     onClose={() => setIsEditModalOpen(false)}
-                    onUpdate={handleUpdate} // 상태 업데이트 콜백 전달
+                    onUpdate={handleUpdate}
                 />
             )}
         </div>
