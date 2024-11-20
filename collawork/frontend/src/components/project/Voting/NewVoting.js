@@ -60,6 +60,7 @@ const Voting = ({setModalShow,handleModalClose }) => {
     }
 
     const cancleHandler = () => {
+        console.log(projectData);
         setShow(false);
         setTitle('');
         setDetail('');
