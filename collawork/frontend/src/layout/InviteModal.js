@@ -194,7 +194,7 @@ const InviteModal = ({
                         <button onClick={removeParticipants}>{'<<'}</button>
                     </div>
 
-                    {/* 초대 목록 asdasdasd*/}
+                    {/* 초대 목록 */}
                     <div className="invites-list">
                         <h4>
                             초대 목록
