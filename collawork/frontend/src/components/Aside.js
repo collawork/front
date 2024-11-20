@@ -7,7 +7,7 @@ import '../components/assest/css/Aside.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Aside = ({ onProjectSelect }) => {
+const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const [projectName, setProjectName] = useState([]);
     const [title, setTitle] = useState("");
     const [context, setContext] = useState("");
@@ -21,6 +21,8 @@ const Aside = ({ onProjectSelect }) => {
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+    const [userRole, setUserRole] = useState(null);
+    const [selectedProject, setSelectedProject] = useState(null);
 
     // 친구 목록 가져오기
     const fetchFriends = async () => {
@@ -110,6 +112,54 @@ const Aside = ({ onProjectSelect }) => {
             setProjectName([]);
         }
     };
+
+    // 선택된 프로젝트의 role 가져오기
+    const fetchUserRole = async (projectId) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다.");
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/user/${projectId}/role`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            setUserRole(response.data.role);
+            console.log("----------------projectId : ", projectId);
+            console.log("----------------userRole : ",userRole);
+        } catch (error) {
+            console.error("사용자의 프로젝트 역할을 가져오는 중 오류 발생:", error);
+        }
+    };
+
+    // 프로젝트 선택 시 처리
+    const handleProjectSelect = (project) => {
+        setSelectedProject(project);
+        fetchUserRole(project.id); // 현재 사용자의 역할 가져오기
+        onProjectSelect(project); // 부모 컴포넌트에 선택된 프로젝트 전달
+        fetchFriends(); // 선택된 프로젝트에 따라 친구 목록 업데이트
+    };
+
+        // 친구 초대
+        const inviteFriends = () => {
+            if (!selectedProject || !selectedProject.id) {
+                alert("프로젝트를 선택해주세요.");
+                return;
+            }
+            if (onInviteFriends && selectedFriends.length > 0 && selectedProject) {
+                onInviteFriends(selectedProject, selectedFriends);
+                alert(`${selectedFriends.length}명의 친구를 초대했습니다.`);
+                setSelectedFriends([]);
+                setIsAllFriendsSelected(false);
+            } else {
+                alert("초대할 친구를 선택하세요.");
+            }
+        };
     
     
 
@@ -119,6 +169,8 @@ const Aside = ({ onProjectSelect }) => {
         if (userId && token) {
             fetchFriends();
             selectProjectName();
+            console.log("현재 userId:", userId);
+            console.log("현재 selectedProject:", selectedProject);
         }
     }, [userId]);
 
@@ -240,6 +292,7 @@ const Aside = ({ onProjectSelect }) => {
         setCalShow(false);
         setNotiShow(false);
         setVotig(false);
+        console.log("onProjectSelect 전달 확인");
         onProjectSelect(project);
     };
     

@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker';
 import axios from 'axios';
 import { calendarEvents, projectStore } from '../store';
 import { useUser } from '../context/UserContext';
+import CalendarService from '../services/CalendarService';
 
 // Modal 스타일 설정
 const customStyles = {
@@ -31,11 +32,12 @@ export const TestCalendar = () => {
     const [selectedProjectId, setSelectedProjectId] = useState('');
 
     const {
-        id, title, start, end, allDay, description, createdBy, createdAt, projectId,
-        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId
+        id, title, start, end, allDay, description, createdBy, createdAt, groupId,
+        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setGroupId
     } = calendarEvents();
 
     const [events, setEvents] = useState([]);
+    const [isEventAdded, setIsEventAdded] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState();
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -72,13 +74,20 @@ export const TestCalendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: {selectedProjectId: selectedProjectId? selectedProjectId:"null"}
+                        params: { selectedProjectId: selectedProjectId ? selectedProjectId : "null" }
                     }
                 );
                 if (response.data) {
                     console.log("일정 모두 가져왔어!");
-                   // setEvents(response.data)
-                    console.log("setEvents는 useState라서.. 리스폰으로 확인해 본다.. : " + response.data);
+                    console.log(response.data);
+                    // setEvents(prev => [...prev, response.data[0]])
+                    // setEvents(prev => [...prev, response.data[1]])
+
+                    for (let i = 0; i < response.data.length; i++) {
+                        setEvents(prev => [...prev, response.data[i]])
+                    }
+
+                    console.log(events);
                 } else {
                     console.log("미안해.. 일정 못 담았어.. ㅠㅠ");
                 };
@@ -91,13 +100,15 @@ export const TestCalendar = () => {
             };
         };
         fetchEvents();
+        setIsEventAdded(false);
 
-    }, [selectedProjectId, userId, events]);
-
+    }, [selectedProjectId, userId, isEventAdded]);
+    console.log("이거 좀 보세요!!!! 이벤트 객체들이예요~!!!!!!", events);
+    console.log("이거시가 선택된 프로젝트 아이디!!!!!!!!", selectedProjectId);
 
     //// userId와 projectId 필터를 거친 모든 일정 조회
     const filterEventsByProjectId = (events, selectedProjectId) => {
-        return events.filter(event => event.projectId === selectedProjectId);
+        return events.filter(event => event.groupId === selectedProjectId);
     };
 
     const changeView = () => {
@@ -115,18 +126,31 @@ export const TestCalendar = () => {
         setModalIsOpen(false);
     };
 
-    const handleDateSelect = (info) => {
+    const handleDateSelect = async (info) => {
         // 드래그하여 선택한 영역에 대한 정보를 받습니다.
-        const newEvent = {
+         const newEvent = {
             title: '새로운 일정',
             start: info.startStr,
             end: info.endStr,
-            allDay: allDay
+            allDay: allDay,
+            groupId: selectedProjectId,
+            createdBy: createdBy
+            // description은 null 가능, createAt, Id는 DB에서 값 부여.
         };
-        console.log("새로운 이벤트 객체의 올데이 여부 : "+newEvent.allDay);
-        setEvents([...events, newEvent]);
+        console.log("시분이 있고 없는 데이터의 길이를 확인해 보자!! ", info.startStr);
+        console.log("!!!새로운 이벤트 객체의 올데이 여부 : " + newEvent.allDay);
+        // setEvents([...events, newEvent]);
+        if (info.startStr.length < 11) {
+            setAllDay(true);
+        } else setAllDay(false);
+        console.log("날짜 길이가 짧으면 allDay true고, 길면 false : ",allDay); // 근데 시점이.. 문제네..
+
+        await CalendarService.registerSchedule(newEvent);
+        setIsEventAdded(true);
+        console.log("testttt")
         // 선택 영역을 해제합니다.
         info.view.calendar.unselect();
+
     };
 
     // 일정의 제목 설명 update ------- 진행 중
