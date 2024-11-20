@@ -82,6 +82,7 @@ export const TestCalendar = () => {
                     console.log(response.data);
                     // setEvents(prev => [...prev, response.data[0]])
                     // setEvents(prev => [...prev, response.data[1]])
+
                     for (let i = 0; i < response.data.length; i++) {
                         setEvents(prev => [...prev, response.data[i]])
                     }
@@ -127,7 +128,7 @@ export const TestCalendar = () => {
 
     const handleDateSelect = async (info) => {
         // 드래그하여 선택한 영역에 대한 정보를 받습니다.
-        const newEvent = {
+         const newEvent = {
             title: '새로운 일정',
             start: info.startStr,
             end: info.endStr,
