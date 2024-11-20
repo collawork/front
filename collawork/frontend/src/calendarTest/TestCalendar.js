@@ -82,6 +82,7 @@ export const TestCalendar = () => {
                     console.log(response.data);
                     // setEvents(prev => [...prev, response.data[0]])
                     // setEvents(prev => [...prev, response.data[1]])
+
                     for (let i = 0; i < response.data.length; i++) {
                         setEvents(prev => [...prev, response.data[i]])
                     }

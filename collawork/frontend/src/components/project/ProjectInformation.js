@@ -45,13 +45,16 @@ const ProjectImformation = () => {
             params: { projectName },
             baseURL: 'http://localhost:8080',
         }).then(function(response) {
+           
+            console.log(response);
+            console.log(response.data[0]);
+            console.log(response.data);
 
             PlusProjectData(response.data[0]);
-            // setIsProjectLoaded(true);
-            if(!response.data[0]){
+            if(!response.data || response.data.length === 0) {
                 Send();
             }
-            console.log(response);
+            console.log("projectselect response : ", response);
         });
         console.log("projectData : " + projectData);
         console.log("projectData.createdBy : " + projectData.createdBy);
