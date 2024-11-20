@@ -34,8 +34,35 @@ const registerSchedule = async (newData) => {
     });
 };
 
+const updateEvent = async (id, title, description) => {
+    console.log("서비스로 보내졌지?");
+    console.log(id);
+    console.log(title);
+    console.log(description);
+    const updateData = { id, title, description }
+
+    await axios(
+        {
+            url: `${API_URL}/api/calendar/update`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json', // JSON 형식으로 전송
+            },
+            method: 'post',
+            data: { updateData },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true
+        }
+    ).then(function (response) {
+        console.log("update 됐어? 뭘 리턴한거야?",response);
+        return response.data
+    });
+
+}
+
 const CalendarService = {
-    registerSchedule
+    registerSchedule,
+    updateEvent
 }
 
 export default CalendarService;
