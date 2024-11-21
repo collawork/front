@@ -9,10 +9,13 @@ import Voting from '../components/project/Voting/ShowVoting';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
 import { TestCalendar } from '../calendarTest/TestCalendar';
+import {projectStore} from '../store';
 
 
 
 const Project = () => {
+
+    const {projectData} = projectStore(); 
     
     const token = localStorage.getItem("token");
     console.log("현재 로그인한 사용자의 token : " + token);
@@ -25,44 +28,55 @@ const Project = () => {
 
    
     const homeClickHandler = () => {
-        setHomeShow(true);
-        setChatShow(false);
-        setCalShow(false);
-        setNotiShow(false);
-        setVotig(false);
+        if(projectData){
+            console.log(projectData.id);
+            setHomeShow(true);
+            setChatShow(false);
+            setCalShow(false);
+            setNotiShow(false);
+            setVotig(false);
+        }
     };
 
     const chatClickHandler = () => {
+        if(projectData){
         setChatShow(true);
         setHomeShow(false);
         setCalShow(false);
         setNotiShow(false);
         setVotig(false);
+        }
     };
 
     const onClickHandler = () => {
+        if(projectData ){
         setHomeShow(false);
         setChatShow(false);
         setCalShow(true);
         setNotiShow(false);
         setVotig(false);
+        }
     };
 
     const notiClickHandler = () => {
+        if(projectData){
         setNotiShow(true);
         setHomeShow(false);
         setChatShow(false);
         setCalShow(false);
         setVotig(false);
+        }
 
     }
 
     const AllOnClickHandler = () => {
+        if(projectData){
         setNotiShow(false);
         setHomeShow(false);
         setChatShow(false);
         setCalShow(false);
         setVotig(true);
+        }
     }
 
     return (

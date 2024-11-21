@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import UserDetail from '../../pages/UserDetail';
+import FriendCategoryManager from './FriendCategoryManager';
 
 const FriendList = ({ userId }) => {
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [showCategoryManager, setShowCategoryManager] = useState(false);
 
     // 친구 목록 불러오기
     const fetchFriends = async () => {
@@ -37,7 +39,7 @@ const FriendList = ({ userId }) => {
             // 필터링 로직
             const filteredFriends = response.data
                 .map(friend => {
-                    console.log("friend.requester.id:", friend.requester.id, "friend.responder.id:", friend.responder.id, "userId:", userId);
+                    // console.log("friend.requester.id:", friend.requester.id, "friend.responder.id:", friend.responder.id, "userId:", userId);
     
                     if (String(friend.requester.id) === String(userId)) {
                         //console.log(`친구로 선택된 responder:`, friend.responder);
@@ -96,6 +98,15 @@ const FriendList = ({ userId }) => {
     return (
         <div className="friend-list">
             <h3>친구 목록</h3>
+            
+            <button onClick={() => setShowCategoryManager(true)}>목록 열기</button>
+            {showCategoryManager && (
+                <FriendCategoryManager
+                    userId={userId}
+                    onClose={() => setShowCategoryManager(false)}
+                />
+            )}
+
             <ul>
                 {friends.map(friend => (
                     <li key={friend.id}>
