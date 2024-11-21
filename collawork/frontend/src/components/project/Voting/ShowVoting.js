@@ -6,22 +6,24 @@ import { useUser } from '../../../context/UserContext';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-    const VotingList = () => {
+const ShowVoting = () => {
+
     const [votingData, setVotingData] = useState([]);
     const [contentsData, setContentsData] = useState({});
     const [modalShow, setModalShow] = useState(false);
     const { projectData } = projectStore();
     const [state, setState] = useState();
     const { userId } = useUser();
-    const [endVotingId, setEndVotingId] = useState(); // 투표 한 유저의 투표 한 투표id
+    // const [endVotingId, setEndVotingId] = useState(); // 투표 한 유저의 투표 한 투표id
     const [userVotes, setUserVotes] = useState({}); // 각 투표별로 상태를 관리하기 위한 상태 객체 추가
-    const [use, setUse] = useState();
+    // const [use, setUse] = useState();
+    const [voteResults, setVoteResults] = useState({});
 
     useEffect(() => {
         if(userId){
             handler();
         }
-        }, [modalShow, userId,setModalShow ]);
+        }, [modalShow, userId ]);
 
     const handleModalClose = () => {
         setModalShow(false);
@@ -68,10 +70,9 @@ const API_URL = process.env.REACT_APP_API_URL;
         try {
 
         const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error("Token is missing. User is not authenticated.");
-        }
-
+        // 만약 투표를 했다면 투표를 했는지 찾고 또 다시 정보 찾고 그럴 필요가 있나..? 
+        // 그냥 한번에 투표를 했으면-> true, 투표 한 유저의 수
+        // 투표를 안했다면 -> false 를 보내면 되자나......
         const response = await axios({
             url: `${API_URL}/api/user/projects/findUserVoting`,
             headers: { 'Authorization': `Bearer ${token}` },
@@ -95,9 +96,11 @@ const API_URL = process.env.REACT_APP_API_URL;
     // 각 투표 별 정보 조회 handler(1. 기본 투표 정보  2.투표 항목 )
     const handler = async () => {
     const votingResponse = await Send(); // 1
-    console.log(votingResponse);
+    console.log("Voting data:" + votingResponse);
+
         if (votingResponse && votingResponse.length > 0) {
         const allContents = {};
+
         for (const vote of votingResponse) {
             const contents = await contentsSend(vote.id); // 2
             console.log(contents);
@@ -111,8 +114,9 @@ const API_URL = process.env.REACT_APP_API_URL;
           setUserVotes(prev => ({
             ...prev,
             [vote.id]: {contentsId:userVoteContents[1], voteId:userVoteContents[0] }
-          }))
-        }
+          }));
+          await optionSend(vote.id); 
+        }   
       }
         setContentsData(allContents);
         }
@@ -131,20 +135,37 @@ const API_URL = process.env.REACT_APP_API_URL;
         });
     }
 
-    // // (투표 후) 항목들에 대한 유저들의 투표 정보들
-    // function optionSend(voteId){
-    //     const token = localStorage.getItem('token');
-    //     console.log("봐야되는 부분 :: " + voteId);
-    //     axios({
-    //     url: `${API_URL}/api/user/projects/VoteOptionUsers`,
-    //     headers: { 'Authorization': `Bearer ${token}` },
-    //     method: 'post',
-    //     params: {votingId: voteId}, // 투표 고유 id, 투표 항목 id, 사용자id
-    //     }).then(function (response) {
-    //         console.log(response);
-    //         console.log(response.data);
-    //     });
-    // }
+    // (투표 후) 항목들에 대한 유저들의 투표 정보들
+    const optionSend = async (voteId) => {         
+      const token = localStorage.getItem('token');         
+      try {             
+          const response = await axios({                 
+              url: `${API_URL}/api/user/projects/VoteOptionUsers`,                 
+              headers: { 'Authorization': `Bearer ${token}` },                 
+              method: 'post',                 
+              params: { votingId: voteId , projectId:projectData.id},             
+          });             
+          const voteCounts = {}; 
+          response.data.forEach((votes, idx) => {
+            if (votes.length > 0) {
+                
+                const contentsId = idx + 1; 
+                voteCounts[contentsId] = votes.length || 0;
+            } else {
+                const contentsId = idx + 1;
+                voteCounts[contentsId] = 0;
+            }
+        });
+
+          setVoteResults((prev) => ({ ...prev, [voteId]: voteCounts }));    
+          console.log(voteCounts);    
+          console.log(response.data);
+      } catch (error) {             
+          console.error(`Error fetching vote results for ${voteId}:`, error);         
+      }     
+  };      
+  
+
 
     // 투표하기! 를 누른 후 handlerSubmit
     const handleSubmit = (e, voteId) => {
@@ -162,85 +183,88 @@ const API_URL = process.env.REACT_APP_API_URL;
         // optionSend(voteId); // 다른 유저들의 투표정보들 까지도 불러옴
         alert("투표가 완료되었습니다!");
     };
+    
+    const modalHandler = () => {
+        console.log("새 투표 버튼 누름");
+        setModalShow(true);
+        console.log(modalShow);
+    }
 
     return (
         <>
           <h3>투표 페이지</h3>
-          <button onClick={() => setModalShow(true)}>+ 새 투표</button>
+          <button onClick={modalHandler}>+ 새 투표</button>
     
-          {modalShow && (
-            <NewVoting setModalShow={setModalShow} handleModalClose={handleModalClose} />
-          )}
+          {
+          modalShow && 
+            <NewVoting setModalShow={setModalShow} modalShow={modalShow} handler={handler} handleModalClose={handleModalClose} />
+          }
     
-          <div>
-            {Array.isArray(votingData) &&
-              votingData.map((vote) => (
-                <section key={vote.id}>
-                  <h3>투표 이름: {vote.votingName}</h3>
-                  <h5>- {vote.votingDetail}</h5>
-                  <ul style={{ listStyleType: "none", padding: 0 }}>
-                    <li>
-                      <strong>ID:</strong> {vote.id}
-                    </li>
-                    <li>
-                      <strong>작성자:</strong> {vote.createdUser}
-                    </li>
+    <div>
+    {Array.isArray(votingData) &&
+        votingData.map((vote) => (
+            <section key={vote.id}>
+                <h3>투표 이름: {vote.votingName}</h3>
+                <h5>- {vote.votingDetail}</h5>
+                <ul style={{ listStyleType: "none", padding: 0 }}>
+                    <li><strong>ID:</strong> {vote.id}</li>
+                    <li><strong>작성자:</strong> {vote.createdUser}</li>
                     <li>작성일: {new Date(vote.createdAt).toLocaleDateString()}</li>
                     <li>
-                      <strong>투표 항목:</strong>
-                      {Array.isArray(contentsData[vote.id]) &&
-                      contentsData[vote.id].length > 0 ? (
-                        <form onSubmit={(e) => handleSubmit(e, vote.id)}>
-                          {contentsData[vote.id].map((content, idx) => {
-                            const isVoted =
-                              userVotes[vote.id]?.contentsId === content.id;
-                            return (
-                              <div key={idx} style={{ marginBottom: "8px" }}>
-                                <label
-                                  style={{ color: isVoted ? "red" : "black" }}
+                        <strong>투표 항목:</strong>
+                        {Array.isArray(contentsData[vote.id]) && contentsData[vote.id].length > 0 ? (
+                            <form onSubmit={(e) => handleSubmit(e, vote.id)}>
+                                {contentsData[vote.id].map((content, idx) => {
+                                    const isVoted = userVotes[vote.id]?.contentsId === content.id;
+                                    const voteCount = voteResults[vote.id]?.[content.id] || 0;
+
+                                    return (
+                                        <div key={idx} style={{ marginBottom: "8px" }}>
+                                            <label style={{ color: isVoted ? "red" : "black" }}>
+                                                <input
+                                                    type="radio"
+                                                    name={`vote-${vote.id}`}
+                                                    onChange={(e) => setState(e.target.value)}
+                                                    value={content.id}
+                                                    disabled={!!userVotes[vote.id]}
+                                                    style={{ marginRight: "8px" }}
+                                                />
+                                                {content.votingContents}
+                                                <span style={{ marginLeft: "10px", fontWeight: "bold" }}>
+                                                    ({voteCount} 명 투표)
+                                                </span>
+                                            </label>
+                                        </div>
+                                    );
+                                })}
+                                <button
+                                    type="submit"
+                                    disabled={!!userVotes[vote.id]}
+                                    style={{
+                                        backgroundColor: !!userVotes[vote.id] ? "gray" : "#007bff",
+                                        color: "white",
+                                        padding: "8px 16px",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        cursor: !!userVotes[vote.id] ? "not-allowed" : "pointer",
+                                    }}
                                 >
-                                  <input
-                                    type="radio"
-                                    name={`vote-${vote.id}`}
-                                    onChange={(e) => setState(e.target.value)}
-                                    value={content.id}
-                                    disabled={!!userVotes[vote.id]} 
-                                    style={{ marginRight: "8px" }}
-                                  />
-                                  {content.votingContents}
-                                </label>
-                              </div>
-                            );
-                          })}
-                          <button
-                            type="submit"
-                            disabled={!!userVotes[vote.id]} 
-                            style={{
-                              backgroundColor: !!userVotes[vote.id]
-                                ? "gray"
-                                : "#007bff",
-                              color: "white",
-                              padding: "8px 16px",
-                              border: "none",
-                              borderRadius: "4px",
-                              cursor: !!userVotes[vote.id] ? "not-allowed" : "pointer",
-                            }}
-                          >
-                            투표하기
-                          </button>
-                        </form>
-                      ) : (
-                        <p>내용이 없습니다.</p>
-                      )}
+                                    투표하기
+                                </button>
+                            </form>
+                        ) : (
+                            <p>내용이 없습니다.</p>
+                        )}
                     </li>
-                  </ul>
-                  <br />
-                  <br />
-                </section>
-              ))}
-          </div>
+                </ul>
+                <br />
+                <br />
+            </section>
+        ))}
+</div>
+
         </>
       );
     };
     
-    export default VotingList;
+    export default ShowVoting;
