@@ -10,6 +10,8 @@ import { calendarEvents, projectStore } from '../store';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 
+import cloneDeep from 'lodash/cloneDeep';
+
 // Modal 스타일 설정
 const customStyles = {
     content: {
@@ -32,8 +34,8 @@ export const TestCalendar = () => {
     const [selectedProjectId, setSelectedProjectId] = useState('');
 
     const {
-        id, title, start, end, allDay, description, createdBy, createdAt, groupId,
-        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setGroupId
+        id, title, start, end, allDay, description, createdBy, createdAt, projectId,
+        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId
     } = calendarEvents();
     const editable = true
 
@@ -74,7 +76,8 @@ export const TestCalendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: { selectedProjectId: selectedProjectId ? selectedProjectId : "null" }
+                        params: { selectedProjectId: selectedProjectId? selectedProjectId : "0" }
+                        //params: { selectedProjectId: selectedProjectId ? selectedProjectId : "null" }
                     }
                 );
                 if (response.data) {
@@ -82,10 +85,10 @@ export const TestCalendar = () => {
                     console.log(response.data);
                     // setEvents(prev => [...prev, response.data[0]])
                     // setEvents(prev => [...prev, response.data[1]])
-
-                    for (let i = 0; i < response.data.length; i++) {
-                        setEvents(prev => [...prev, response.data[i]])
-                    }
+                    setEvents(response.data);
+                    // for (let i = 0; i < response.data.length; i++) {
+                    //     setEvents(prev => [...prev, response.data[i]])
+                    // }
 
                     console.log(events);
                 } else {
@@ -106,11 +109,11 @@ export const TestCalendar = () => {
 
 
     //// userId와 projectId 필터를 거친 모든 일정 조회
-    const filterEventsByProjectId = (events, selectedProjectId) => {
+    // const filterEventsByProjectId = (events, selectedProjectId) => {
 
 
-        return events.filter(event => event.groupId == selectedProjectId);
-    };
+    //     return events.filter(event => event.groupId == selectedProjectId);
+    // };
 
     const changeView = () => {
         setCurrentView(currentView === 'dayGridMonth' ? 'timeGridWeek' : 'dayGridMonth');
@@ -138,7 +141,7 @@ export const TestCalendar = () => {
             start: info.startStr,
             end: info.endStr,
             allDay: allDay,
-            groupId: selectedProjectId,
+            projectId: selectedProjectId,
             createdBy: createdBy
             // description은 null 가능, createAt, Id는 DB에서 값 부여.
         };
@@ -200,14 +203,25 @@ export const TestCalendar = () => {
 
     // 일정의 날짜 updata ---- 진행 중
     const handleEventDrop = (info) => {
+        // const updatedEvents = cloneDeep(events);
+        // const updatedEvent = updatedEvents.find(event => event.id == info.event.id);
+        // updatedEvent.start = info.event.start;
+        // updatedEvent.end = info.event.end;
+        // setEvents(updatedEvents);
+
         const updatedEvents = events.map((event) => {
-          if (event.id === info.event.id) {
-            return { ...event, start: info.event.startStr }; // 변경된 시작 시간으로 업데이트
+            console.log("하나의 객체! ::::::::::::::::::::::::::::::::::::",info.event.id);
+            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::",event.id);
+          if (event.id == info.event.id) {
+
+            return { ...event, start: info.event.startStr, end: info.event.endStr }; // 변경된 시작 시간으로 업데이트
           }
           return event; // 다른 이벤트는 그대로 유지
         });
         setEvents(updatedEvents);
-      };
+
+
+    };
 
     return (
         <div>
@@ -216,7 +230,7 @@ export const TestCalendar = () => {
                 key={currentView}
                 initialView={currentView}
                 weekends={true}
-                editable={false}
+                editable={true}
                 selectable={true}
                 select={handleDateSelect}
                 eventClick={handleEventClick}
@@ -243,7 +257,8 @@ export const TestCalendar = () => {
                     //     click: () => changeView('dayGridMonth')
                     // }
                 }}
-                events={filterEventsByProjectId(events, selectedProjectId)}
+                events={events}
+                // events={filterEventsByProjectId(events, selectedProjectId)}
 
             />
             <ReactModal

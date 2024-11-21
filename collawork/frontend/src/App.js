@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import ChatRoom from './components/Chat/ChatRoom';
 import { UserProvider } from './context/UserContext';
 import { TestCalendar } from './calendarTest/TestCalendar';
+import { MiniCalendar } from './calendarTest/MiniCalendar';
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/info" element={<UserProfile />} />
                     <Route path="/chattingServer/:chatRoomId" element={<ChatRoom/>} />
                     <Route path="/testcalendar" element={<TestCalendar/>}/>
+                    <Route path="/testcalendar1" element={<MiniCalendar/>}/>
                 </Routes>
             </Router>
         </UserProvider>
