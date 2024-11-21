@@ -110,3 +110,18 @@ form button:last-child:hover {
     color: #333;
 }
 
+.image-upload-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.profile-image-preview {
+    width: 120px; /* 프로필 이미지 크기 */
+    height: 120px;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
