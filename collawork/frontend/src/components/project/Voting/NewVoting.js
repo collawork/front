@@ -100,6 +100,7 @@ const Voting = ({ setModalShow, modalShow, handleModalClose, handler }) => {
   
     const handleSubmit = (e) => {
       e.preventDefault();
+      alert("투표가 생성되었습니다 !")
   
       for (var i = 0; i < inputItems.length; i++) {
         arr[i] = inputItems[i].voteOption;

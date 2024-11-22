@@ -138,6 +138,12 @@ const Layout = () => {
         navigate('/main');
         // 홈버튼을 누르면 캘린더의 선택된 프로젝트 아이디가 null로 상태가 바뀌어야 하고, 홈화면의 달력은 개인 달력(프로젝트 아이디가 null인 스케쥴들)으로 출력한다.
         PlusProjectData('');
+        setHomeShow('');
+        setChatShow(''); 
+        setCalShow('');
+        setNotiShow('');
+        setVotig('') ;
+        
     }
 
     return (
