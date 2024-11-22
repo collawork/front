@@ -51,8 +51,8 @@ export const calendarEvents = create((set, get) => ({
     description : '',
     createdBy : '',
     createdAt : '',
-    groupId : '',
-    editable : true,
+    projectId : '',
+    
     color : '',
 
     setId : (value) => {set({id: value})},
@@ -63,8 +63,8 @@ export const calendarEvents = create((set, get) => ({
     setDescription : (value) => {set({description: value})},
     setCreatedBy : (value) => {set({createdBy: value})},
     setCreatedAt : (value) => {set({createdAt: value})},
-    setGroupId : (value) => {set({groupId: value})},
-    setEdiable : (value) => {set({editable: value})},
+    setProjectId : (value) => {set({projectId: value})},
+    
     setColor : (value) => {set({color: value})}
 
 }));
