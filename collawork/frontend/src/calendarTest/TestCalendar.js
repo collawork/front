@@ -4,13 +4,10 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import ReactModal from 'react-modal';
-import DatePicker from 'react-datepicker';
 import axios from 'axios';
 import { calendarEvents, projectStore } from '../store';
 import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
-
-import cloneDeep from 'lodash/cloneDeep';
 
 // Modal 스타일 설정
 const customStyles = {
@@ -26,6 +23,11 @@ const customStyles = {
 
 
 export const TestCalendar = () => {
+    // 추가된 상태 변수 // #3788d8
+    const [selectedColor, setSelectedColor] = useState('#2196f3'); // 초기값 설정
+
+    // 색상 팔레트 예시
+    const colors = [/*'#f44336', '#e91e63',*/ '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
 
     const [currentView, setCurrentView] = useState('dayGridMonth');
 
@@ -34,9 +36,10 @@ export const TestCalendar = () => {
     const [selectedProjectId, setSelectedProjectId] = useState('');
 
     const {
-        id, title, start, end, allDay, description, createdBy, createdAt, projectId,
-        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId
+        id, title, start, end, allDay, description, createdBy, createdAt, projectId, color,
+        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId, setColor
     } = calendarEvents();
+    const [isInserting, setIsInserting] = useState(true);
     const editable = true
 
     const [events, setEvents] = useState([]);
@@ -68,7 +71,7 @@ export const TestCalendar = () => {
         const fetchEvents = async () => {
             setEvents([]);
             try {
-                console.log(":::::::::::::::::::::::::::::::::::::::",projectId);
+                console.log(":::::::::::::::::::::::::::::::::::::::", projectId);
                 const token = localStorage.getItem('token')
                 const response = await axios(
                     {
@@ -126,90 +129,78 @@ export const TestCalendar = () => {
     };
 
     const handleDateSelect = async (info) => {
-
+        setIsInserting(true);
+        // 시분이 붙은 날짜 정보 처리 로직
         let allDay;
         if (info.startStr.length < 11) {
             allDay = true;
-
         } else {
             allDay = false;
-
         }
-        console.log("날짜 길이가 짧으면 allDay true고, 길면 false : ", allDay); // 근데 시점이.. 문제네..
 
-        // 드래그하여 선택한 영역에 대한 정보를 받습니다.
+        //선택한 영역에 대한 스케쥴 상태를 받아 사용자에게 보여 준다.
+        setTitle("");
+        setDescription("");
+        setStart(info.startStr);
+        setEnd(info.endStr);
+        setAllDay(allDay);
+        setColor("#2196f3")
+
+        setModalIsOpen(true);
+    };
+
+    const insertEvent = async (e) => {
+        e.preventDefault();
         const newEvent = {
             title: "",
-            start: info.startStr,
-            end: info.endStr,
+            start: e.startStr,
+            end: e.endStr,
             allDay: allDay,
             projectId: projectId,
-            createdBy: createdBy
-            // description은 null 가능, createAt, Id는 DB에서 값 부여.
+            createdBy: createdBy,
+            color: "#2196f3"
         };
-        console.log("시분이 있고 없는 데이터의 길이를 확인해 보자!! ", info.startStr);
-        console.log("!!!새로운 이벤트 객체의 올데이 여부 : " + newEvent.allDay);
-
 
         let result = await CalendarService.registerSchedule(newEvent);
-        setIsEventAdded(true);
+        if (result) {
+            alert("일정 등록에 성공하였습니다.");
+            setIsEventAdded(true);
+        } else {
+            alert("일정 등록에 실패하였습니다.");
+        }
 
         // 선택 영역을 해제합니다.
-        info.view.calendar.unselect();
-        if (result == false) {
-            alert("일정 등록에 실패하였습니다.")
-        }
+        e.view.calendar.unselect();
         handleModalClose();
 
-    };
+    }
 
     // 특정 일정의 제목 설명을 가져오는 함수
     const handleEventClick = (info) => {
-
+        setIsInserting(false);
         setId(info.event.id);
         setTitle(info.event.title);
         setDescription(info.event.extendedProps.description);
+        setColor(info.event.backgroundColor);
 
         setModalIsOpen(true);
-
-
     };
 
-    // 일정 업데이트
+    // 입력한 일정의 제목과 설명, 고유 색상을 업데이트 하는 함수
     const updateSelectedEvent = async (e) => {
 
         e.preventDefault();
 
-        let result = await CalendarService.updateEvent(id, title, description);
+        let result = await CalendarService.updateEvent(id, title, description, color);
         if (result == false) {
             alert("일정 변경에 실패하였습니다.")
         }
         setIsEventAdded(true);
         handleModalClose();
-    }
+    };
 
-    // 일정 update ------ 진행 중 
-    // const handleSaveEvent = () => {
 
-    //     if (selectedEvent) {
-    //         const updatedEvents = events.map(event => {
-    //             if (event.id === selectedEvent.id) {
-    //                 return { ...event, ...selectedEvent };
-    //             }
-    //             return event;
-    //         });
-    //         setEvents(updatedEvents);
-    //         handleModalClose();
-    //     };
-    // };
-
-    // 일정의 날짜 updata ---- 진행 중
     const handleEventDrop = async (info) => {
-        // const updatedEvents = cloneDeep(events);
-        // const updatedEvent = updatedEvents.find(event => event.id == info.event.id);
-        // updatedEvent.start = info.event.start;
-        // updatedEvent.end = info.event.end;
-        // setEvents(updatedEvents);
 
         const updatedEvents = events.map(async (event) => {
             console.log("하나의 객체! ::::::::::::::::::::::::::::::::::::", info.event.id);
@@ -218,32 +209,63 @@ export const TestCalendar = () => {
                 let id = info.event.id;
                 let start = info.event.startStr;
                 let end = info.event.endStr;
-                console.log("조건문을 만나기 전의 end",end);
-                if(end == ""){
+                console.log("조건문을 만나기 전의 end", end);
+                if (end == "") {
                     end = info.event.startStr
-                    console.log("조건문의 적용을 받은 end",end);
+                    console.log("조건문의 적용을 받은 end", end);
                 }
-                console.log("조건문을 만난 후의 end",end);
+                console.log("조건문을 만난 후의 end", end);
                 let allDay = info.event.allDay
-                console.log("여기 올데이 여부가 들어 있어?",allDay);
+                console.log("여기 올데이 여부가 들어 있어?", allDay);
 
-                let result = await CalendarService.updataEventDate(id, start, end, allDay);
-                if (result == false) {
-                    alert("일정 변경에 실패하였습니다.")
-                }
-                setIsEventAdded(true);
-
-                // return { ...event, start: info.event.startStr, end: info.event.endStr }; // 변경된 시간으로 업데이트
+                await CalendarService.updataEventDate(id, start, end, allDay)
+                    .then(result => {
+                        if (result) {
+                            console.log("일정 시간 변경 :::::: 결과 ::::: ", result);
+                            alert("일정 변경에 성공하였습니다.");
+                            //setIsEventAdded(true);
+                        } else {
+                            alert("일정 변경에 실패하였습니다.")
+                        }
+                    });
             }
-            // return event; // 다른 이벤트는 그대로 유지
         });
-        // 비동기 처리 후 상태 업데이트
-        // map()는 비동기 처리이므로 Promise.all로 결과를 기다림
-        // const resolvedEvents = await Promise.all(updatedEvents);
-        // setEvents(resolvedEvents);
-
-
     };
+
+    const deleteSelectedEvent = async (e) => {
+
+        e.preventDefault();
+
+        console.log("삭제 진행 체크");
+        await CalendarService.deleteEventDate(id)
+            .then(result => {
+                if (result) {
+                    alert("일정 삭제에 성공하였습니다.");
+                    setIsEventAdded(true);
+                } else {
+                    alert("일정 삭제에 실패하였습니다.")
+                }
+            });
+        handleModalClose();
+    };
+
+    // const handleDeleteEvent = () => {
+    //     if (!selectedEvent) {
+    //         alert('삭제할 이벤트를 선택해주세요.');
+    //         return;
+    //     }
+
+    //     // 백엔드 API 호출하여 이벤트 삭제
+    //     axios.delete(`/api/events/${selectedEvent.id}`)
+    //         .then(() => {
+    //             // 삭제 성공 시 캘린더 갱신
+    //             calendarRef.current.refetchEvents();
+    //             setSelectedEvent(null); // 선택 상태 해제
+    //         })
+    //         .catch(error => {
+    //             console.error('이벤트 삭제 실패:', error);
+    //         });
+    // };
 
     return (
         <div>
@@ -262,26 +284,18 @@ export const TestCalendar = () => {
                     return true; // 또는 특정 조건에 따라 허용 여부를 결정
                 }}
                 droppable={true}
-                // selectAllow={(info) => {
-                //     return info.start >= new Date(); // 오늘 이후의 날짜만 선택 가능하도록 제한
-                // }}
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'custom'
+                    right: 'view'
                 }}
                 customButtons={{
-                    custom: {
+                    view: {
                         text: 'Month / Week',
                         click: () => changeView()
                     },
-                    // custom2: {
-                    //     text: '월간 보기',
-                    //     click: () => changeView('dayGridMonth')
-                    // }
                 }}
                 events={events}
-            // events={filterEventsByProjectId(events, selectedProjectId)}
 
             />
             <ReactModal
@@ -290,21 +304,35 @@ export const TestCalendar = () => {
                 style={customStyles}
                 contentLabel="Example Modal"
             >
-                <form onSubmit={updateSelectedEvent}>
+                {/* <form onSubmit={updateSelectedEvent}> */}
+                <form onSubmit={isInserting ? insertEvent : updateSelectedEvent}>
                     제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' />
                     설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} value={description} placeholder='일정의 상세 설명을 입력해 주세요.' />
-
+                    색상 :
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        {colors.map((theColor) => (
+                            <div
+                                key={theColor}
+                                style={{
+                                    backgroundColor: theColor,
+                                    width: '30px',
+                                    height: '25px',
+                                    border: `2px solid ${color === theColor ? 'black' : 'transparent'}`,
+                                    cursor: 'pointer',
+                                    flex: 1 // 각 아이템이 공간을 균등하게 차지
+                                }}
+                                onChange={(e) => setColor(e.target.value)}
+                                value={color}
+                                onClick={() => setColor(theColor)}
+                            />
+                        ))}
+                    </div>
                     <button type='submit'>저장</button>
-                    {/* 해당 이벤트에 마우스를 올리면 설명이 1초 뒤에 보이도록 해보자..! */}
                 </form>
-                {/* <DatePicker selected={start} onChange={(date) => setStart(date)} style={{ width: 200, marginRight: 10 }} />
-                <DatePicker selected={end} onChange={(date) => setEnd(date)} style={{ width: 200, marginRight: 10 }} />  날짜 변경은 풀캘린더에서 제공해주는 방법을 이용.. */}
-                {/* <button onClick={handleSaveEvent}>저장</button> */}
-                {/* <button onClick={handleModalClose}>취소</button> */}
+                {isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button>}
+
+                {/* <button onClick={deleteSelectedEvent}>일정 삭제</button> */}
             </ReactModal>
         </div>
-
-
-
     );
 }
