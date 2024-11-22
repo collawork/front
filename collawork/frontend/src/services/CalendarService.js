@@ -24,7 +24,6 @@ const registerSchedule = async (newData) => {
             method: 'post',
             data: { newData },
             baseURL: 'http://localhost:8080',
-            withCredentials: true
 
         }
     ).then(function (response) {
@@ -54,15 +53,36 @@ const updateEvent = async (id, title, description) => {
             withCredentials: true
         }
     ).then(function (response) {
-        console.log("update 됐어? 뭘 리턴한거야?",response);
+        console.log("update 됐어? 뭘 리턴한거야?", response);
         return response.data
     });
 
+};
+const updataEventDate = async (id, start, end, allDay) => {
+    const updateData = { id, start, end, allDay };
+
+    await axios(
+        {
+            url: `${API_URL}/api/calendar/updatedate`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json', // JSON 형식으로 전송
+            },
+            method: 'post',
+            data: { updateData },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true
+        }
+    ).then(function (response) {
+        console.log("update 됐어? 뭘 리턴한거야?", response);
+        return response.data
+    });
 }
 
 const CalendarService = {
     registerSchedule,
-    updateEvent
+    updateEvent,
+    updataEventDate
 }
 
 export default CalendarService;

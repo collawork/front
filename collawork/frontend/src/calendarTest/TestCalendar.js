@@ -52,11 +52,11 @@ export const TestCalendar = () => {
     useEffect(() => {
 
         const fetchProjectId = async () => {
-            setSelectedProjectId(projectData.id);
+            setProjectId(projectData.id);
             console.log(projectData);
         };
         fetchProjectId();
-        console.log("선택된 프로젝트 아이디 값 = ", selectedProjectId);
+        console.log("선택된 프로젝트 아이디 값 = ", projectId);
 
         const fetchUserInfo = async () => {
             setCreatedBy(userId);
@@ -66,7 +66,9 @@ export const TestCalendar = () => {
 
         // 모든 일정 조회
         const fetchEvents = async () => {
+            setEvents([]);
             try {
+                console.log(":::::::::::::::::::::::::::::::::::::::",projectId);
                 const token = localStorage.getItem('token')
                 const response = await axios(
                     {
@@ -76,7 +78,7 @@ export const TestCalendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: { selectedProjectId: selectedProjectId? selectedProjectId : "0" }
+                        params: { selectedProjectId: projectId ? projectId : "0" }
                         //params: { selectedProjectId: selectedProjectId ? selectedProjectId : "null" }
                     }
                 );
@@ -105,7 +107,7 @@ export const TestCalendar = () => {
         fetchEvents();
         setIsEventAdded(false);
 
-    }, [selectedProjectId, userId, isEventAdded]);
+    }, [projectId, userId, isEventAdded]);
 
 
     //// userId와 projectId 필터를 거친 모든 일정 조회
@@ -141,7 +143,7 @@ export const TestCalendar = () => {
             start: info.startStr,
             end: info.endStr,
             allDay: allDay,
-            projectId: selectedProjectId,
+            projectId: projectId,
             createdBy: createdBy
             // description은 null 가능, createAt, Id는 DB에서 값 부여.
         };
@@ -202,23 +204,43 @@ export const TestCalendar = () => {
     // };
 
     // 일정의 날짜 updata ---- 진행 중
-    const handleEventDrop = (info) => {
+    const handleEventDrop = async (info) => {
         // const updatedEvents = cloneDeep(events);
         // const updatedEvent = updatedEvents.find(event => event.id == info.event.id);
         // updatedEvent.start = info.event.start;
         // updatedEvent.end = info.event.end;
         // setEvents(updatedEvents);
 
-        const updatedEvents = events.map((event) => {
-            console.log("하나의 객체! ::::::::::::::::::::::::::::::::::::",info.event.id);
-            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::",event.id);
-          if (event.id == info.event.id) {
+        const updatedEvents = events.map(async (event) => {
+            console.log("하나의 객체! ::::::::::::::::::::::::::::::::::::", info.event.id);
+            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::", event.id);
+            if (event.id == info.event.id) {
+                let id = info.event.id;
+                let start = info.event.startStr;
+                let end = info.event.endStr;
+                console.log("조건문을 만나기 전의 end",end);
+                if(end == ""){
+                    end = info.event.startStr
+                    console.log("조건문의 적용을 받은 end",end);
+                }
+                console.log("조건문을 만난 후의 end",end);
+                let allDay = info.event.allDay
+                console.log("여기 올데이 여부가 들어 있어?",allDay);
 
-            return { ...event, start: info.event.startStr, end: info.event.endStr }; // 변경된 시작 시간으로 업데이트
-          }
-          return event; // 다른 이벤트는 그대로 유지
+                let result = await CalendarService.updataEventDate(id, start, end, allDay);
+                if (result == false) {
+                    alert("일정 변경에 실패하였습니다.")
+                }
+                setIsEventAdded(true);
+
+                // return { ...event, start: info.event.startStr, end: info.event.endStr }; // 변경된 시간으로 업데이트
+            }
+            // return event; // 다른 이벤트는 그대로 유지
         });
-        setEvents(updatedEvents);
+        // 비동기 처리 후 상태 업데이트
+        // map()는 비동기 처리이므로 Promise.all로 결과를 기다림
+        // const resolvedEvents = await Promise.all(updatedEvents);
+        // setEvents(resolvedEvents);
 
 
     };
@@ -235,6 +257,7 @@ export const TestCalendar = () => {
                 select={handleDateSelect}
                 eventClick={handleEventClick}
                 eventDrop={handleEventDrop}
+                eventResize={handleEventDrop}
                 selectAllow={info => {
                     return true; // 또는 특정 조건에 따라 허용 여부를 결정
                 }}
@@ -258,7 +281,7 @@ export const TestCalendar = () => {
                     // }
                 }}
                 events={events}
-                // events={filterEventsByProjectId(events, selectedProjectId)}
+            // events={filterEventsByProjectId(events, selectedProjectId)}
 
             />
             <ReactModal
