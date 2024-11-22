@@ -21,6 +21,7 @@ import { useUser } from '../context/UserContext';
 import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList'
 import MyProfileIcon from '../pages/MyProfileIcon'
+import { TestCalendar } from '../calendarTest/TestCalendar';
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -194,7 +195,8 @@ const MyPage = () => {
             <div className="centered-vertically">
                 <div className="calender-mypage">
                     <span className="text">달력</span>
-                    <FullCalendar
+                    <TestCalendar/>
+                    {/* <FullCalendar
                         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                         dateClick={handleDateClick}
                         eventContent={renderEventContent}
@@ -227,7 +229,7 @@ const MyPage = () => {
                             <button onClick={closeModal}>닫기</button>
                             <button type='submit'>일정등록</button>
                         </form>
-                    </ReactModal>
+                    </ReactModal> */}
                 </div>
 
                 <div className="horizontal-alignment">
