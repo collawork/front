@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "../../../components/assest/css/CreateNotice.css";
 
-const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
+const NoticeForm = ({ projectId, notice, onSubmit, onClose }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [important, setImportant] = useState(false);
   const [attachments, setAttachments] = useState([]);
-
-  const API_URL = process.env.REACT_APP_API_URL;
+  const [existingAttachments, setExistingAttachments] = useState([]);
 
   useEffect(() => {
     if (notice) {
-      // 수정 모드일 경우 기존 데이터 설정
+      // 기존 데이터를 폼에 세팅
       setTitle(notice.title || "");
       setContent(notice.content || "");
       setImportant(notice.important || false);
-      setAttachments([]); // 기존 첨부파일 표시 구현 필요 (현재는 비워 둠)
+      setExistingAttachments(notice.attachments || []);
     }
   }, [notice]);
 
@@ -31,6 +29,10 @@ const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const removeExistingAttachment = (index) => {
+    setExistingAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -38,44 +40,18 @@ const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
     formData.append("content", content);
     formData.append("important", important);
 
-    // 파일 추가
+    // 기존 첨부파일 정보 포함
+    existingAttachments.forEach((file, index) => {
+      formData.append(`existingAttachments[${index}]`, file);
+    });
+
+    // 새 첨부파일 추가
     attachments.forEach((file) => {
       formData.append("attachments", file);
     });
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("토큰이 없습니다.");
-      return;
-    }
-
     try {
-      if (notice) {
-        // 수정 요청
-        await axios.put(
-          `${API_URL}/api/projects/${projectId}/notices/${notice.id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        alert("공지사항이 수정되었습니다.");
-      } else {
-        // 작성 요청
-        await axios.post(`${API_URL}/api/projects/${projectId}/notices`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        alert("공지사항이 작성되었습니다.");
-      }
-      if (onSubmit) {
-        onSubmit();
-      }
+      await onSubmit(formData);
       onClose();
     } catch (error) {
       console.error("작업 중 오류 발생:", error);
@@ -83,7 +59,7 @@ const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
     }
   };
 
-  if (!isOpen) return null;
+  if (!notice && !onClose) return null;
 
   return (
     <div className="notice-modal-overlay">
@@ -113,6 +89,29 @@ const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
               />
               중요
             </label>
+          </div>
+
+          {/* 기존 첨부파일 */}
+          <div className="form-group">
+            <label>기존 첨부파일:</label>
+            {existingAttachments.length > 0 ? (
+              <ul className="attachment-list">
+                {existingAttachments.map((file, index) => (
+                  <li key={index}>
+                    {file.fileName}
+                    <button
+                      type="button"
+                      className="remove-attachment-btn"
+                      onClick={() => removeExistingAttachment(index)}
+                    >
+                      제거
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>첨부파일 없음</p>
+            )}
           </div>
 
           {/* 첨부파일 */}
@@ -165,4 +164,4 @@ const CreateNotice = ({ isOpen, onClose, projectId, notice, onSubmit }) => {
   );
 };
 
-export default CreateNotice;
+export default NoticeForm;

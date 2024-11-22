@@ -3,7 +3,7 @@ import axios from "axios";
 import NoticeDetailModal from "./NoticeDetail";
 import NoticeCreateModal from "./CreateNotice";
 import { useUser } from "../../../context/UserContext";
-import '../../../components/assest/css/NoticeList.css';
+import "../../../components/assest/css/NoticeList.css";
 
 const NoticeList = ({ projectId }) => {
   const [notices, setNotices] = useState([]);
@@ -76,20 +76,43 @@ const NoticeList = ({ projectId }) => {
     setIsCreateModalOpen(false);
   };
 
+  const handleNoticeCreated = (newNotice) => {
+    setNotices((prevNotices) => [newNotice, ...prevNotices]);
+    closeCreateModal();
+  };
+
   return (
-    <div>
-      <h1>공지사항 목록</h1>
+    <div className="notice-list-container">
+      <h1>공지사항</h1>
       {userRole === "ADMIN" && (
-        <button onClick={openCreateModal}>공지사항 작성</button>
+        <button className="create-notice-button" onClick={openCreateModal}>
+          공지사항 작성
+        </button>
       )}
-      <ul>
-        {notices.map((notice) => (
-          <li key={notice.id} onClick={() => openDetailModal(notice.id)}>
-            <strong>{notice.important ? "[중요] " : ""}</strong>
-            {notice.title}
-          </li>
-        ))}
-      </ul>
+      <table className="notice-table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>중요</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+          </tr>
+        </thead>
+        <tbody>
+          {notices.map((notice, index) => (
+            <tr key={notice.id} onClick={() => openDetailModal(notice.id)}>
+              <td>{index + 1}</td>
+              <td>{notice.important ? "중요" : ""}</td>
+              <td>{notice.title}</td>
+              <td>{notice.creatorName || "알 수 없음"}</td>
+              <td>{new Date(notice.createdAt).toLocaleString()}</td>
+              <td>{notice.viewCount || 0}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       {isDetailModalOpen && selectedNotice && (
         <NoticeDetailModal
           isOpen={isDetailModalOpen}
@@ -103,7 +126,7 @@ const NoticeList = ({ projectId }) => {
           isOpen={isCreateModalOpen}
           onClose={closeCreateModal}
           projectId={projectId}
-          onNoticeCreated={fetchNotices} 
+          onNoticeCreated={handleNoticeCreated}
         />
       )}
     </div>
