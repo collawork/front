@@ -1,77 +1,86 @@
-.notice-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .notice-modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .notice-modal-title {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .notice-modal-content-text {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  .notice-modal-important {
-    color: red;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  .notice-modal-creator {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-  }
-  
-  .notice-modal-actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .notice-modal-delete-button,
-  .notice-modal-close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .notice-modal-delete-button {
-    background-color: #ff4d4d;
-    color: white;
-  }
-  
-  .notice-modal-delete-button:hover {
-    background-color: #e60000;
-  }
-  
-  .notice-modal-close-button {
-    background-color: #f0f0f0;
-    color: black;
-  }
-  
-  .notice-modal-close-button:hover {
-    background-color: #d6d6d6;
-  }
-  
+.notice-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notice-detail-content {
+  background: #fff;
+  width: 80%;
+  max-width: 800px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notice-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.notice-detail-table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.notice-detail-table th,
+.notice-detail-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.notice-content {
+  margin-bottom: 20px;
+}
+
+.notice-content h3 {
+  margin-bottom: 10px;
+}
+
+.notice-attachments ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notice-attachments li {
+  margin-bottom: 5px;
+}
+
+.notice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.notice-edit-button,
+.notice-delete-button,
+.notice-back-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.notice-edit-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.notice-delete-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.notice-back-button {
+  background-color: #6c757d;
+  color: #fff;
+}
