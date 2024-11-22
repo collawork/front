@@ -194,6 +194,29 @@ const FriendCategoryManager = ({ userId, onClose }) => {
             alert("친구 제외 중 문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
+
+    const handleDeleteCategory = async (categoryId) => {
+        if (!window.confirm("정말 이 카테고리를 삭제하시겠습니까?")) return;
+    
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`${API_URL}/api/category/categories/${categoryId}/delete`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+    
+            setCategories((prev) => prev.filter((category) => category.id !== categoryId));
+            if (selectedCategory?.id === categoryId) {
+                setSelectedCategory(null);
+                setSelectedCategoryFriends([]);
+            }
+            fetchCategories();
+            fetchFriends();
+        } catch (error) {
+            console.error("카테고리 삭제 실패:", error);
+            alert("카테고리 삭제 중 문제가 발생했습니다. 다시 시도해주세요.");
+        }
+    };
+    
     
 
     const handleFriendSelection = (friendId) => {
@@ -227,6 +250,14 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                     <div className="sidebar">
                         <h3>카테고리</h3>
                         <button onClick={handleCreateCategory}>+ 카테고리 생성</button>
+                            {selectedCategory && (
+                                <button
+                                    onClick={() => handleDeleteCategory(selectedCategory.id)}
+                                    className="delete-category-button"
+                                >
+                                    삭제
+                                </button>
+                            )}
                         <input
                             type="text"
                             value={newCategoryName}
