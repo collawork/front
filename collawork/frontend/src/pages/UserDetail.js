@@ -8,32 +8,33 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        let response;
-
-        if (type === 'user') {
-          response = await axios.get(`http://localhost:8080/api/user/detail`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            params: {
-              email: item?.email
-            }
-          });
-          setData(response.data);
-        } 
-      } catch (error) {
-        console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
-      }
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/user/detail`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    email: item?.email,
+                    // id: item?.id,
+                    // currentUserId: currentUser
+                }
+            });
+            setData(response.data);
+        } catch (error) {
+            console.error(`${type} 정보를 불러오는 중 오류 발생: `, error);
+        }
     };
 
     fetchData();
-  }, [type, item, currentUser]);
+}, [type, item, currentUser]);
 
-  console.log("UserDetail currentUser:", JSON.stringify(currentUser));
 
   if (!data) return <p>로딩 중...</p>;
+
+  // const profileImageUrl = data.profileImage && !data.profileImage.includes(':')
+  //   ? `http://localhost:8080/uploads/${data.profileImage}`
+  //   : '/default-profile.png';
 
   return (
     <div className="user-detail-modal">
@@ -43,7 +44,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
         <>
           <h3>사용자 정보</h3>
           <img
-            src={data.profileImage || '../components/assest/imges/default_image.png'}
+            src={data.profileImage ? `http://localhost:8080/uploads/${data.profileImage}` : '/default-profile.png'}
             alt={`${data.username || '사용자'}의 프로필 이미지`}
           />
           <p>이름: {data.username || '정보 없음'}</p>

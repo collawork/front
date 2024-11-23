@@ -1,140 +1,428 @@
-import { useState } from 'react'; 
-import ReactModal from "react-modal"; 
-import ProjectService from "../services/ProjectService"; 
+import { useState, useEffect } from 'react';
+import ReactModal from "react-modal";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { stateValue, projectStore } from '../store';
+import '../components/assest/css/Aside.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Aside = () => {  
+const Aside = ({ onProjectSelect, onInviteFriends  }) => {
+    const [projectName, setProjectName] = useState([]);
+    const [title, setTitle] = useState("");
+    const [context, setContext] = useState("");
+    const [friends, setFriends] = useState([]);
+    const [participants, setParticipants] = useState([]);
+    const [selectedFriends, setSelectedFriends] = useState([]);
+    const [selectedParticipants, setSelectedParticipants] = useState([]);
+    const [isAllFriendsSelected, setIsAllFriendsSelected] = useState(false);
+    const [isAllParticipantsSelected, setIsAllParticipantsSelected] = useState(false);
+    const { userId } = useUser();
+    const [newShow, setNewShow] = useState(false);
+    const addTitle = projectStore(state => state.PlusProjectName);
+    const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+    const [userRole, setUserRole] = useState(null);
+    const [selectedProject, setSelectedProject] = useState(null);
 
-  const [title, setTitle] = useState("");
-  const [context, setContext] = useState("");
-  const { userId } = useUser();
-  console.log("2userId : " + userId );
-  
-    const [newShow, setNewShow] = useState(false); 
-    function Send(){
-      console.log(title);
-      console.log(context);
-      console.log(userId);
-      axios(
-          {
-              url:`${API_URL}/api/user/projects/newproject`,
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-              method: 'post',
-            //   data: {
-            //       title:title, context:context, userId:userId
-            //   },
-             params: { title, context , userId},
-              baseURL:'http://localhost:8080',
-              withCredentials: true,
-          }
-      ).then(function(response){
-          console.log(response.data)
-      }
-  )
-  }
-
-    
-    const modalCloseHandler = () => { 
-        setNewShow(false); 
-        // setFormData({ title: "", context: "" }); 
-        setTitle("");
-        setContext("");
-    };
-
-    const handleSubmit = async (e) => { 
-        e.preventDefault(); 
-
-        if (!title) {
-            alert("프로젝트의 이름을 입력해주세요.");
+    // 친구 목록 가져오기
+    const fetchFriends = async () => {
+        const token = localStorage.getItem('token');
+        if (!token || !userId) {
+            console.warn("토큰 또는 userId가 없습니다.");
             return;
         }
+    
         try {
-            Send(title, context);
-            alert('새 프로젝트가 생성되었습니다.');
-            setNewShow(false);
+            const response = await axios.get(`${API_URL}/api/friends/list`, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                params: { userId },
+            });
+    
+            //console.log("친구 목록 데이터:", response.data);
+    
+            // 필터링 로직 디버깅
+            const filteredFriends = response.data.reduce((acc, friend, index) => {
+                // console.log(`friend[${index}].requester.id: ${friend.requester.id}`);
+                // console.log(`friend[${index}].responder.id: ${friend.responder.id}`);
+                // console.log(`friend[${index}].status: ${friend.status}`);
+    
+                if (friend.status !== 'ACCEPTED') {
+                    console.warn(`friend[${index}]가 ACCEPTED 상태가 아닙니다.`);
+                    return acc;
+                }
+    
+                if (String(friend.requester.id) === String(userId)) {
+                    acc.push({
+                        id: friend.responder.id,
+                        username: friend.responder.username,
+                        email: friend.responder.email
+                    });
+                } else if (String(friend.responder.id) === String(userId)) {
+                    acc.push({
+                        id: friend.requester.id,
+                        username: friend.requester.username,
+                        email: friend.requester.email
+                    });
+                } else {
+                    console.warn(`friend[${index}]에서 userId와 일치하지 않는 requester/responder를 찾을 수 없습니다.`);
+                }
+                return acc;
+            }, []);
+    
+            //console.log("필터링된 친구 목록:", filteredFriends);
+    
+            setFriends(filteredFriends);
         } catch (error) {
-            alert('프로젝트 생성에 실패하였습니다.');
+            console.error('친구 목록을 불러오는 중 오류 발생:', error);
+        }
+    };
+    
+
+    // 프로젝트 목록 가져오기
+    const selectProjectName = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다.");
+            return;
+        }
+    
+        try {
+            console.log("전송할 데이터:", { userId: Number(userId) });
+            const response = await axios.post(
+                `${API_URL}/api/user/projects/selectAll`,
+                { userId: Number(userId) },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+    
+            console.log("프로젝트 목록:", response.data);
+    
+            if (Array.isArray(response.data)) {
+                setProjectName(response.data);
+            } else {
+                console.warn("API 응답이 배열이 아닙니다. 빈 배열로 설정합니다.");
+                setProjectName([]);
+            }
+        } catch (error) {
+            console.error("프로젝트 목록을 불러오는 중 오류 발생:", error);
+            setProjectName([]);
         }
     };
 
-   
-    const handleInputChange1 = (e) => {
-      setTitle(e.target.value);
-       
+    // 선택된 프로젝트의 role 가져오기
+    const fetchUserRole = async (projectId) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다.");
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/user/${projectId}/role`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            setUserRole(response.data.role);
+        } catch (error) {
+            console.error("사용자의 프로젝트 역할을 가져오는 중 오류 발생:", error);
+        }
     };
 
-    const handleInputChange2 = (e) => {
-      setContext(e.target.value);
+    // 프로젝트 선택 시 처리
+    const handleProjectSelect = (project) => {
+        setSelectedProject(project);
+        fetchUserRole(project.id); // 현재 사용자의 역할 가져오기
+        onProjectSelect(project); // 부모 컴포넌트에 선택된 프로젝트 전달
+        fetchFriends(); // 선택된 프로젝트에 따라 친구 목록 업데이트
     };
+
+        // 친구 초대
+        const inviteFriends = () => {
+            if (!selectedProject || !selectedProject.id) {
+                alert("프로젝트를 선택해주세요.");
+                return;
+            }
+            if (onInviteFriends && selectedFriends.length > 0 && selectedProject) {
+                onInviteFriends(selectedProject, selectedFriends);
+                alert(`${selectedFriends.length}명의 친구를 초대했습니다.`);
+                setSelectedFriends([]);
+                setIsAllFriendsSelected(false);
+            } else {
+                alert("초대할 친구를 선택하세요.");
+            }
+        };
+    
+    
+
+    // 초기 데이터 로드
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (userId && token) {
+            fetchFriends();
+            selectProjectName();
+            console.log("현재 userId:", userId);
+            console.log("현재 selectedProject:", selectedProject);
+        }
+    }, [userId]);
+
+    useEffect(() => {
+        if (newShow) {
+            fetchFriends();
+        }
+    }, [newShow]);
+
+    const handleFriendSelection = (friend) => {
+        setSelectedFriends((prev) =>
+            prev.includes(friend) ? prev.filter((f) => f !== friend) : [...prev, friend]
+        );
+    };
+
+    const handleParticipantSelection = (participant) => {
+        setSelectedParticipants((prev) =>
+            prev.includes(participant) ? prev.filter((p) => p !== participant) : [...prev, participant]
+        );
+    };
+
+    const toggleSelectAllFriends = () => {
+        if (isAllFriendsSelected) {
+            setSelectedFriends([]);
+        } else {
+            setSelectedFriends(friends);
+        }
+        setIsAllFriendsSelected(!isAllFriendsSelected);
+    };
+
+    const toggleSelectAllParticipants = () => {
+        if (isAllParticipantsSelected) {
+            setSelectedParticipants([]);
+        } else {
+            setSelectedParticipants(participants);
+        }
+        setIsAllParticipantsSelected(!isAllParticipantsSelected);
+    };
+
+    const addParticipants = () => {
+        const updatedParticipants = [...participants, ...selectedFriends];
+        const updatedFriends = friends.filter((friend) => !selectedFriends.includes(friend));
+        setParticipants(updatedParticipants);
+        setFriends(updatedFriends);
+        setSelectedFriends([]);
+        setIsAllFriendsSelected(false);
+    };
+
+    const removeParticipants = () => {
+        const updatedFriends = [...friends, ...selectedParticipants];
+        const updatedParticipants = participants.filter((participant) => !selectedParticipants.includes(participant));
+        setFriends(updatedFriends);
+        setParticipants(updatedParticipants);
+        setSelectedParticipants([]);
+        setIsAllParticipantsSelected(false);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        const token = localStorage.getItem("token");
+
+        const participantIds = participants.map(participant => participant.id || participant);
+
+        console.log("전송 데이터 확인:", {
+            title,
+            context,
+            userId,
+            participants: participantIds, // 숫자 배열인지 확인
+        });
+    
+        try {
+            const response = await axios.post(
+                `${API_URL}/api/user/projects/newproject`,
+                {
+                    title,
+                    context,
+                    userId,
+                    participants: participantIds,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+    
+            console.log("전송 데이터 확인:", { title, context, userId, participants: participantIds });
+
+            alert("프로젝트가 생성되었습니다.");
+        } catch (error) {
+            console.error("프로젝트 생성 중 오류 발생:", error.response?.data || error.message);
+            alert("프로젝트 생성에 실패하였습니다.");
+        }
+    };
+    
+    
+
+    const modalCloseHandler = () => {
+        setNewShow(false);
+        setTitle("");
+        setContext("");
+        setParticipants([]);
+        setSelectedFriends([]);
+        setSelectedParticipants([]);
+        setIsAllFriendsSelected(false);
+        setIsAllParticipantsSelected(false);
+        fetchFriends();
+    };
+
+    // 프로젝트 선택 시 피드에 정보 띄우는 함수
+    const moveProjectHome = (project) => {
+        console.log("선택된 프로젝트:", project); 
+        if (!project || !project.id || !project.name) {
+            console.error("프로젝트 데이터가 유효하지 않습니다:", project);
+            return;
+        }
+        addTitle(project.name); // 전역 상태에 프로젝트 이름 저장
+        setHomeShow(true); // 홈 화면 상태 변경
+        setChatShow(false);
+        setCalShow(false);
+        setNotiShow(false);
+        setVotig(false);
+        console.log("onProjectSelect 전달 확인");
+        onProjectSelect(project);
+    };
+    
 
     return (
-        <>  
-            <ReactModal 
-                isOpen={newShow} 
-                contentLabel="새 프로젝트" 
+        <>
+            <ReactModal
+                isOpen={newShow}
+                contentLabel="새 프로젝트"
+                onRequestClose={modalCloseHandler}
                 appElement={document.getElementById('root')}
-                style={{ 
-                    content: { 
-                        top: '50%', 
-                        left: '50%', 
-                        right: 'auto', 
-                        bottom: 'auto', 
-                        marginRight: '-50%', 
-                        transform: 'translate(-50%, -50%)', 
-                        width: 600, 
-                        borderRadius: 0, 
-                        border: "none", 
-                        padding: '20px', 
-                    }, 
-                    overlay: { 
-                        backgroundColor: 'rgba(0, 0, 0, 0.75)', 
-                    } 
-                }} 
-            > 
-                <h2>프로젝트 만들기</h2> 
-                <form onSubmit={handleSubmit}> 
-                    <input 
-                        type="text" 
-                        name="title" 
-                        placeholder="제목을 입력하세요" 
-                        onChange={handleInputChange1} 
-                        value={title} 
-                        required 
-                    /> 
-                    <textarea 
-                        name="context" 
-                        placeholder='프로젝트 설명을 입력하세요.' 
-                        onChange={handleInputChange2} 
-                        value={context} 
-                    /> 
-                    <div> 
-                        <button type="submit">프로젝트 생성</button> 
-                        <button type="button" onClick={modalCloseHandler}>취소</button> 
-                    </div> 
-                </form> 
-            </ReactModal>  
+                style={{
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        borderRadius: 0,
+                        border: "none",
+                        padding: '20px',
+                    },
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                    }
+                }}
+            >
+                <h2>프로젝트 만들기</h2>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="제목을 입력하세요"
+                        onChange={(e) => setTitle(e.target.value)}
+                        value={title}
+                        required
+                    />
+                    <textarea
+                        name="context"
+                        placeholder="프로젝트 설명을 입력하세요."
+                        onChange={(e) => setContext(e.target.value)}
+                        value={context}
+                    />
 
-            <div className="aside"> 
-                <div className="aside-top"> 
-                    <div>collawork</div> 
-                    <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button> 
-                </div> 
-                <div className="aside-bottom"> 
-                    <div className="project-list"> 
-                        <div className="project-item">프로젝트1</div> 
-                        <div className="project-item">프로젝트2</div> 
-                        <div className="project-item">프로젝트3</div> 
-                        <div className="project-item">프로젝트4</div> 
-                    </div> 
-                </div> 
-            </div> 
-        </>  
-    ); 
+                    <div className="participants-section">
+                        <div className="friends-list">
+                            <h4>
+                                친구 목록
+                                <input
+                                    type="checkbox"
+                                    checked={isAllFriendsSelected}
+                                    onChange={toggleSelectAllFriends}
+                                />
+                            </h4>
+                            <ul>                            
+                                {friends.length > 0 ? (
+                                    friends.map((friend) => (
+                                        <li key={friend.id}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedFriends.includes(friend)}
+                                                onChange={() => handleFriendSelection(friend)}
+                                            />
+                                            {friend.username || "이름 없음"} ({friend.email || "이메일 없음"})
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p>친구 목록이 비어 있습니다.</p>
+                                )}
+                            </ul>
+
+                        </div>
+
+                        <div className="actions">
+                            <button type="button" onClick={addParticipants}>{'>>'}</button>
+                            <button type="button" onClick={removeParticipants}>{'<<'}</button>
+                        </div>
+
+                        <div className="participants-list">
+                            <h4>
+                                초대 목록
+                                <input
+                                    type="checkbox"
+                                    checked={isAllParticipantsSelected}
+                                    onChange={toggleSelectAllParticipants}
+                                />
+                            </h4>
+                            <ul>
+                                {participants.map((participant) => (
+                                    <li key={participant.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedParticipants.includes(participant)}
+                                            onChange={() => handleParticipantSelection(participant)}
+                                        />
+                                        {participant.username || "이름 없음"} ({participant.email || "이메일 없음"})
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit">프로젝트 생성</button>
+                        <button type="button" onClick={modalCloseHandler}>취소</button>
+                    </div>
+                </form>
+            </ReactModal>
+
+            <div className="aside">
+                <div className="aside-top">
+                    <div>collawork</div>
+                    <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button>
+                </div>
+
+                <div className="aside-bottom">
+                    {projectName.map((project) => (
+                        <section key={project.id}>
+                            <li>
+                                <button onClick={() => moveProjectHome(project)}>{project.name}</button>
+                            </li>
+                        </section>
+                    ))}
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default Aside;

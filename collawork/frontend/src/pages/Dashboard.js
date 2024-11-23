@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import '../components/assest/css/Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
     const [user, setUser] = useState({ username: '', greeting: '' });
@@ -43,6 +44,11 @@ function Dashboard() {
         fetchUserData();
     }, []);
     
+    const navigate = useNavigate();
+    const go = ()=>{
+        navigate('/chattingServer/6');
+    }
+    
 
     return (
         <div className="dashboard">
@@ -50,7 +56,7 @@ function Dashboard() {
                 <h2>안녕하세요! {user.username || '사용자'}님 좋은 아침이에요.</h2>
                 <p>{user.greeting}</p>
             </header>
-
+            <button onClick={go}>채팅방 6번</button>
             <section className="quick-links">
                 <a href='https://google.com'>Google</a>
                 <a href='https://mail.google.com/'>Gmail</a>

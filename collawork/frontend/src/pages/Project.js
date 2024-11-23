@@ -1,72 +1,103 @@
-import { useNavigate, useLocation} from 'react-router-dom';
 import ProjectHome from '../components/project/ProjectHome';
-import ProjectChat from "../components/project/ProjectChat";
-import ProjectCalendar from "../components/project/ProjectCalendar";
-import { useState } from 'react';
+import ChatRoom from "../components/Chat/ChatRoom";
+//import ProjectCalendar from "../components/project/ProjectCalendar";
 import '../components/assest/css/Project.css'; 
-import Notification from '../components/project/Notification';
+import Board from '../components/project/Board';
 import { useUser } from '../context/UserContext';
+import { stateValue } from '../store';
+import Voting from '../components/project/Voting/ShowVoting';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
+import { Calendar } from '../components/calendar/Calendar'; 
+import {projectStore} from '../store';
+
 
 
 const Project = () => {
+
+    const {projectData} = projectStore(); 
     
     const token = localStorage.getItem("token");
     console.log("현재 로그인한 사용자의 token : " + token);
 
     const { userId } = useUser();
     console.log("Project 페이지의 userId: ", userId);
+    const {homeShow,chatShow,calShow, notiShow,voting,
+        setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig
+    } = stateValue();
 
-    const [homeShow, setHomeShow] = useState(true);
-    const [chatShow, setChatShow] = useState(false);
-    const [calShow, setCalShow] = useState(false);
-    const [notiShow, setNotiShow] = useState(false);
    
     const homeClickHandler = () => {
-        setHomeShow(true);
-        setChatShow(false);
-        setCalShow(false);
-        setNotiShow(false);
+        if(projectData){
+            console.log(projectData.id);
+            setHomeShow(true);
+            setChatShow(false);
+            setCalShow(false);
+            setNotiShow(false);
+            setVotig(false);
+        }
     };
 
     const chatClickHandler = () => {
+        if(projectData){
         setChatShow(true);
         setHomeShow(false);
         setCalShow(false);
         setNotiShow(false);
+        setVotig(false);
+        }
     };
 
     const onClickHandler = () => {
+        if(projectData ){
         setHomeShow(false);
         setChatShow(false);
         setCalShow(true);
         setNotiShow(false);
+        setVotig(false);
+        }
     };
 
     const notiClickHandler = () => {
+        if(projectData){
         setNotiShow(true);
         setHomeShow(false);
         setChatShow(false);
         setCalShow(false);
+        setVotig(false);
+        }
 
     }
 
+    const AllOnClickHandler = () => {
+        if(projectData){
+        setNotiShow(false);
+        setHomeShow(false);
+        setChatShow(false);
+        setCalShow(false);
+        setVotig(true);
+        }
+    }
 
     return (
         
         <div className="project-container">
             <div className="button-group">
-                <button onClick={homeClickHandler}>피드</button>
-                <button onClick={notiClickHandler}>공지사항</button>
-                <button onClick={chatClickHandler}>채팅방</button>
-                <button onClick={onClickHandler}> 캘린더</button>
+                <button onClick={homeClickHandler}><FontAwesomeIcon icon={faHouse}/> 피드</button>
+                <button onClick={notiClickHandler}><FontAwesomeIcon icon={faBell} /> 공지사항</button>
+                <button onClick={chatClickHandler}><FontAwesomeIcon icon={faComment} /> 채팅방</button>
+                <button onClick={onClickHandler}><FontAwesomeIcon icon={faCalendarDays} /> 캘린더</button>
+                <button onClick={AllOnClickHandler}><FontAwesomeIcon icon={faCheckToSlot} /> 투표</button>
             </div>
 
             <div className="content-area">
 
                 {homeShow && <ProjectHome />}
-                {chatShow && <ProjectChat />}
-                {calShow && <ProjectCalendar />}
-                {notiShow && <Notification />}
+                {chatShow && <ChatRoom />}
+                {calShow && <Calendar />}
+                {/* {calShow && <ProjectCalendar />} */}
+                {notiShow && <Board />}
+                {voting && <Voting/>}
             </div>
         </div>
     );

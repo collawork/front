@@ -4,33 +4,85 @@
 달력을 이용한 일정 등록 서비스 제공
 */
 
-// const [formData, setFormData] = useState({
-//     scheduleId: '', pjId: '', scheduleTilte: '', scheduleDesc: '',
-//     scheduleStart: '', scheduleEnd: '', scheduleCreate: '', createdBy: '', createdAt: ''
-// });
 
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
-const registerSchedule = async(data)=>{
-    console.log(data);
-    const formData = data;
 
-    const registerScheduleRequest = data; // ex) title: ''
-    console.log("sdsdfasdfgdfhadf");
+const registerSchedule = async (newData) => {
+    const response = await axios(
+        {
+            url: `${API_URL}/api/calendar/insert`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            method: 'post',
+            data: { newData },
+            baseURL: 'http://localhost:8080',
+        }
+    )
+    return response.data;
+};
 
-    
-    console.log(formData);
-    console.log(`${API_URL}`);
-    return await axios.post(`${API_URL}/api/calendar`, formData, {
-        headers: {
-            'Content-Type': 'application/json', // JSON 형식으로 전송
-        }, withCredentials: true
-    });
+const updateEvent = async (id, title, description, color) => {
+    const updateData = { id, title, description, color }
+    const response = await axios(
+        {
+            url: `${API_URL}/api/calendar/update`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            method: 'post',
+            data: { updateData },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true
+        }
+    );
+    return response.data;
+};
+
+const updataEventDate = async (id, start, end, allDay) => {
+    const updateData = { id, start, end, allDay };
+    const response = await axios(
+        {
+            url: `${API_URL}/api/calendar/updatedate`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            method: 'post',
+            data: { updateData },
+            baseURL: 'http://localhost:8080',
+            withCredentials: true
+        }
+    );
+    console.log(response.data);
+    return response.data;
+};
+
+const deleteEventDate = async (id) => {
+    const response = await axios(
+        {
+            url: `${API_URL}/api/calendar/delete/${id}`,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+            },
+            method: 'delete',
+            baseURL: 'http://localhost:8080',
+            withCredentials: true
+        }
+    );
+    console.log(response.data);
+    return response.data;
 };
 
 const CalendarService = {
-    registerSchedule
-}
-  
+    registerSchedule,
+    updateEvent,
+    updataEventDate,
+    deleteEventDate
+};
 export default CalendarService;

@@ -1,148 +1,323 @@
-// import React, { useEffect, useState } from 'react';
-// import WebSocket from 'isomorphic-ws';
-// import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../../components/assest/css/ChatRoom.css';
+import {projectStore} from '../../store';
 
-// const ChatRoom = () => {
-//     const { chatRoomId } = useParams(); // URL에서 chatRoomId 가져오기
-//     const [messages, setMessages] = useState([]); // 채팅 메시지 상태 관리
-//     const [messageContent, setMessageContent] = useState(''); // 입력된 메시지 상태 관리
-//     const [file, setFile] = useState(null); // 파일 상태 관리
-//     const [webSocket, setWebSocket] = useState(null); // 웹소켓 상태 관리
-//     const navigate = useNavigate();
+const ChatRoom = () => {
+    const { chatRoomId } = useParams();
+    const [messages, setMessages] = useState([]);
+    const [messageInput, setMessageInput] = useState('');
+    const [fileInput, setFileInput] = useState(null);
+    const [webSocket, setWebSocket] = useState(null);
+    const [senderId, setSenderId] = useState('');
+    const [username, setUsername] = useState('');
+    const [roomName, setRoomName] = useState('');
+    const [isDeleteMode, setIsDeleteMode] = useState(false);
+    const [selectedMessages, setSelectedMessages] = useState([]);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+    const navigate = useNavigate();
+    const chatWindowRef = useRef(null);
+    const {projectData} = projectStore();
+    console.log({projectData})
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.');
+                return;
+            }
+    
+            try {
+                const response = await axios.get('http://localhost:8080/api/user/info', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+    
+                if (response.data) {
+                    setSenderId(response.data.id || null);
+                    setUsername(response.data.username || '알 수 없음');
+                } else {
+                    console.error('서버로부터 사용자 정보를 가져오지 못했습니다.');
+                }
+            } catch (error) {
+                console.error('사용자 정보를 불러오는 중 에러 발생:', error);
+            }
+        };
+    
+        fetchUserData();
+    }, [chatRoomId]);
+    
+
+    useEffect(() => {
+        const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const wsURL = `${wsProtocol}localhost:8080/chattingServer/${chatRoomId}`;
+        const ws = new WebSocket(wsURL);
+
+        ws.onopen = () => {
+            console.log("WebSocket 연결 성공");
+            fetchMessages();
+            ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
+        };
+
+        ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            const timestamp = new Date().toLocaleTimeString();
+            const messageWithSort = {
+                ...message,
+                time: timestamp,
+                sort: message.senderId === senderId ? 'sent' : 'received',
+                username: message.sender.username,
+                fileUrl: message.fileUrl || '',
+            };
+            setMessages(prev => [...prev, messageWithSort]);
+
+            
+        };
+
+        ws.onerror = (error) => {
+            console.error("WebSocket 오류:", error);
+        };
+
+        ws.onclose = () => {
+            console.log("WebSocket 연결 종료");
+        };
+
+        setWebSocket(ws);
+
+        return () => {
+            if (ws) {
+                ws.send(JSON.stringify({ type: 'leave', senderId }));
+                ws.close();
+            }
+        };
+    }, [chatRoomId, senderId, username]);
+
+    const fetchMessages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:8080/api/chat/${chatRoomId}/messages`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const formattedMessages = response.data.map(msg => ({
+                messageId: msg.id,
+                senderId: msg.senderId,
+                message: msg.content,
+                time: new Date(msg.createdAt).toLocaleTimeString(),
+                sort: msg.senderId === senderId ? 'sent' : 'received',
+                username: msg.sender.username,
+                type: msg.messageType,
+                fileUrl: msg.fileUrl || ''
+            }));
+            setMessages(formattedMessages);
+        } catch (error) {
+            console.error("메시지 가져오기 오류:", error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchRoomName = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`http://localhost:8080/api/chat/roomName/${chatRoomId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setRoomName(response.data);
+            } catch (error) {
+                console.error("채팅방 이름 가져오기 오류:", error);
+            }
+        };
+        fetchRoomName();
+    }, [chatRoomId]);
+
+    // 체크 풀기
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!event.target.closest('.message') && !event.target.closest('.dropdown-menu')) {
+                handleCancelDelete();
+            }
+        };
+        document.addEventListener('click', handleOutsideClick);
+        return () => {
+            document.removeEventListener('click', handleOutsideClick);
+        };
+    }, []);
+
+    const sendMessage = async (type = 'text') => {
+        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+            const timestamp = new Date().toLocaleTimeString();
+            if (type === 'text' && messageInput.trim() !== '') {
+                const sentMessage = {
+                    senderId,
+                    chatRoomId,
+                    message: messageInput,
+                    messageType: 'text',
+                    fileUrl: '',
+                    time: timestamp,
+                    sort: 'sent',
+                    username
+                };
 
 
-//     const url = process.env.REACT_APP_API_URL; // 환경 변수에서 API URL 가져오기
+                webSocket.send(JSON.stringify(sentMessage));
+                setMessages(prev => [...prev, sentMessage]);
+                setMessageInput('');
+                fetchMessages();
 
-//     useEffect(() => {
-//         const wsProtocol = window.location.protocol === "http:" ? "wss://" : "ws://";
-//         const wsURL = `${wsProtocol}localhost:8080/chattingServer/${chatRoomId}`;
-//         const ws = new WebSocket(wsURL);
 
-//         ws.onopen = () => {
-//             console.log("WebSocket 연결 성공");
-//             ws.send(JSON.stringify({ type: 'join', chatRoomId }));
-//         };
+            } else if (type === 'file' && fileInput) {
+                const formData = new FormData();
+                formData.append('file', fileInput);
+                formData.append('senderId', senderId);
+                formData.append('chatRoomId', chatRoomId);
+                formData.append('timestamp', timestamp);
 
-//         ws.onmessage = (event) => {
-//             const message = JSON.parse(event.data);
-//             setMessages((prevMessages) => [...prevMessages, message]);
-//             console.log("받은 메시지:", message); // 메시지 수신 로그
-//         };
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await axios.post('http://localhost:8080/api/chat/upload', formData, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
 
-//         ws.onerror = (error) => {
-//             console.error("WebSocket 오류:", error); // 오류 로그
-//         };
+                    const fileUrl = response.data.fileUrl;
+                    const sentMessage = {
+                        type: 'file',
+                        fileUrl: fileUrl,
+                        time: timestamp,
+                        senderId,
+                        sort: 'sent',
+                        username
+                    };
 
-//         ws.onclose = () => {
-//             console.log("WebSocket 연결 종료 2222");
-//         };
-//                 //연결된 웹소켓인스턴스 관리
-//         setWebSocket(ws);
+                    webSocket.send(JSON.stringify({ type, senderId, fileUrl, chatRoomId }));
+                    setMessages(prev => [...prev, sentMessage]);
+                    setFileInput(null);
+                    fetchMessages();
 
-//         return () => {
-//             if (ws) {
-//                 ws.send(JSON.stringify({ type: 'leave', chatRoomId }));
-//                 ws.close();
-//             }
-//         };
-//     }, [chatRoomId]);
+                } catch (error) {
+                    console.error('파일 업로드 오류:', error);
+                }
+            }
+        } else {
+            console.log("웹소켓이 연결되지 않았습니다.");
+        }
+    };
 
-//     const handleSendMessage = async () => {
-//         if (!messageContent.trim()) return; // 메시지가 비어있으면 전송하지 않음
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    };
 
-//         const newMessage = {
-//             content: messageContent,
-//             senderId: 'currentUserId', // 현재 사용자 ID로 변경
-//             chatRoomId,
-//             messageType: file ? 'file' : 'text', // 파일 여부에 따라 메시지 유형 설정
-//             fileUrl: file ? await uploadFile(file) : null, // 파일 업로드 후 URL 받아오기
-//             createdAt: new Date().toISOString(),
-//         };
+    const handleFileChange = (event) => {
+        setFileInput(event.target.files[0]);
+    };
 
-//         if (file && !newMessage.fileUrl) {
-//             console.error("파일 업로드 실패"); // 파일 업로드 실패 로그
-//             return;
-//         }
+    const handlerBackToMain = () => {
+        navigate("/main");
+    };
 
-//         await fetch(`${url}/messages`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(newMessage),
-//         });
+    useEffect(() => {
+        if (chatWindowRef.current) {
+            chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+        }
+    }, [messages]);
 
-//         webSocket.send(JSON.stringify(newMessage)); // 웹소켓으로 메시지 전송
 
-//         // 초기화
-//         setMessageContent('');
-//         setFile(null);
-//     };
+    const deleteSelectedMessages = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:8080/api/chat/deleteMessages`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                data: { messageIds: selectedMessages }
+            });
+            setMessages((prevMessages) => prevMessages.filter((msg) => !selectedMessages.includes(msg.messageId)));
+            setSelectedMessages([]);
+            setIsDeleteMode(false);
+        } catch (error) {
+            console.error("메시지 삭제 오류:", error);
+        }
+    };
 
-//     const uploadFile = async (file) => {
-//         const formData = new FormData();
-//         formData.append('file', file);
+    const rightClick = (event, messageId) => {
+        event.preventDefault();
+        setDropdownVisible(true);
+        setDropdownPosition({ x: event.clientX, y: event.clientY });
+    };
 
-//         const response = await fetch(`${url}/upload`, {
-//             method: 'POST',
-//             body: formData,
-//         });
+    const handleDropdownSelect = (action) => {
+        if (action === 'delete') {
+            setIsDeleteMode(true);
+        }
+        setDropdownVisible(false);
+    };
 
-//         if (response.ok) {
-//             const result = await response.text(); // 파일 업로드 성공 시 URL 반환
-//             return result; // URL 반환
-//         }
-//         return null;
-//     };
+    const handleCheckboxChange = (messageId) => {
+        setSelectedMessages((prevSelected) =>
+            prevSelected.includes(messageId)
+                ? prevSelected.filter((id) => id !== messageId)
+                : [...prevSelected, messageId]
+        );
+    };
 
-//     const handleKeyPress = (event) => {
-//         if (event.key === 'Enter') {
-//             handleSendMessage();
-//         }
-//     };
+    const handleCancelDelete = () => {
+        setSelectedMessages([]);  
+        setIsDeleteMode(false);    
+    };
 
-//     const handleBackToMain = () => {
-//         navigate("/"); // 메인으로 돌아가기
-//     };
+    return (
+        <div className="chat-container">
+            <h2>{roomName}</h2>
+            <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
+                {messages.map((msg) => (
+                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
+                         {isDeleteMode && (
+                            <input
+                                type="checkbox"
+                                checked={selectedMessages.includes(msg.messageId)}
+                                onChange={() => handleCheckboxChange(msg.messageId)}
+                            />
+                        )}
+                        <strong>{msg.username}</strong>: 
+                        {msg.type === 'file' ? (
+                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img|jfif)$/i) ? (
+                                <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                            ) : (
+                                <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
+                            )
+                        ) : (
+                            msg.message 
+                        )}
+                        <br />
+                        <span>{msg.time}</span>
+                    </div>
+                ))}
+                       {dropdownVisible && (
+                    <ul
+                        className="dropdown-menu"
+                        style={{ top: dropdownPosition.y, left: dropdownPosition.x }}
+                    >
+                        <li onClick={() => handleDropdownSelect('delete')}>삭제</li>
+                    </ul>
+                )}
+            </div>
+            <div className="input-container">
+                <input
+                    type="text"
+                    id="chatMessage"
+                    placeholder="메시지 입력"
+                    value={messageInput}
+                    onChange={e => setMessageInput(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                />
+                <input type="file" onChange={handleFileChange} />
+                <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
+                {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
+                <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
+            </div>
+        </div>
+    );
+};
 
-//     return (
-//         <div className="chat-container">
-//             <h2>채팅</h2>
-//                 {messages.map((msg, index) => (
-//                     <div key={index} style={{ marginTop: '5px' }}>
-//                         <strong>{msg.senderId}:</strong> {msg.content} <em>{new Date(msg.createdAt).toLocaleString()}</em>
-//                         {msg.fileUrl && (
-//                             <div>
-//                                 <a href={`/${msg.fileUrl}`} target="_blank" rel="noopener noreferrer">
-//                                     파일 다운로드
-//                                 </a>
-//                             </div>
-//                         )}
-//                     </div>
-//                 ))}
-//             <div className="input-container" style={{ marginTop: '10px' }}>
-//                 <input
-//                     type="text"
-//                     placeholder="메시지 입력"
-//                     value={messageContent}
-//                     onChange={e => setMessageContent(e.target.value)}
-//                     onKeyDown={handleKeyPress} // Enter 키 입력 처리
-//                     style={{
-//                         width: '100%',
-//                         padding: '8px',
-//                         borderRadius: '4px',
-//                         border: '1px solid #ccc',
-//                     }}
-//                 />
-//                 <input
-//                     type="file"
-//                     onChange={e => setFile(e.target.files[0])}
-//                 />
-//                 <button onClick={handleSendMessage}>전송</button>
-//                 <button onClick={handleBackToMain}>메인으로 돌아가기</button>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ChatRoom;
+export default ChatRoom;
