@@ -5,8 +5,8 @@ import { projectStore } from '../../store';
 import defaultImage from '../../components/assest/images/default-profile.png';
 import {faBars} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-
+import ProjectModify from "./ProjectModify";
+import { Color } from "three";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,6 +14,7 @@ const ProjectInformation = () => {
   const modalRef = useRef();
   const [modal, setModal] = useState(false);
   const [show, setShow] = useState(false);
+  const [noticesList,setNoticesList] = useState(); // 중요한 공지사항
   const [modify, setModify] = useState(false);
   const [calendarList,setCalendarList] = useState(); // 다가오는 일정 응답
   const { projectName, projectData, userData, PlusProjectData, PlusUserData } = projectStore();
@@ -23,15 +24,19 @@ const ProjectInformation = () => {
     if (projectName) {
       Send();  // 1. projectName 으로 프로젝트 정보 조회
       setShow(true);
-     // calendarSend();
+      calendarSend(); // 다가오는 캘린더 일정(7일 이내)
+      noticesSend(); // 등록된 중요 공지사항
     }
   }, [projectName]);
+
 
   useEffect(() => {
     if (projectData.createdBy) {
       manager(); // 프로젝트 데이터의 createdBy가 있을 때만 유저 정보 조회
     }
   }, [projectData]); // projectData가 업데이트될 때마다 실행
+
+
 
   function Send() { // 프로젝트 정보 조회
     const token = localStorage.getItem('token');
@@ -51,26 +56,51 @@ const ProjectInformation = () => {
     });
   }
 
-//   function calendarSend(){ // 다가오는 프로젝트 calendar
-//     const token = localStorage.getItem('token');
 
-//     axios({
-//       url: `${API_URL}/api/user/projects/calendarList`,
-//       headers: { 'Authorization': `Bearer ${token}` },
-//       method: 'post',
-//       params: { projectData:projectData.id, userId:userId }, // 프로젝트 id, userId 
-//       baseURL: 'http://localhost:8080',
-//     }).then(function(response) {
-//       console.log(response);
-//       if(response){
-//         setCalendarList(response.data);
-//       }
-//       if (!response.data || response.data.length === 0) {
-//         Send();
-//       }
-//     });
 
-  // };
+  function calendarSend(){ // 다가오는 프로젝트 calendar
+    const token = localStorage.getItem('token');
+
+    axios({
+      url: `${API_URL}/api/user/projects/calendarList`,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'post',
+      params: { projectData:projectData.id, userId:userId }, // 프로젝트 id, userId 
+      baseURL: 'http://localhost:8080',
+    }).then(function(response) {
+      console.log(response);
+      if(response){
+        setCalendarList(response.data); // 배열로 받아야 하나?
+        console.log(response.data);
+      }
+      if (!response.data || response.data.length === 0) {
+        Send();
+      }
+    });
+  };
+
+
+  
+    function noticesSend(){ // 중요 공지사항 
+      const token = localStorage.getItem('token');
+
+      axios({
+        url: `${API_URL}/api/user/projects/noticesSend`,
+        headers: { 'Authorization': `Bearer ${token}` },
+        method: 'post',
+        params: { projectData:projectData.id}, // 프로젝트 id
+        baseURL: 'http://localhost:8080',
+      }).then(function(response) {
+        console.log(response);
+        if(response){
+          setNoticesList(response.data);// 배열로 받아야 하나?
+          console.log(response.data);
+        }
+      });
+    }
+
+
+
 
   function manager() { // 유저 정보 조회
     const token = localStorage.getItem('token');
@@ -94,6 +124,39 @@ const ProjectInformation = () => {
     <>
       {show && (
         <div>
+          <h5>다가오는 일정</h5>
+         
+         {calendarList.length ? (
+            <ul>
+              {calendarList.map((list, index)=>(
+                <li key={index}>
+                  <h5>{list.title}</h5>
+                  <h6>{list.startTime} -- {list.endTime}</h6>
+                  {/* 시작시간이 빠른것부터 보여주기 */}
+                </li>
+              ))}
+            </ul>
+          )
+          :
+          <p>다가오는 일정이 없습니다.</p>
+        }
+
+        <h5>중요 공지사항</h5>
+        {noticesList.length ? (
+          <ul>
+            {noticesList.map((list, index)=>(
+              <li key={index}>
+                <h5>{list.title}</h5>
+                <h5>{list.creatorId}</h5> 
+                <h6>{list.createdAt}</h6>
+              </li>
+            ))}
+          </ul>
+        )
+        :
+        <h5>중요 공지사항이 없습니다.</h5>
+      }
+         
           <h3>프로젝트 이름 : {projectData.projectName}</h3>
           <h5>- {projectData.projectCode}</h5>
           <button onClick={()=> modify? setModify(false):setModify(true)}><FontAwesomeIcon icon={faBars}/></button>
@@ -112,6 +175,7 @@ const ProjectInformation = () => {
                 objectFit: "cover",
               }}
             />
+            {modify && <ProjectModify setModify={setModify}/>}
             {userData.username || '정보 없음'}
             {modal && (
               <div
@@ -144,28 +208,8 @@ const ProjectInformation = () => {
           <h6>+다가올 캘린더 속 일정 공지, +최근 공지사항, +중요공지</h6>
         </div>
       )}
-      <div ref={modalRef} style={{ position: 'relative' }}>
-  {modify && (
-    <>
-      <input 
-        type="text" 
-        placeholder="관리자 변경" 
-        readOnly 
-        onClick={() => console.log('관리자 변경 클릭됨')} 
-        style={{ cursor: 'pointer' }} 
-      />
-      <input 
-        type="text" 
-        placeholder="채팅방 이름 변경" 
-        readOnly 
-        onClick={() => console.log('채팅방 이름 변경 클릭됨')} 
-        style={{ cursor: 'pointer' }} 
-      />
     </>
-  )}
-</div>
-    </>
-  );
-};
+  )
+}
 
 export default ProjectInformation;
