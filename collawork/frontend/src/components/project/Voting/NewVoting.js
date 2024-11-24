@@ -4,12 +4,6 @@ import axios from "axios";
 import { projectStore } from "../../../store";
 import { useUser } from "../../../context/UserContext";
 
-// -- 고민 해볼것들 --  
-    // 1. 투표 결과 공개 시점 (실시간/투표종료 후)
-    // 2. 복수 투표
-    // 3. 익명 투표
-    // 4. 투표 결과 나만 보기 
-
 
 const API_URL = process.env.REACT_APP_API_URL;
 
