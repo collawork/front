@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../../components/assest/css/FriendCategoryManager.css";
+import UserDetail from "../../pages/UserDetail";
 
 const FriendCategoryManager = ({ userId, onClose }) => {
     const [categories, setCategories] = useState([]);
@@ -13,6 +14,8 @@ const FriendCategoryManager = ({ userId, onClose }) => {
     const [selectedCategoryFriends, setSelectedCategoryFriends] = useState([]);
     const [addToCategory, setAddToCategory] = useState([]);
     const modalRef = useRef(null);
+    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [showUserDetail, setShowUserDetail] = useState(false);   
 
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -243,6 +246,11 @@ const FriendCategoryManager = ({ userId, onClose }) => {
         );
     };
 
+    const handleFriendClick = (friend) => {
+        setSelectedFriend(friend);
+        setShowUserDetail(true);
+    };
+
     return (
         <div className="modal-overlay">
             <div className="modal-content" ref={modalRef}>
@@ -339,6 +347,15 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                         <button onClick={handleAddFriendsToCategory}>추가하기</button>
                     </div>
                 </div>
+                {showUserDetail && selectedFriend && (
+                    <UserDetail
+                        type="user"
+                        item={selectedFriend}  // 선택된 친구 정보 전달
+                        closeModal={() => setShowUserDetail(false)}  // 모달 닫기 핸들러
+                        currentUser={userId}   // 현재 사용자 ID 전달
+                    />
+                )}
+
             </div>
         </div>
     );
