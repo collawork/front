@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../../components/assest/css/FriendCategoryManager.css";
+import UserDetail from "../../pages/UserDetail";
 
 const FriendCategoryManager = ({ userId, onClose }) => {
     const [categories, setCategories] = useState([]);
@@ -13,6 +14,8 @@ const FriendCategoryManager = ({ userId, onClose }) => {
     const [selectedCategoryFriends, setSelectedCategoryFriends] = useState([]);
     const [addToCategory, setAddToCategory] = useState([]);
     const modalRef = useRef(null);
+    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [showUserDetail, setShowUserDetail] = useState(false);   
 
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -243,6 +246,11 @@ const FriendCategoryManager = ({ userId, onClose }) => {
         );
     };
 
+    const handleFriendClick = (friend) => {
+        setSelectedFriend(friend);
+        setShowUserDetail(true);
+    };
+
     return (
         <div className="modal-overlay">
             <div className="modal-content" ref={modalRef}>
@@ -250,14 +258,14 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                     <div className="sidebar">
                         <h3>카테고리</h3>
                         <button onClick={handleCreateCategory}>+ 카테고리 생성</button>
-                            {selectedCategory && (
-                                <button
-                                    onClick={() => handleDeleteCategory(selectedCategory.id)}
-                                    className="delete-category-button"
-                                >
-                                    삭제
-                                </button>
-                            )}
+                        {selectedCategory && (
+                            <button
+                                onClick={() => handleDeleteCategory(selectedCategory.id)}
+                                className="delete-category-button"
+                            >
+                                삭제
+                            </button>
+                        )}
                         <input
                             type="text"
                             value={newCategoryName}
@@ -302,7 +310,9 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                                 checked={addToCategory.includes(friend.id)}
                                                 onChange={() => handleCategoryFriendSelection(friend.id)}
                                             />
-                                            {friend.username} ({friend.email})
+                                            <span onClick={() => handleFriendClick(friend)}>
+                                                {friend.username} ({friend.email})
+                                            </span>
                                         </li>
                                     ))}
                                 </ul>
@@ -332,7 +342,9 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                         checked={selectedFriends.includes(friend.id)}
                                         onChange={() => handleFriendSelection(friend.id)}
                                     />
-                                    {friend.username} ({friend.email})
+                                    <span onClick={() => handleFriendClick(friend)}>
+                                        {friend.username} ({friend.email})
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -340,8 +352,22 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                     </div>
                 </div>
             </div>
+    
+            {/* UserDetail 모달 */}
+            {showUserDetail && selectedFriend && (
+                <div className="user-detail-modal-right">
+                    <div className="user-detail-modal2">
+                        <UserDetail
+                            type="user"
+                            item={selectedFriend}
+                            closeModal={() => setShowUserDetail(false)}
+                            currentUser={userId}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
-    );
+    );   
 };
 
 export default FriendCategoryManager;
