@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../components/assest/css/InviteModal.css";
 import axios from "axios";
+import Pagination from "../components/Pagination";
 
 const InviteModal = ({
   isOpen,
@@ -17,9 +18,13 @@ const InviteModal = ({
   const [isAllInvitesSelected, setIsAllInvitesSelected] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
 
+  // 페이징 상태
+  const [friendsCurrentPage, setFriendsCurrentPage] = useState(1);
+  const [invitesCurrentPage, setInvitesCurrentPage] = useState(1);
+  const pageSize = 5; // 한 페이지당 표시할 항목 수
+
   const API_URL = process.env.REACT_APP_API_URL;
 
-  // 친구 목록 불러오기
   const fetchFriends = async () => {
     if (!userId) return;
 
@@ -59,7 +64,6 @@ const InviteModal = ({
     }
   };
 
-  // 참여자 목록 불러오기
   const fetchAcceptedParticipants = async () => {
     if (!selectedProject || !selectedProject.id) return;
 
@@ -76,36 +80,32 @@ const InviteModal = ({
     }
   };
 
-  // 초대 발송
   const handleInvite = async () => {
     if (!selectedProject || !selectedProject.id) {
-        alert("프로젝트를 선택해주세요.");
-        return;
+      alert("프로젝트를 선택해주세요.");
+      return;
     }
     if (invites.length === 0) {
-        alert("초대할 사용자가 없습니다.");
-        return;
+      alert("초대할 사용자가 없습니다.");
+      return;
     }
 
     try {
-        const participantIds = invites.map((invite) => invite.id);
-        console.log("초대 요청 데이터:", participantIds);
+      const participantIds = invites.map((invite) => invite.id);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/api/user/projects/${selectedProject.id}/participants/invite`,
+        { participants: participantIds },
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+      );
 
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-            `${API_URL}/api/user/projects/${selectedProject.id}/participants/invite`,
-            { participants: participantIds },
-            { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-        );
-
-        alert(response.data);   //  초대 성공 알림
-        onClose();
+      alert(response.data); // 초대 성공 알림
+      onClose();
     } catch (error) {
-        console.error("초대 요청 오류:", error.response?.data || error.message);
-        alert("초대 실패");
+      console.error("초대 요청 오류:", error.response?.data || error.message);
+      alert("초대 실패");
     }
-};
-  
+  };
 
   const addParticipants = () => {
     const validFriends = selectedFriends.filter(
@@ -140,6 +140,16 @@ const InviteModal = ({
     }
   }, [isOpen]);
 
+  // 페이징 데이터
+  const paginatedFriends = friends.slice(
+    (friendsCurrentPage - 1) * pageSize,
+    friendsCurrentPage * pageSize
+  );
+  const paginatedInvites = invites.slice(
+    (invitesCurrentPage - 1) * pageSize,
+    invitesCurrentPage * pageSize
+  );
+
   if (!isOpen) return null;
 
   return (
@@ -147,22 +157,11 @@ const InviteModal = ({
       <div className="modal-content">
         <h3>{selectedProject?.name || "프로젝트"}에 초대하기</h3>
         <div className="participants-section">
-          {/* 친구 목록 */}
           <div className="friends-list">
-            <h4>
-              친구 목록
-              <input
-                type="checkbox"
-                checked={isAllFriendsSelected}
-                onChange={() => {
-                  setIsAllFriendsSelected(!isAllFriendsSelected);
-                  setSelectedFriends(isAllFriendsSelected ? [] : [...friends]);
-                }}
-              />
-            </h4>
+            <h4>친구 목록</h4>
             <ul>
-              {friends.map((friend) => (
-                <li key={`friend-${friend.id}`}>
+              {paginatedFriends.map((friend) => (
+                <li key={friend.id}>
                   <label>
                     <input
                       type="checkbox"
@@ -180,30 +179,23 @@ const InviteModal = ({
                 </li>
               ))}
             </ul>
+            <Pagination
+              currentPage={friendsCurrentPage}
+              totalPages={Math.ceil(friends.length / pageSize)}
+              onPageChange={setFriendsCurrentPage}
+            />
           </div>
 
-          {/* 버튼 */}
           <div className="actions">
             <button onClick={addParticipants}>{'>>'}</button>
             <button onClick={removeParticipants}>{'<<'}</button>
           </div>
 
-          {/* 초대 목록 */}
           <div className="invites-list">
-            <h4>
-              초대 목록
-              <input
-                type="checkbox"
-                checked={isAllInvitesSelected}
-                onChange={() => {
-                  setIsAllInvitesSelected(!isAllInvitesSelected);
-                  setSelectedInvites(isAllInvitesSelected ? [] : [...invites]);
-                }}
-              />
-            </h4>
+            <h4>초대 목록</h4>
             <ul>
-              {invites.map((invite) => (
-                <li key={`invite-${invite.id}`}>
+              {paginatedInvites.map((invite) => (
+                <li key={invite.id}>
                   <label>
                     <input
                       type="checkbox"
@@ -221,18 +213,11 @@ const InviteModal = ({
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* 참여자 목록 */}
-          <div className="participants-list">
-            <h4>참여자 목록</h4>
-            <ul>
-              {participants.map((participant) => (
-                <li key={`participant-${participant.id}`}>
-                  {participant.username} ({participant.email})
-                </li>
-              ))}
-            </ul>
+            <Pagination
+              currentPage={invitesCurrentPage}
+              totalPages={Math.ceil(invites.length / pageSize)}
+              onPageChange={setInvitesCurrentPage}
+            />
           </div>
         </div>
 

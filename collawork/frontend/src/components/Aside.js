@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useUser } from '../context/UserContext';
 import { stateValue, projectStore } from '../store';
 import '../components/assest/css/Aside.css';
+import Pagination from "../components/Pagination";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -23,6 +24,10 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const pageSize = 10; // 한 페이지에 표시할 프로젝트 수
+
 
     // 친구 목록 가져오기
     const fetchFriends = async () => {
@@ -90,7 +95,6 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         }
     
         try {
-            console.log("전송할 데이터:", { userId: Number(userId) });
             const response = await axios.post(
                 `${API_URL}/api/user/projects/selectAll`,
                 { userId: Number(userId) },
@@ -102,19 +106,20 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 }
             );
     
-            console.log("프로젝트 목록:", response.data);
-    
             if (Array.isArray(response.data)) {
-                setProjectName(response.data);
+                const allProjects = response.data;
+                setTotalPages(Math.ceil(allProjects.length / pageSize)); // 전체 페이지 수 계산
+                const startIndex = (currentPage - 1) * pageSize; // 현재 페이지의 시작 인덱스
+                const endIndex = Math.min(startIndex + pageSize, allProjects.length); // 현재 페이지의 끝 인덱스
+                setProjectName(allProjects.slice(startIndex, endIndex)); // 슬라이싱한 데이터 저장
             } else {
-                console.warn("API 응답이 배열이 아닙니다. 빈 배열로 설정합니다.");
-                setProjectName([]);
+                console.warn("API 응답이 예상한 형식이 아닙니다.");
             }
         } catch (error) {
             console.error("프로젝트 목록을 불러오는 중 오류 발생:", error);
-            setProjectName([]);
         }
     };
+    
 
     // 선택된 프로젝트의 role 가져오기
     const fetchUserRole = async (projectId) => {
@@ -298,6 +303,14 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         console.log("onProjectSelect 전달 확인");
         onProjectSelect(project);
     };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    useEffect(() => {
+        selectProjectName();
+    }, [currentPage, userId]);
     
 
     return (
@@ -422,6 +435,11 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                         </section>
                     ))}
                 </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </>
     );
