@@ -17,6 +17,7 @@ const ShowVoting = () => {
     const [contentsData, setContentsData] = useState({});
     const [modalShow, setModalShow] = useState(false);
     const { projectData } = projectStore();
+    const [rere, setRere] = useState();
     const [state, setState] = useState();
     const { userId } = useUser();
     const [userVotes, setUserVotes] = useState({}); // 각 투표별로 상태를 관리하기 위한 상태 객체 추가
@@ -31,7 +32,7 @@ const ShowVoting = () => {
         if(userId){
             handler();
         }
-        }, [modalShow, userId,idVoteState ]);
+        }, [modalShow, userId,idVoteState,rere ]);
 
     const handleModalClose = () => {
         setModalShow(false);
@@ -254,6 +255,7 @@ const ShowVoting = () => {
             modalShow={modalShow}
             handler={handler}
             handleModalClose={handleModalClose}
+            setRere={setRere}
           />
         )}
   
