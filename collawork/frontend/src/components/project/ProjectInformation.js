@@ -18,24 +18,37 @@ const ProjectInformation = () => {
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
   const { projectName, projectData, userData, PlusProjectData, PlusUserData } = projectStore();
   const { userId } = useUser();
-  const [title, setTitle] = useState();
 
   useEffect(() => {
     if (projectName) {
       Send(); // 1. projectName으로 프로젝트 정보 조회
       setShow(true);
-      calendarSend(); // 다가오는 캘린더 일정(7일 이내)
-      noticesSend(); // 등록된 중요 공지사항
     }
-  }, [projectName]);
+  }, [projectName]); 
 
   useEffect(() => {
-    if (projectData.createdBy) {
-      manager(); // 프로젝트 데이터의 createdBy가 있을 때만 유저 정보 조회
+    if (projectData && projectData.id) {  
+      calendarSend(); // 다가오는 캘린더 일정(7일 이내)
+      noticesSend(); // 등록된 중요 공지사항
+      manager();
     }
-  }, [projectData]);
+  }, [projectData]); 
 
-  function Send() { // 프로젝트 정보 조회
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setModal(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  function Send() {
     const token = localStorage.getItem('token');
 
     axios({
@@ -47,61 +60,50 @@ const ProjectInformation = () => {
     }).then(function(response) {
       console.log(response);
       PlusProjectData(response.data[0]);
-      console.log(response.data[0]);
       if (!response.data || response.data.length === 0) {
         Send();
       }
     }).catch(err => console.error("프로젝트 정보 조회 오류:", err));
   }
 
-
-
-  function calendarSend() { // 다가오는 프로젝트 캘린더
+  function calendarSend() {
     const token = localStorage.getItem('token');
-    const userIdValue =
-    typeof userId === "object" && userId !== null ? userId.userId : userId;
-    console.log("캘린더 일정 : " + userIdValue);
+    const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
 
     axios({
       url: `${API_URL}/api/user/projects/calendarList`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { projectId:projectData?.id, userId:userId }, // 프로젝트 id, userId 
+      params: { projectId: projectData?.id, userId: userIdValue },
       baseURL: 'http://localhost:8080',
-    }).then(function (response) {
-      console.log(response.data[0]);
-      if (response) {
-        setCalendarList(response.data[0]); // 캘린더 데이터를 설정
-        console.log(response.data[0].title);
-        setTitle(response.data[0].title);
+    }).then(function(response) {
+      if (response.data) {
+        setCalendarList(response.data);
       } else {
         setCalendarList([]); // 응답이 없을 경우 빈 배열로 설정
       }
     }).catch(err => console.error("캘린더 조회 오류:", err));
-  };
+  }
 
-
-  
-    function noticesSend(){ // 중요 공지사항 
-      const token = localStorage.getItem('token');
+  function noticesSend() {
+    const token = localStorage.getItem('token');
 
     axios({
       url: `${API_URL}/api/user/projects/noticesSend`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { projectId: projectData?.id }, // 프로젝트 id
+      params: { projectId: projectData?.id },
       baseURL: 'http://localhost:8080',
-    }).then(function (response) {
-      console.log(response);
+    }).then(function(response) {
       if (response?.data) {
-        setNoticesList(response.data); // 공지사항 데이터를 설정
+        setNoticesList(response.data);
       } else {
         setNoticesList([]); // 응답이 없을 경우 빈 배열로 설정
       }
     }).catch(err => console.error("공지사항 조회 오류:", err));
   }
 
-  function manager() { // 유저 정보 조회
+  function manager() {
     const token = localStorage.getItem('token');
 
     axios({
@@ -110,7 +112,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { id: projectData?.createdBy },
       baseURL: 'http://localhost:8080',
-    }).then(function (response) {
+    }).then(function(response) {
       PlusUserData(response.data);
     }).catch(err => console.error("유저 정보 조회 오류:", err));
   }
@@ -120,44 +122,41 @@ const ProjectInformation = () => {
       {show && (
         <div>
           <h5>다가오는 일정</h5>
-          
-         
-         {calendarList? (
+          {calendarList.length > 0 ? (
             <ul>
-             
-              <li>{calendarList.title}</li>
-              <h6>{calendarList.start_time}--{calendarList.end_time}</h6>
-             
-              {/* {calendarList.map((list, index) => (
-                <li key={index}>
-                  <h5>{list.title}</h5>
-                  <h6>{list.start_time} -- {list.end_time}</h6>
+              {calendarList.map((calendarItem, index) => (
+                <li key={index} className="calendar-item">
+                  <h3>{calendarItem.title}</h3>
+                  <p>{new Date(calendarItem.start_time).toLocaleString()} ~ {new Date(calendarItem.end_time).toLocaleString()}</p>
                 </li>
-              ))} */}
+              ))}
             </ul>
           ) : (
             <p>다가오는 일정이 없습니다.</p>
           )}
 
-        <h5>중요 공지사항</h5>
-        {noticesList.length? (
-          <ul>
-            {noticesList.map((list, index)=>(
-              <li key={index}>
-                <h5>{list.title}</h5>
-                <h5>{list.creatorId}</h5> 
-                <h6>{list.createdAt}</h6>
-              </li>
-            ))}
-          </ul>
-        )
-        :
-        <h5>중요 공지사항이 없습니다.</h5>
-      }
-         
+          <h5>중요 공지사항</h5>
+          {noticesList.length > 0 ? (
+            <ul>
+              {noticesList.map((list, index) => (
+                <li key={index}>
+                  <h5>{list.title}</h5>
+                  <h5>{list.creatorId}</h5>
+                  <h6>{list.createdAt}</h6>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <h5>중요 공지사항이 없습니다.</h5>
+          )}
+
           <h3>프로젝트 이름 : {projectData.projectName}</h3>
           <h5>- {projectData.projectCode}</h5>
-          <button onClick={()=>setModify(true)}><FontAwesomeIcon icon={faBars}/></button>
+          <button onClick={() => setModify(true)}>
+            <FontAwesomeIcon icon={faBars} />
+          </button>
+          {modify && <ProjectModify setModify={setModify} />}
+
           <div className="user-info-dropdown" ref={modalRef} style={{ position: 'relative' }}>
             <img
               src={userData?.profileImageUrl || defaultImage}
@@ -173,8 +172,8 @@ const ProjectInformation = () => {
                 objectFit: "cover",
               }}
             />
-            {modify && <ProjectModify setModify={setModify} />}
             {userData?.username || '정보 없음'}
+
             {modal && (
               <div
                 className="modal-info"
@@ -200,6 +199,7 @@ const ProjectInformation = () => {
               </div>
             )}
           </div>
+
           <h6>{projectData?.createdAt}</h6>
         </div>
       )}
