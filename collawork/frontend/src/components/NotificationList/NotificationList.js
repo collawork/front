@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const NotificationList = ({ userId, fetchFriends }) => {
+const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
     const [notifications, setNotifications] = useState([]);
 
     // 알림 목록 불러오기
@@ -111,6 +111,39 @@ const NotificationList = ({ userId, fetchFriends }) => {
         }
     };
 
+    // const handleRespondToProjectInvitation = async (notification, action) => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         if (!token) {
+    //             alert("로그인이 필요합니다.");
+    //             return;
+    //         }
+    
+    //         const response = await axios.post(
+    //             `http://localhost:8080/api/notifications/${notification.id}/respond`,
+    //             null,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //                 params: { action }, // action: 'accept' 또는 'decline'
+    //             }
+    //         );
+    
+    //         alert(`프로젝트 초대를 ${action === "accept" ? "승인" : "거절"}했습니다.`);
+    
+    //         // 알림 목록 새로고침
+    //         setNotifications((prevNotifications) =>
+    //             prevNotifications.filter((noti) => noti.id !== notification.id)
+    //         );
+    
+    //         // 친구 목록 또는 프로젝트 참여자 목록 새로고침
+    //         if (fetchFriends) fetchFriends();
+    //     } catch (error) {
+    //         console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
+    //     }
+    // };
+
     const handleRespondToProjectInvitation = async (notification, action) => {
         try {
             const token = localStorage.getItem('token');
@@ -136,13 +169,16 @@ const NotificationList = ({ userId, fetchFriends }) => {
             setNotifications((prevNotifications) =>
                 prevNotifications.filter((noti) => noti.id !== notification.id)
             );
-    
-            // 친구 목록 또는 프로젝트 참여자 목록 새로고침
-            if (fetchFriends) fetchFriends();
+
+            // 초대 목록 새로고침
+            if (onInvitationChange) {
+                onInvitationChange();
+            }
         } catch (error) {
             console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
         }
     };
+
     
     
     

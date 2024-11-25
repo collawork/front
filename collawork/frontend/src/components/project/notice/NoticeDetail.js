@@ -17,6 +17,7 @@ const NoticeDetail = ({ projectId, noticeId, isOpen, onClose, onNoticeUpdated })
     }
   }, [isOpen, noticeId]);
 
+  // 공지사항 데이터 가져오기
   const fetchNotice = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -28,39 +29,62 @@ const NoticeDetail = ({ projectId, noticeId, isOpen, onClose, onNoticeUpdated })
       const response = await axios.get(`${API_URL}/api/projects/${projectId}/notices/${noticeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotice(response.data);
+      // 공지사항 데이터에서 태그 제거
+      const sanitizedContent = sanitizeHtml(response.data.content);
+      setNotice({ ...response.data, content: sanitizedContent });
     } catch (error) {
       console.error("공지사항 조회 실패:", error);
     }
   };
 
+  // HTML 태그 제거 함수
+  const sanitizeHtml = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    return doc.body.textContent || ""; // 태그 제거 후 텍스트만 반환
+  };
+
+  // 공지사항 저장
   const saveNotice = async (formData) => {
+    console.log("saveNotice로 전달된 FormData:");
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+  
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("토큰이 없습니다.");
       return;
     }
-
+  
     try {
-      const response = await axios.put(
-        `${API_URL}/api/projects/${projectId}/notices/${noticeId}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const url = `${API_URL}/api/projects/${projectId}/notices/${noticeId}`;
+  
+      // FormData를 그대로 전송
+      const response = await axios.put(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       alert("공지사항이 수정되었습니다.");
-      setNotice(response.data);
+      setNotice({ ...response.data, content: sanitizeHtml(response.data.content) });
       setIsEditing(false);
+  
       if (onNoticeUpdated) {
-        onNoticeUpdated();
+        onNoticeUpdated(); // 목록 새로고침
       }
     } catch (error) {
-      console.error("공지사항 수정 실패:", error);
+      console.error("공지사항 수정 실패:", error.response?.data || error.message);
       alert("공지사항 수정에 실패했습니다.");
     }
   };
+  
+  
+  
 
+  // 공지사항 삭제
   const deleteNotice = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -73,7 +97,12 @@ const NoticeDetail = ({ projectId, noticeId, isOpen, onClose, onNoticeUpdated })
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("공지사항이 삭제되었습니다.");
-      onClose();
+
+      if (onNoticeUpdated) {
+        onNoticeUpdated(); // 목록 새로고침
+      }
+
+      onClose(); // 모달 닫기
     } catch (error) {
       console.error("공지사항 삭제 실패:", error);
     }
@@ -125,7 +154,8 @@ const NoticeDetail = ({ projectId, noticeId, isOpen, onClose, onNoticeUpdated })
               <p>{notice.content}</p>
             </div>
 
-            {notice.attachments && notice.attachments.length > 0 && (
+            {/* 첨부파일 출력 */}
+            {Array.isArray(notice.attachments) && notice.attachments.length > 0 && (
               <div className="notice-attachments">
                 <h3>첨부파일</h3>
                 <ul>

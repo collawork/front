@@ -190,9 +190,9 @@ const ShowVoting = () => {
             [voteId]: voteCounts,
           }));
       
-          console.log(`Vote results for ${voteId}:`, voteCounts);
+          console.log(`${voteId}:`, voteCounts);
         } catch (error) {
-          console.error(`Error fetching vote results for ${voteId}:`, error);
+          console.error(` ${voteId}:`, error);
         }
       };
 
