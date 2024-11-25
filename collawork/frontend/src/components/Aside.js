@@ -21,6 +21,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const { userId } = useUser();
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
+    const {listState} = projectStore();
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
@@ -178,7 +179,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
             console.log("현재 userId:", userId);
             console.log("현재 selectedProject:", selectedProject);
         }
-    }, [userId]);
+    }, [userId,listState]);
 
     useEffect(() => {
         if (newShow) {
