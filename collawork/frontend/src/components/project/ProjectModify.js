@@ -121,7 +121,12 @@ const ProjectModify = ({ setModify }) => {
     // e.preventDefault();
     console.log("클릭하면 넘오와댜되는 id :: " + id)
     if (id) {
-      managerModify();
+      if(id !== String(userData.id)){
+        managerModify();
+      }else{
+        alert("이미 관리자 입니다.");
+        return;
+      }
     } else {
       alert("변경할 참여자를 선택해주세요.");
     }
