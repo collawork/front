@@ -120,11 +120,11 @@ const ProjectInformation = () => {
       {show && (
         <div>
           <h5>다가오는 일정</h5>
-          {console.log("왜안떠:: " + calendarList.title)}
+          
          
          {calendarList? (
             <ul>
-              {console.log("왜안떠:: " + calendarList.title)}
+             
               <li>{calendarList.title}</li>
               <h6>{calendarList.start_time}--{calendarList.end_time}</h6>
              
