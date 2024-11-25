@@ -1,100 +1,209 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from '../../context/UserContext';
 import axios from 'axios';
-import {projectStore} from '../../store';
-
+import { projectStore } from '../../store';
+import defaultImage from '../../components/assest/images/default-profile.png';
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ProjectModify from "./ProjectModify";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const ProjectInformation = () => {
+  const modalRef = useRef();
+  const [modal, setModal] = useState(false);
+  const [show, setShow] = useState(false);
+  const [noticesList, setNoticesList] = useState([]); // 초기값 빈 배열
+  const [modify, setModify] = useState(false);
+  const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
+  const { projectName, projectData, userData, PlusProjectData, PlusUserData } = projectStore();
+  const { userId } = useUser();
+  const [title, setTitle] = useState();
 
-const ProjectImformation = () => {
-
-    const [show, setShow] = useState(false);
-
-     // const [projectData, setProjectData] = useState([]); // 프로젝트 정보 데이터
-   //  const [userData, setUserData] = useState([]); // 유저 정보 데이터
-    // const PlusProjectCreatedBy = projectStore(state => state.PlusProjectCreatedBy);
-    const {projectName,projectData,userData, PlusProjectData, PlusUserData} = projectStore();
-    // 프로젝트 정보와 유저 정보 확인
-    // const [isProjectLoaded, setIsProjectLoaded] = useState(false);
-
-        console.log(projectName,projectData)
-    useEffect(() => {
-       if(projectName){
-        Send();  // 1. projectName 으로 프로젝트 정보 조회
-        
-        setShow(true);
-       
-       }
-
-    }, [projectName]);
-
-    useEffect(() => {
-        if (projectData.createdBy) {
-          manager(); // 프로젝트 데이터의 createdBy가 있을 때만 유저 정보 조회
-        }
-      }, [projectData]); // projectData가 업데이트될 때마다 실행
-   
-
-    function Send(){ // 프로젝트 정보 조회
-        const token = localStorage.getItem('token');
-      
-        axios({
-            url: `${API_URL}/api/user/projects/projectselect`,
-            headers: { 'Authorization': `Bearer ${token}` },
-            method: 'post',
-            params: { projectName },
-            baseURL: 'http://localhost:8080',
-        }).then(function(response) {
-
-            PlusProjectData(response.data[0]);
-            // setIsProjectLoaded(true);
-            if(!response.data[0]){
-                Send();
-            }
-            console.log(response);
-        });
-        console.log("projectData : " + projectData);
-        console.log("projectData.createdBy : " + projectData.createdBy);
+  useEffect(() => {
+    if (projectName) {
+      Send(); // 1. projectName으로 프로젝트 정보 조회
+      setShow(true);
+      calendarSend(); // 다가오는 캘린더 일정(7일 이내)
+      noticesSend(); // 등록된 중요 공지사항
     }
+  }, [projectName]);
 
-    function manager(){ // 유저 정보 조회  // 유저정보에서 첫 실행할 때 오류남
-        const token = localStorage.getItem('token');
-        console.log(projectData.id);
-        if(!projectData){
-            Send();
-        }
-    
-        axios({
-            url: `${API_URL}/api/user/projects/projecthomeusers`,
-            headers: { 'Authorization': `Bearer ${token}` },
-            method: 'post',
-            params: { id : projectData.createdBy },
-            baseURL: 'http://localhost:8080',
-        }).then(function(response) {
-
-            console.log(response);
-            PlusUserData(response.data);
-           
-          
-        });
+  useEffect(() => {
+    if (projectData.createdBy) {
+      manager(); // 프로젝트 데이터의 createdBy가 있을 때만 유저 정보 조회
     }
-    
-    return (
-        <>
-       {show && (
+  }, [projectData]);
+
+  function Send() { // 프로젝트 정보 조회
+    const token = localStorage.getItem('token');
+
+    axios({
+      url: `${API_URL}/api/user/projects/projectselect`,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'post',
+      params: { projectName },
+      baseURL: 'http://localhost:8080',
+    }).then(function(response) {
+      console.log(response);
+      PlusProjectData(response.data[0]);
+      console.log(response.data[0]);
+      if (!response.data || response.data.length === 0) {
+        Send();
+      }
+    }).catch(err => console.error("프로젝트 정보 조회 오류:", err));
+  }
+
+
+
+  function calendarSend() { // 다가오는 프로젝트 캘린더
+    const token = localStorage.getItem('token');
+    const userIdValue =
+    typeof userId === "object" && userId !== null ? userId.userId : userId;
+    console.log("캘린더 일정 : " + userIdValue);
+
+    axios({
+      url: `${API_URL}/api/user/projects/calendarList`,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'post',
+      params: { projectId:projectData?.id, userId:userId }, // 프로젝트 id, userId 
+      baseURL: 'http://localhost:8080',
+    }).then(function (response) {
+      console.log(response.data[0]);
+      if (response) {
+        setCalendarList(response.data[0]); // 캘린더 데이터를 설정
+        console.log(response.data[0].title);
+        setTitle(response.data[0].title);
+      } else {
+        setCalendarList([]); // 응답이 없을 경우 빈 배열로 설정
+      }
+    }).catch(err => console.error("캘린더 조회 오류:", err));
+  };
+
+
+  
+    function noticesSend(){ // 중요 공지사항 
+      const token = localStorage.getItem('token');
+
+    axios({
+      url: `${API_URL}/api/user/projects/noticesSend`,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'post',
+      params: { projectId: projectData?.id }, // 프로젝트 id
+      baseURL: 'http://localhost:8080',
+    }).then(function (response) {
+      console.log(response);
+      if (response?.data) {
+        setNoticesList(response.data); // 공지사항 데이터를 설정
+      } else {
+        setNoticesList([]); // 응답이 없을 경우 빈 배열로 설정
+      }
+    }).catch(err => console.error("공지사항 조회 오류:", err));
+  }
+
+  function manager() { // 유저 정보 조회
+    const token = localStorage.getItem('token');
+
+    axios({
+      url: `${API_URL}/api/user/projects/projecthomeusers`,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'post',
+      params: { id: projectData?.createdBy },
+      baseURL: 'http://localhost:8080',
+    }).then(function (response) {
+      PlusUserData(response.data);
+    }).catch(err => console.error("유저 정보 조회 오류:", err));
+  }
+
+  return (
+    <>
+      {show && (
         <div>
-        <h3>프로젝트 이름 : {projectData.projectName}</h3>
-        <h5>- {projectData.projectCode}</h5>
-        <h3>담당자 이름 : {userData.username}</h3> 
-        <h3>직급 : {userData.position}</h3>
-        <h3>이메일: {userData.email}</h3>
-        <h6>{projectData.createdAt}</h6>
-        <p>+ 담당자 바꾸기,다가올 캘린더 속 일정 공지, +최근 공지사항? </p>
+          <h5>다가오는 일정</h5>
+          
+         
+         {calendarList? (
+            <ul>
+             
+              <li>{calendarList.title}</li>
+              <h6>{calendarList.start_time}--{calendarList.end_time}</h6>
+             
+              {/* {calendarList.map((list, index) => (
+                <li key={index}>
+                  <h5>{list.title}</h5>
+                  <h6>{list.start_time} -- {list.end_time}</h6>
+                </li>
+              ))} */}
+            </ul>
+          ) : (
+            <p>다가오는 일정이 없습니다.</p>
+          )}
+
+        <h5>중요 공지사항</h5>
+        {noticesList.length? (
+          <ul>
+            {noticesList.map((list, index)=>(
+              <li key={index}>
+                <h5>{list.title}</h5>
+                <h5>{list.creatorId}</h5> 
+                <h6>{list.createdAt}</h6>
+              </li>
+            ))}
+          </ul>
+        )
+        :
+        <h5>중요 공지사항이 없습니다.</h5>
+      }
+         
+          <h3>프로젝트 이름 : {projectData.projectName}</h3>
+          <h5>- {projectData.projectCode}</h5>
+          <button onClick={()=>setModify(true)}><FontAwesomeIcon icon={faBars}/></button>
+          <div className="user-info-dropdown" ref={modalRef} style={{ position: 'relative' }}>
+            <img
+              src={userData?.profileImageUrl || defaultImage}
+              alt={`${userData?.username || '사용자'}의 프로필 이미지`}
+              onClick={() => setModal(!modal)}
+              className="profile-image-small"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                marginRight: "10px",
+                cursor: "pointer",
+                objectFit: "cover",
+              }}
+            />
+            {modify && <ProjectModify setModify={setModify} />}
+            {userData?.username || '정보 없음'}
+            {modal && (
+              <div
+                className="modal-info"
+                style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '50px',
+                  backgroundColor: 'white',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: '1px solid #ccc',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  width: '200px',
+                  zIndex: 1000,
+                }}
+              >
+                <p>이름: {userData?.username || '정보 없음'}</p>
+                <p>이메일: {userData?.email || '정보 없음'}</p>
+                <p>회사명: {userData?.company || '정보 없음'}</p>
+                <p>직급: {userData?.position || '정보 없음'}</p>
+                <p>핸드폰 번호: {userData?.phone || '정보 없음'}</p>
+                <p>fax: {userData?.fax || '정보 없음'}</p>
+              </div>
+            )}
+          </div>
+          <h6>{projectData?.createdAt}</h6>
         </div>
-        )} 
-        </>
-    )
+      )}
+    </>
+  );
+};
 
-
-}
-export default ProjectImformation;
+export default ProjectInformation;

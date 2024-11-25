@@ -21,7 +21,7 @@ function Login() {
             if (error.response && error.response.data.message) {
                 setError(error.response.data.message);
             } else if (error.request) {
-                setError('서버와의 통신에 실패했습니다.');
+                setError('이메일 또는 비밀번호를 확인해 주세요.');
             } else {
                 setError(error.message || '로그인 요청 중 오류가 발생했습니다.');
             }
