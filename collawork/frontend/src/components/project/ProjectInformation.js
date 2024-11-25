@@ -48,8 +48,9 @@ const ProjectInformation = () => {
       params: { projectName },
       baseURL: 'http://localhost:8080',
     }).then(function(response) {
-      console.log(response);
+  
       PlusProjectData(response.data[0]);
+      console.log(response.data[0]);
       if (!response.data || response.data.length === 0) {
         Send();
       }
@@ -60,12 +61,15 @@ const ProjectInformation = () => {
 
   function calendarSend(){ // 다가오는 프로젝트 calendar
     const token = localStorage.getItem('token');
+    const userIdValue =
+    typeof userId === "object" && userId !== null ? userId.userId : userId;
+    console.log("캘린더 일정 : " + userIdValue);
 
     axios({
       url: `${API_URL}/api/user/projects/calendarList`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { projectData:projectData.id, userId:userId }, // 프로젝트 id, userId 
+      params: { projectId:projectData.id, userId:userIdValue }, // 프로젝트 id, userId 
       baseURL: 'http://localhost:8080',
     }).then(function(response) {
       console.log(response);
@@ -83,6 +87,11 @@ const ProjectInformation = () => {
   
     function noticesSend(){ // 중요 공지사항 
       const token = localStorage.getItem('token');
+      
+      if(!projectData){
+        Send();
+      }
+      console.log("noticesSend 타는중:: " + projectData.id);
 
       axios({
         url: `${API_URL}/api/user/projects/noticesSend`,
@@ -126,7 +135,7 @@ const ProjectInformation = () => {
         <div>
           <h5>다가오는 일정</h5>
          
-         {calendarList.length ? (
+         {calendarList ? (
             <ul>
               {calendarList.map((list, index)=>(
                 <li key={index}>
@@ -142,7 +151,7 @@ const ProjectInformation = () => {
         }
 
         <h5>중요 공지사항</h5>
-        {noticesList.length ? (
+        {noticesList ? (
           <ul>
             {noticesList.map((list, index)=>(
               <li key={index}>
