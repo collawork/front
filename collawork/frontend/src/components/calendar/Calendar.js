@@ -47,13 +47,15 @@ export const Calendar = () => {
     const [events, setEvents] = useState([]);
     // 스케쥴이 등록됐을 때 DB로부터 가장 최신의 스케쥴까지 사용자에게 보여줄 수 있도록 한다.
     const [isEventAdded, setIsEventAdded] = useState(false);
-
+    
     const API_URL = process.env.REACT_APP_API_URL;
     const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
     const GOOGLE_CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_KR_HOLIDAY_ID
 
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
+        // DB로부터 최신 스케쥴을 받을 수 있도록 돕는다.
+        setIsEventAdded(false); 
         // 선택된 프로젝트 아이디 저장. 선택된 프로젝트 아이디가 없으면 개인 달력으로 사용된다.
         const fetchProjectId = async () => {
             setProjectId(projectData.id);
@@ -69,6 +71,16 @@ export const Calendar = () => {
 
         // 프로젝트 아이디로 해당 일정 모두 조회. 아이디가 없으면 개인 일정을 모두 조회.
         const fetchEvents = async () => {
+
+            // // 캐시에서 데이터 가져오기
+            // const cachedEvents = localStorage.getItem('calendarEvents');
+            // if (cachedEvents) {
+            //     setEvents(JSON.parse(cachedEvents));
+            //     return;
+            // }
+
+
+
             setEvents([]);
             try {
                 const token = localStorage.getItem('token')
@@ -97,7 +109,6 @@ export const Calendar = () => {
             };
         };
         fetchEvents();
-        setIsEventAdded(false); // DB로부터 최신 스케쥴을 받을 수 있도록 돕는다.
     }, [projectId, userId, isEventAdded]);
 
     // 뷰를 바꾸는 함수
@@ -132,6 +143,8 @@ export const Calendar = () => {
 
         // 모달을 열면 상기에 적어둔 초기값들이 보여진다. 이후 사용자는 title, description, color를 변경할 수 있다.
         setModalIsOpen(true);
+        setIsEventAdded(true);
+        
         // 선택 영역을 해제합니다.
         info.view.calendar.unselect();
     };
@@ -194,7 +207,7 @@ export const Calendar = () => {
                 await CalendarService.updataEventDate(id, start, end, allDay)
                     .then(result => {
                         if (result) {
-                            alert("일정 변경에 성공하였습니다.");
+                            //alert("일정 변경에 성공하였습니다.");
                         } else {
                             alert("일정 변경에 실패하였습니다.")
                         }
@@ -250,17 +263,50 @@ export const Calendar = () => {
                 googleCalendarApiKey={`${GOOGLE_API_KEY}`}
 
 
+
+
+                // events = {[
+                //     ...events, // 기존 events 배열 전개
+                //     {
+                //       googleCalendarId: `${GOOGLE_CALENDAR_ID}`,
+                //       color: 'white',   // an option!
+                //       textColor: 'red'  // an option!
+                //     }
+                //   ]}
+
+                // eventSources={
+                //     [
+                //         {googleCalendarId: 'ko.south_korea#holiday@group.v.calendar.google.com',
+                //         className: 'ko_event'}
+                //     ] 
+                // }
+
+
+
+                // events={
+                //     [
+                //         ...events,
+                //         {
+                //             googleCalendarId: GOOGLE_CALENDAR_ID,
+                //             color: 'white',   // an option!
+                //             textColor: 'red' // an option!
+                //         }
+                //     ]
+                // }
+
                 eventSources={
                     [
+                        {events},
                         {
-                            googleCalendarId: GOOGLE_CALENDAR_ID, // 한국의 공휴일 정보 
-                            color: 'white',
+                            googleCalendarId: GOOGLE_CALENDAR_ID,
+                            display:'background',
+                            color: 'red',
                             textColor: 'red'
                         }
                     ]
                 }
 
-                events={events} // 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능
+                // events={events} // 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능
 
             />
             < ReactModal // 등록, 수정을 함꼐하는 모달
