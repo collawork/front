@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse,faCheckToSlot,faComment,faBell,faCalendarDays} from "@fortawesome/free-solid-svg-icons";
 import { Calendar } from '../components/calendar/Calendar'; 
 import {projectStore} from '../store';
+import NoticeList from '../components/project/notice/NoticeList';
 
 
 
@@ -96,7 +97,8 @@ const Project = () => {
                 {chatShow && <ChatRoom />}
                 {calShow && <Calendar />}
                 {/* {calShow && <ProjectCalendar />} */}
-                {notiShow && <Board />}
+                {/* {notiShow && <Board />} */}
+                {notiShow && <NoticeList projectId={projectData?.id} />}
                 {voting && <Voting/>}
             </div>
         </div>

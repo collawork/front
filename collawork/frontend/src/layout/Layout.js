@@ -10,12 +10,13 @@ import { useUser } from "../context/UserContext";
 import { stateValue } from "../store";
 import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
 import { useNavigate } from "react-router-dom";
-import { projectStore, calendarEvents } from '../store';
+import { projectStore, calendarEvents ,friendsList} from '../store';
 
 const Layout = () => {
     const { userId } = useUser();
     const [activeTab, setActiveTab] = useState("friends");
-    const [participants, setParticipants] = useState([]);
+    const {participants,setParticipants} = friendsList();
+    // const [participants, setParticipants] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);
@@ -138,6 +139,12 @@ const Layout = () => {
         navigate('/main');
         // 홈버튼을 누르면 캘린더의 선택된 프로젝트 아이디가 null로 상태가 바뀌어야 하고, 홈화면의 달력은 개인 달력(프로젝트 아이디가 null인 스케쥴들)으로 출력한다.
         PlusProjectData('');
+        setHomeShow('');
+        setChatShow(''); 
+        setCalShow('');
+        setNotiShow('');
+        setVotig('') ;
+        
     }
 
     return (

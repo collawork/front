@@ -101,3 +101,16 @@ export const stateValue = create((set, get)=> ({
     }
 
 }));
+
+
+// 프로젝트 참여자 목록
+export const friendsList = create((set, get)=> ({
+
+    participants: [],
+
+    setParticipants:(value) => {
+        set({setParticipants : value})
+    }
+
+}));
+
