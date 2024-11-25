@@ -10,12 +10,13 @@ import { useUser } from "../context/UserContext";
 import { stateValue } from "../store";
 import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
 import { useNavigate } from "react-router-dom";
-import { projectStore, calendarEvents } from '../store';
+import { projectStore, calendarEvents ,friendsList} from '../store';
 
 const Layout = () => {
     const { userId } = useUser();
     const [activeTab, setActiveTab] = useState("friends");
-    const [participants, setParticipants] = useState([]);
+    const {participants,setParticipants} = friendsList();
+    // const [participants, setParticipants] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);
