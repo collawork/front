@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Pagination from '../Pagination';
 
-const NotificationList = ({ userId, fetchFriends }) => {
+const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
     const [notifications, setNotifications] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const [pageSize] = useState(5); // 한 페이지당 표시할 알림 수
+    const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
 
     // 알림 목록 불러오기
     useEffect(() => {
@@ -19,13 +23,22 @@ const NotificationList = ({ userId, fetchFriends }) => {
                     params: { userId: userIdValue },
                 });
                 setNotifications(response.data);
+                setTotalPages(Math.ceil(response.data.length / pageSize));
             } catch (error) {
                 console.error('알림을 불러오는 중 오류 발생:', error);
             }
         };
 
         fetchNotifications();
-    }, [userId]);
+    }, [userId, pageSize]);
+    // 현재 페이지의 알림 계산
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedNotifications = notifications.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     // 친구 요청 수락 핸들러
     const handleAcceptFriendRequest = async (notification) => {
@@ -111,6 +124,39 @@ const NotificationList = ({ userId, fetchFriends }) => {
         }
     };
 
+    // const handleRespondToProjectInvitation = async (notification, action) => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         if (!token) {
+    //             alert("로그인이 필요합니다.");
+    //             return;
+    //         }
+    
+    //         const response = await axios.post(
+    //             `http://localhost:8080/api/notifications/${notification.id}/respond`,
+    //             null,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //                 params: { action }, // action: 'accept' 또는 'decline'
+    //             }
+    //         );
+    
+    //         alert(`프로젝트 초대를 ${action === "accept" ? "승인" : "거절"}했습니다.`);
+    
+    //         // 알림 목록 새로고침
+    //         setNotifications((prevNotifications) =>
+    //             prevNotifications.filter((noti) => noti.id !== notification.id)
+    //         );
+    
+    //         // 친구 목록 또는 프로젝트 참여자 목록 새로고침
+    //         if (fetchFriends) fetchFriends();
+    //     } catch (error) {
+    //         console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
+    //     }
+    // };
+
     const handleRespondToProjectInvitation = async (notification, action) => {
         try {
             const token = localStorage.getItem('token');
@@ -136,13 +182,16 @@ const NotificationList = ({ userId, fetchFriends }) => {
             setNotifications((prevNotifications) =>
                 prevNotifications.filter((noti) => noti.id !== notification.id)
             );
-    
-            // 친구 목록 또는 프로젝트 참여자 목록 새로고침
-            if (fetchFriends) fetchFriends();
+
+            // 초대 목록 새로고침
+            if (onInvitationChange) {
+                onInvitationChange();
+            }
         } catch (error) {
             console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
         }
     };
+
     
     
     
@@ -151,7 +200,7 @@ const NotificationList = ({ userId, fetchFriends }) => {
         <div className="notification-list">
             <h3>새로운 알림</h3>
             <ul>
-                {notifications.map(notification => (
+                {paginatedNotifications.map(notification => (
                     <li key={notification.id}>
                         <span>{notification.message}</span>
                         
@@ -176,9 +225,15 @@ const NotificationList = ({ userId, fetchFriends }) => {
                     </li>
                 ))}
             </ul>
+            {notifications.length === 0 && <p>알림이 없습니다.</p>}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
-    
 };
 
 export default NotificationList;

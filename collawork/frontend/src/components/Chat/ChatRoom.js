@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
 import {projectStore} from '../../store';
 
+
 const ChatRoom = () => {
  //   const { chatRoomId } = useParams();
     const [messages, setMessages] = useState([]);
@@ -23,6 +24,7 @@ const ChatRoom = () => {
    
    const projectData = projectStore((state) => state.projectData);
      const chatRoomId =  projectData.chatRoomId
+     console.log(projectData)
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -84,6 +86,7 @@ const ChatRoom = () => {
 
         ws.onclose = () => {
             console.log("WebSocket 연결 종료");
+
         };
 
         setWebSocket(ws);

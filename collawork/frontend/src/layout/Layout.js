@@ -57,6 +57,7 @@ const Layout = () => {
             }));
 
             setParticipants(formattedParticipants);
+            console.log(formattedParticipants)
         } catch (error) {
             console.error("참여자 목록을 가져오는 중 오류 발생:", error);
         }
