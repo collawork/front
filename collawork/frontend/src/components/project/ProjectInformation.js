@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProjectModify from "./ProjectModify";
 
 const API_URL = process.env.REACT_APP_API_URL;
-
 const ProjectInformation = () => {
   const modalRef = useRef();
   const [modal, setModal] = useState(false);
