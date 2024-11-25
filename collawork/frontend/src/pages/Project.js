@@ -12,6 +12,7 @@ import { TestCalendar } from '../calendarTest/TestCalendar';
 
 
 
+
 const Project = () => {
     
     const token = localStorage.getItem("token");
@@ -22,8 +23,7 @@ const Project = () => {
     const {homeShow,chatShow,calShow, notiShow,voting,
         setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig
     } = stateValue();
-
-   
+    
     const homeClickHandler = () => {
         setHomeShow(true);
         setChatShow(false);

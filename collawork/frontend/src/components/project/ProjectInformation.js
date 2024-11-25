@@ -17,7 +17,7 @@ const ProjectImformation = () => {
     // 프로젝트 정보와 유저 정보 확인
     // const [isProjectLoaded, setIsProjectLoaded] = useState(false);
 
-
+        console.log(projectName,projectData)
     useEffect(() => {
        if(projectName){
         Send();  // 1. projectName 으로 프로젝트 정보 조회

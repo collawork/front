@@ -175,7 +175,7 @@ const Aside = ({ onProjectSelect }) => {
         setSelectedParticipants([]);
         setIsAllParticipantsSelected(false);
     };
-
+        //여기 프로젝트 생성하기 누르기전에 채팅방 테이블 만들기 먼저
     const handleSubmit = async (e) => {
         e.preventDefault();
     
