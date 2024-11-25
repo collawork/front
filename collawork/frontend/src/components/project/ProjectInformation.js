@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ProjectModify from "./ProjectModify";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
 const ProjectInformation = () => {
   const modalRef = useRef();
   const [modal, setModal] = useState(false);
@@ -15,7 +16,7 @@ const ProjectInformation = () => {
   const [noticesList, setNoticesList] = useState([]); // 초기값 빈 배열
   const [modify, setModify] = useState(false);
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
-  const { projectName, projectData, userData, PlusProjectData, PlusUserData } = projectStore();
+  const { projectName, projectData, userData, PlusProjectData, PlusUserData ,projectInformationState} = projectStore();
   const { userId } = useUser();
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const ProjectInformation = () => {
       Send(); // 1. projectName으로 프로젝트 정보 조회
       setShow(true);
     }
-  }, [projectName]); 
+  }, [projectName,projectInformationState]); 
 
   useEffect(() => {
     if (projectData && projectData.id) {  
@@ -65,7 +66,7 @@ const ProjectInformation = () => {
     }).catch(err => console.error("프로젝트 정보 조회 오류:", err));
   }
 
-  function calendarSend() {
+  function calendarSend() { // 다가오는 (7일) 캘린더 조회
     const token = localStorage.getItem('token');
     const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
 
@@ -84,7 +85,7 @@ const ProjectInformation = () => {
     }).catch(err => console.error("캘린더 조회 오류:", err));
   }
 
-  function noticesSend() {
+  function noticesSend() { // 중요 공지사항 요청
     const token = localStorage.getItem('token');
 
     axios({
@@ -102,7 +103,7 @@ const ProjectInformation = () => {
     }).catch(err => console.error("공지사항 조회 오류:", err));
   }
 
-  function manager() {
+  function manager() {  // 담당자 정보 조회
     const token = localStorage.getItem('token');
 
     axios({
@@ -154,7 +155,11 @@ const ProjectInformation = () => {
           <button onClick={() => setModify(true)}>
             <FontAwesomeIcon icon={faBars} />
           </button>
-          {modify && <ProjectModify setModify={setModify} />}
+          {modify && (
+            <ProjectModify
+          setModify={(value) => {
+           setModify(value); // 모달 상태를 업데이트
+              }}/>)}
 
           <div className="user-info-dropdown" ref={modalRef} style={{ position: 'relative' }}>
             <img

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Pagination from '../Pagination';
 
 const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
     const [notifications, setNotifications] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const [pageSize] = useState(5); // 한 페이지당 표시할 알림 수
+    const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
 
     // 알림 목록 불러오기
     useEffect(() => {
@@ -19,13 +23,22 @@ const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
                     params: { userId: userIdValue },
                 });
                 setNotifications(response.data);
+                setTotalPages(Math.ceil(response.data.length / pageSize));
             } catch (error) {
                 console.error('알림을 불러오는 중 오류 발생:', error);
             }
         };
 
         fetchNotifications();
-    }, [userId]);
+    }, [userId, pageSize]);
+    // 현재 페이지의 알림 계산
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedNotifications = notifications.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     // 친구 요청 수락 핸들러
     const handleAcceptFriendRequest = async (notification) => {
@@ -187,7 +200,7 @@ const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
         <div className="notification-list">
             <h3>새로운 알림</h3>
             <ul>
-                {notifications.map(notification => (
+                {paginatedNotifications.map(notification => (
                     <li key={notification.id}>
                         <span>{notification.message}</span>
                         
@@ -212,9 +225,15 @@ const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
                     </li>
                 ))}
             </ul>
+            {notifications.length === 0 && <p>알림이 없습니다.</p>}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
-    
 };
 
 export default NotificationList;
