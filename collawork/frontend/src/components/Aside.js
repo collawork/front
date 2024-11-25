@@ -20,6 +20,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const { userId } = useUser();
     const [newShow, setNewShow] = useState(false);
     const addTitle = projectStore(state => state.PlusProjectName);
+    const {listState} = projectStore();
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
@@ -173,7 +174,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
             console.log("현재 userId:", userId);
             console.log("현재 selectedProject:", selectedProject);
         }
-    }, [userId]);
+    }, [userId,listState]);
 
     useEffect(() => {
         if (newShow) {
@@ -228,7 +229,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         setSelectedParticipants([]);
         setIsAllParticipantsSelected(false);
     };
-
+        //여기 프로젝트 생성하기 누르기전에 채팅방 테이블 만들기 먼저
     const handleSubmit = async (e) => {
         e.preventDefault();
     

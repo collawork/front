@@ -15,8 +15,8 @@ import { projectStore, calendarEvents ,friendsList} from '../store';
 const Layout = () => {
     const { userId } = useUser();
     const [activeTab, setActiveTab] = useState("friends");
-    const {participants,setParticipants} = friendsList();
-    // const [participants, setParticipants] = useState([]);
+    //const {participants,setParticipants} = friendsList();
+    const [participants, setParticipants] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
     const [userRole, setUserRole] = useState(null);

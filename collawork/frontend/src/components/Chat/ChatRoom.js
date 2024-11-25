@@ -4,8 +4,9 @@ import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
 import {projectStore} from '../../store';
 
+
 const ChatRoom = () => {
-    const { chatRoomId } = useParams();
+ //   const { chatRoomId } = useParams();
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [fileInput, setFileInput] = useState(null);
@@ -19,9 +20,10 @@ const ChatRoom = () => {
     const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
-    const {projectData} = projectStore();
-    console.log({projectData})
 
+   
+   const projectData = projectStore((state) => state.projectData);
+     const chatRoomId =  projectData.chatRoomId
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -31,6 +33,7 @@ const ChatRoom = () => {
             }
     
             try {
+                
                 const response = await axios.get('http://localhost:8080/api/user/info', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -143,7 +146,7 @@ const ChatRoom = () => {
             document.removeEventListener('click', handleOutsideClick);
         };
     }, []);
-
+        // 메세지 전송
     const sendMessage = async (type = 'text') => {
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
             const timestamp = new Date().toLocaleTimeString();
@@ -202,7 +205,7 @@ const ChatRoom = () => {
             console.log("웹소켓이 연결되지 않았습니다.");
         }
     };
-
+        // 엔터
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             sendMessage();
@@ -216,14 +219,14 @@ const ChatRoom = () => {
     const handlerBackToMain = () => {
         navigate("/main");
     };
-
+        //채팅창 스크롤 맨아래로 
     useEffect(() => {
         if (chatWindowRef.current) {
             chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
         }
     }, [messages]);
 
-
+    // 메세지 삭제 
     const deleteSelectedMessages = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -238,20 +241,20 @@ const ChatRoom = () => {
             console.error("메시지 삭제 오류:", error);
         }
     };
-
+        //우클릭 시
     const rightClick = (event, messageId) => {
         event.preventDefault();
         setDropdownVisible(true);
         setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
-
+        // 우클릭 후 드랍
     const handleDropdownSelect = (action) => {
         if (action === 'delete') {
             setIsDeleteMode(true);
         }
         setDropdownVisible(false);
     };
-
+        // 우클릭 후 체크박스 클릭
     const handleCheckboxChange = (messageId) => {
         setSelectedMessages((prevSelected) =>
             prevSelected.includes(messageId)
@@ -259,7 +262,7 @@ const ChatRoom = () => {
                 : [...prevSelected, messageId]
         );
     };
-
+            // 삭제 모드 해제 
     const handleCancelDelete = () => {
         setSelectedMessages([]);  
         setIsDeleteMode(false);    

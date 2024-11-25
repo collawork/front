@@ -155,7 +155,11 @@ const ProjectInformation = () => {
           <button onClick={() => setModify(true)}>
             <FontAwesomeIcon icon={faBars} />
           </button>
-          {modify && <ProjectModify setModify={setModify} />}
+          {modify && (
+            <ProjectModify
+          setModify={(value) => {
+           setModify(value); // 모달 상태를 업데이트
+              }}/>)}
 
           <div className="user-info-dropdown" ref={modalRef} style={{ position: 'relative' }}>
             <img

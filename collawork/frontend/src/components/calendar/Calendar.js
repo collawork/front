@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import ReactModal from 'react-modal';
 import axios from 'axios';
 import { calendarEvents, projectStore } from '../../store';
@@ -48,6 +49,8 @@ export const Calendar = () => {
     const [isEventAdded, setIsEventAdded] = useState(false);
 
     const API_URL = process.env.REACT_APP_API_URL;
+    const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+    const GOOGLE_CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_KR_HOLIDAY_ID
 
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
@@ -219,7 +222,7 @@ export const Calendar = () => {
     return (
         <div>
             <FullCalendar
-                plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+                plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, googleCalendarPlugin]}
                 key={currentView}
                 initialView={currentView} // 현재 뷰
                 weekends={true} // 토일 표시
@@ -244,10 +247,23 @@ export const Calendar = () => {
                         click: () => changeView()
                     },
                 }}
+                googleCalendarApiKey={`${GOOGLE_API_KEY}`}
+
+
+                eventSources={
+                    [
+                        {
+                            googleCalendarId: GOOGLE_CALENDAR_ID, // 한국의 공휴일 정보 
+                            color: 'white',
+                            textColor: 'red'
+                        }
+                    ]
+                }
+
                 events={events} // 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능
 
             />
-            <ReactModal // 등록, 수정을 함꼐하는 모달
+            < ReactModal // 등록, 수정을 함꼐하는 모달
                 isOpen={modalIsOpen} // 모달 여닫는 기능
                 onRequestClose={handleModalClose}
                 style={customStyles}
@@ -279,6 +295,6 @@ export const Calendar = () => {
                 </form>
                 {isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button>}
             </ReactModal>
-        </div>
+        </div >
     );
 }

@@ -26,6 +26,7 @@ const ProjectList = ({ onProjectSelect }) => {
             { userId: userIdValue }, // JSON 형식
             {
                 baseURL: API_URL,
+                
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

@@ -14,6 +14,7 @@ import NoticeList from '../components/project/notice/NoticeList';
 
 
 
+
 const Project = () => {
 
     const {projectData} = projectStore(); 
@@ -26,8 +27,7 @@ const Project = () => {
     const {homeShow,chatShow,calShow, notiShow,voting,
         setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig
     } = stateValue();
-
-   
+    
     const homeClickHandler = () => {
         if(projectData){
             console.log(projectData.id);
