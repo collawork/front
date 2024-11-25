@@ -81,6 +81,11 @@ const NoticeList = ({ projectId }) => {
     closeCreateModal();
   };
 
+  const handleNoticeUpdated = () => {
+    fetchNotices();
+    closeDetailModal();
+  };
+
   return (
     <div className="notice-list-container">
       <h1>공지사항</h1>
@@ -119,6 +124,7 @@ const NoticeList = ({ projectId }) => {
           onClose={closeDetailModal}
           projectId={projectId}
           noticeId={selectedNotice}
+          onNoticeUpdated={handleNoticeUpdated}
         />
       )}
       {isCreateModalOpen && (
