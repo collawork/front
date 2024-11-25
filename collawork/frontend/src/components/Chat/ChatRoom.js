@@ -185,6 +185,8 @@ const ChatRoom = () => {
                     });
 
                     const fileUrl = response.data.fileUrl;
+
+                    console.log('업로드된 파일 URL:', fileUrl);
                     const sentMessage = {
                         type: 'file',
                         fileUrl: fileUrl,
@@ -284,7 +286,7 @@ const ChatRoom = () => {
                             />
                         )}
                         <strong>{msg.username}</strong>: 
-                        {msg.type === 'file' ? (
+                        {msg.type === 'file' || msg.type === 'FILE' ? (
                             msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img|jfif)$/i) ? (
                                 <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
                             ) : (
