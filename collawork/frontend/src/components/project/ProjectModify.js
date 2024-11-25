@@ -14,13 +14,13 @@ const ProjectModify = ({ setModify }) => {
   const [managerModalOpen, setManagerModalOpen] = useState(false); 
   const [exitModalOpen, setExitModalOpen] = useState(false); 
   const [participant, setParticipant] = useState([]);
-  const [id, setId] = useState();
+  const [id, setId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   // const [modalContent, setModalContent] = useState("");
   const { projectData, userData ,PlusListState} = projectStore();
   const { userId } = useUser();
   const [title, setTitle] = useState("");
-  const {setHomeShow, setChatShow,setCalShow,setNotiShow,setVotig} = stateValue();
+  const {setHomeShow, setChatShow,setCalShow,setNotiShow,setVotig, PlusProjectInformationState} = stateValue();
 
 
   const fetchAcceptedParticipants = async () => {
@@ -37,9 +37,9 @@ const ProjectModify = ({ setModify }) => {
       const formattedParticipants = response.data.map((participant) => ({
         name: participant.username || "이름 없음",
         email: participant.email || "이메일 없음",
-        id: participant.id,
       }));
       setParticipant(formattedParticipants);
+      console.log(formattedParticipants);
     } catch (error) {
       console.error("참여자 목록을 가져오는 중 오류 발생:", error);
     }
@@ -48,14 +48,14 @@ const ProjectModify = ({ setModify }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setModify(false); // Close modal when clicking outside
+        setModify(false); 
       }
     };
   
-    // Add event listener to detect clicks
+   
     document.addEventListener("mousedown", handleClickOutside);
   
-    // Clean up the event listener on component unmount
+   
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -102,24 +102,26 @@ const ProjectModify = ({ setModify }) => {
   };
 
   const managerModify = () => {
-    const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
+    // const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
     const token = localStorage.getItem('token');
     axios({
       url: `${API_URL}/api/user/projects/managerModify`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { id:userIdValue, projectId: projectData.id },
+      params: { email:id, projectId: projectData.id },
     }).then(response => {
       console.log(response.data);
       setManagerModalOpen(false);
       setModify(false);
+      // PlusProjectInformationState(false);
     });
   };
 
   const onSubmitHandler = () => {
+    // e.preventDefault();
+    console.log("클릭하면 넘오와댜되는 id :: " + id)
     if (id) {
       managerModify();
-      
     } else {
       alert("변경할 참여자를 선택해주세요.");
     }
@@ -206,6 +208,13 @@ const ProjectModify = ({ setModify }) => {
     }
   }
 
+  const changeHandler = (e) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    setId(e.target.value);
+    console.log(id);
+  }
+
 
   return (
     <>
@@ -290,46 +299,31 @@ const ProjectModify = ({ setModify }) => {
   }}
 >
   <ul>
+    <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
     {participant.map((part) => (
-      <li key={part.id}>
-        <button value={part.id} onClick={(e) => setId(e.target.value)}>
-          {part.name} - {part.email}
-        </button>
-      </li>
-    ))}
+    <li key={part.email}>
+      <input
+        type="radio"
+        id={`participant-${part.email}`}
+        name="adminParticipant"
+        value={part.email}
+        onChange={(e) => changeHandler(e)}
+        // checked={id === part.id} 
+      />
+      <label htmlFor={`participant-${part.email}`}>
+        {console.log(part.email)}
+        {part.id}
+        {part.name} - {part.email}
+      </label>
+    </li>
+  ))}
   </ul>
   <button onClick={onSubmitHandler}>변경하기</button>
   <button onClick={() => setManagerModalOpen(false)}>취소</button>
 </ReactModal>
+  </>
+  )
+}
 
- {/* <ReactModal
-   isOpen={exitModalOpen}
-   onRequestClose={() => setExitModalOpen(false)}
-   contentLabel="exitProject"
-   appElement={document.getElementById("root")}
-   style={{
-     content: {
-       top: "50%",
-       left: "50%",
-       transform: "translate(-50%, -50%)",
-       width: "300px",
-       padding: "10px",
-       borderRadius: "10px",
-      border: "1px solid #ccc",
-     },
-     overlay: {
-
-       backgroundColor:  "transparent",
-     },
-   }}
- >
-   <p>정말 프로젝트를 나가시겠습니까?</p>
-   <button onClick={outSend}>확인</button>
-   <button onClick={() => setExitModalOpen(false)}>취소</button>
- </ReactModal> */}
-
-    </>
-  );
-};
 
 export default ProjectModify;
