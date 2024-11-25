@@ -2,26 +2,20 @@
 작성자: 서현준
 작성일: 2024.10.31
 마이 페이지 겸 헤더랑 네비가 없는 메인 페이지
-날씨 API
-fullcalendar API를 사용할 예정
+날씨 API 예정
+fullcalendar API
 */
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import ReactModal from "react-modal";
 import NotificationList from '../components/NotificationList/NotificationList';
 import FriendList from '../components/Friend/FriendList';
 import '../components/assest/css/MyPage.css';
 import { useUser } from '../context/UserContext';
-import CalendarService from '../services/CalendarService';
 import ProjectList from '../components/project/ProjectList'
 import MyProfileIcon from '../pages/MyProfileIcon'
-import { TestCalendar } from '../calendarTest/TestCalendar';
+import { Calendar } from '../components/calendar/Calendar';
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -29,23 +23,7 @@ const MyPage = () => {
     const { userId, setUserId } = useUser();
     const [currentDate, setCurrentDate] = useState('');
     const [greeting, setGreeting] = useState("어서오세요.");
-    const [currentView, setCurrentView] = useState('dayGridMonth');
-    const [eventCRUDModal, setEventCRUDModal] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null); // 선택된 날짜 상태
-
-    // 달력 관련 변수들..
-    let formData; // fullcalendar에서 지원해 주는 기능.
-    const [title, setTitle] = useState("");
-    const [start, setStart] = useState("");
-    const [end, setEnd] = useState("")
-    let extendedProps; // fullcalendar에서 지원해주지 않는 기능.
-    const [description , setDescription] = useState("");
-    const [projectId, setProjectId] = useState("");
-    const [createBy, setCreateBy] = useState("");
-    // 스케쥴 생성일 & 스케쥴 고유 아이디는 DB에서 부여
-
-    const [errors, setErrors] = useState({});
-    const [validations, setValidations] = useState({});
+   
     const [friends, setFriends] = useState([]);
 
     useEffect(() => {
@@ -96,64 +74,16 @@ const MyPage = () => {
         setGreeting(currentHour < 11 ? "좋은 아침이예요!" : "어서오세요.");
     }, []);
 
-    const changeView = (view) => {
-        setCurrentView(view);
-    };
-
-    const moveToProject = () => {
-        navigate('/project');
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/');
     };
 
-    const handleDateClick = (arg) => {
-        setEventCRUDModal(true); // 모달창 오픈
-    };
 
-    const closeModal = () => {
-        setEventCRUDModal(false);
-    }
 
-    const handleChange = e => {
-        setTitle(e.target.value);
-        setDescription("1234");
-        console.log(e.target.value);
-    };
 
-    const handleSubmit = async (e) => {
-        extendedProps = {description, projectId, createBy};
-        formData = {title , start, end, extendedProps};
-
-        e.preventDefault();
-      
-        if (formData.title === '') { // title: 'sdf'
-            alert('일정의 타이틀을 입력해 주세요.');
-            return;
-        } 
-
-        try {
-            await CalendarService.registerSchedule(formData);
-            alert('일정이 등록되었습니다.');
-        } catch (error) {
-            console.error(error);
-            alert('일정등록에 실패하였습니다.');
-        }
-    };
-
-    function renderEventContent(eventInfo) {
-        return (
-            <>
-                {/* 이벤트의 시작과 종료 시간 출력 */}
-                <b>{eventInfo.timeText}</b>
-                {/* 이벤트 타이틀 */}
-                <i>{eventInfo.event.title}</i>
-            </>
-        );
-    }
-
+    
 
     // 친구 목록 새로고침 함수 추가
     const fetchFriends = async () => {
@@ -195,41 +125,8 @@ const MyPage = () => {
             <div className="centered-vertically">
                 <div className="calender-mypage">
                     <span className="text">달력</span>
-                    <TestCalendar/>
-                    {/* <FullCalendar
-                        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                        dateClick={handleDateClick}
-                        eventContent={renderEventContent}
-                        key={currentView}
-                        initialView={currentView}
-                        headerToolbar={{
-                            left: 'prev,next today',
-                            center: 'title',
-                            right: 'custom,custom2'
-                        }}
-                        customButtons={{
-                            custom: {
-                                text: '주간 보기',
-                                click: () => changeView('timeGridWeek')
-                            },
-                            custom2: {
-                                text: '월간 보기',
-                                click: () => changeView('dayGridMonth')
-                            }
-                        }}
-                        weekends={true}
-                    />
-                    <ReactModal className={"event-CRUD-modal"}
-                        isOpen={eventCRUDModal}
-                        contentLabel="일정 조회 등록 수정 삭제"
-                    >
-                        <h2>일정등록</h2>
-                        <form onSubmit={handleSubmit}>
-                            제목: <input type='text' name='Tilte' placeholder='일정의 제목' onChange={handleChange}/>
-                            <button onClick={closeModal}>닫기</button>
-                            <button type='submit'>일정등록</button>
-                        </form>
-                    </ReactModal> */}
+                    {/* 달력 컴포넌트 */}
+                    <Calendar/>
                 </div>
 
                 <div className="horizontal-alignment">
