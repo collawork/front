@@ -7,21 +7,31 @@ import PendingInvitations from "../components/project/PendingInvitations";
 import axios from "axios";
 import "../components/assest/css/Layout.css";
 import { useUser } from "../context/UserContext";
-import {stateValue} from "../store";
+import { stateValue } from "../store";
+import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
+import { useNavigate } from "react-router-dom";
+import { projectStore, calendarEvents ,friendsList} from '../store';
 
 const Layout = () => {
     const { userId } = useUser();
     const [activeTab, setActiveTab] = useState("friends");
-    const [participants, setParticipants] = useState([]);
-    const [selectedProject, setSelectedProject] = useState(null); 
-    const {setHomeShow,setChatShow, setCalShow,setNotiShow,setVotig} = stateValue();
+    const {participants,setParticipants} = friendsList();
+    // const [participants, setParticipants] = useState([]);
+    const [selectedProject, setSelectedProject] = useState(null);
+    const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+    const [userRole, setUserRole] = useState(null);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const { projectData, PlusProjectData} = projectStore();
+    const {
+        id, title, start, end, allDay, description, createdBy, createdAt, projectId,
+        setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId
+    } = calendarEvents();
 
     const API_URL = process.env.REACT_APP_API_URL;
 
+    // 프로젝트 참여자 목록 가져오기
     const fetchAcceptedParticipants = async () => {
-        console.log("fetchAcceptedParticipants 호출함");
-        console.log("현재 selectedProject:", selectedProject);
-
         if (!selectedProject || !selectedProject.id) {
             console.warn("선택된 프로젝트가 없습니다.");
             return;
@@ -37,13 +47,9 @@ const Layout = () => {
             const response = await axios.get(
                 `${API_URL}/api/user/projects/${selectedProject.id}/participants/accepted`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
-
-            console.log("API 응답 데이터:", response.data);
 
             const formattedParticipants = response.data.map((participant) => ({
                 name: participant.username || "이름 없음",
@@ -56,8 +62,33 @@ const Layout = () => {
         }
     };
 
+    // 사용자 역할 가져오기
+    const fetchUserRole = async () => {
+        if (!selectedProject?.id) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다.");
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${API_URL}/api/user/projects/${selectedProject.id}/role`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { userId },
+                }
+            );
+
+            setUserRole(response.data.role);
+        } catch (error) {
+            console.error("사용자 역할을 가져오는 중 오류 발생:", error);
+            setUserRole(null);
+        }
+    };
+
     useEffect(() => {
-        console.log("activeTab 상태:", activeTab);
         if (activeTab === "participants") {
             fetchAcceptedParticipants();
         }
@@ -66,23 +97,22 @@ const Layout = () => {
     useEffect(() => {
         if (selectedProject && activeTab === "participants") {
             fetchAcceptedParticipants();
+            fetchUserRole();
+        }
+    }, [selectedProject]);
+
+    useEffect(() => {
+        if (selectedProject) {
+            fetchUserRole();
+            fetchAcceptedParticipants();
         }
     }, [selectedProject]);
 
     const renderList = () => {
-        if (!userId) {
-            console.warn("userId가 아직 초기화되지 않았습니다.");
-            return <p>로딩 중...</p>;
-        }
-
         if (activeTab === "friends") {
             return <FriendList userId={userId} />;
         } else if (activeTab === "participants") {
-            if (participants.length === 0) {
-                return <p>참여자가 없습니다.</p>;
-            }
-
-            return (
+            return participants.length ? (
                 <ul>
                     {participants.map((participant, index) => (
                         <li key={index}>
@@ -90,34 +120,45 @@ const Layout = () => {
                         </li>
                     ))}
                 </ul>
+            ) : (
+                <p>참여자가 없습니다.</p>
             );
         } else if (activeTab === "pending") {
             return (
                 <PendingInvitations
-                    projectId={selectedProject ? selectedProject.id : null}
+                    projectId={selectedProject?.id || null}
                     onInvitationChange={fetchAcceptedParticipants}
                 />
             );
         }
     };
 
-    // const onClickHandler = () => {
-    //     setHomeShow(''),
-    //     setChatShow(''),
-    //     setCalShow(''),
-    //     setNotiShow(''),
-    //     setVotig('')
-    // }
+    
+    const moveToMypage = () => {
+
+        navigate('/main');
+        // 홈버튼을 누르면 캘린더의 선택된 프로젝트 아이디가 null로 상태가 바뀌어야 하고, 홈화면의 달력은 개인 달력(프로젝트 아이디가 null인 스케쥴들)으로 출력한다.
+        PlusProjectData('');
+        setHomeShow('');
+        setChatShow(''); 
+        setCalShow('');
+        setNotiShow('');
+        setVotig('') ;
+        
+    }
 
     return (
         <div className="layout-container">
+            <button
+                onClick={moveToMypage}
+            >
+                메인화면으로 이동
+            </button>
             <Search currentUser={{ id: userId }} />
-                <div className="main-content">
-                    {/* <button onClick={onClickHandler}>홈</button> */}
-                    <Aside
+            <div className="main-content">
+                <Aside
                     currentUser={{ id: userId }}
                     onProjectSelect={(project) => {
-                        console.log("선택된 프로젝트 업데이트:", project);
                         setSelectedProject(project);
                     }}
                 />
@@ -145,12 +186,27 @@ const Layout = () => {
                             초대 목록
                         </button>
                     </div>
+                    {userRole === "ADMIN" && (
+                        <button
+                            className="invite-button"
+                            onClick={() => {
+                                setIsInviteModalOpen(true);
+                            }}
+                        >
+                            초대하기
+                        </button>
+                    )}
                     <div className="friend-list-modal">{renderList()}</div>
                 </div>
             </div>
+            <InviteModal
+                isOpen={isInviteModalOpen}
+                onClose={() => setIsInviteModalOpen(false)}
+                selectedProject={selectedProject}
+                userId={userId}
+            />
         </div>
     );
 };
 
 export default Layout;
-

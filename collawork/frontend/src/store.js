@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { create } from "zustand";
 
 export const projectStore = create((set, get)=> ({
@@ -51,6 +52,8 @@ export const calendarEvents = create((set, get) => ({
     createdBy : '',
     createdAt : '',
     projectId : '',
+    
+    color : '',
 
     setId : (value) => {set({id: value})},
     setTitle : (value) => {set({title: value})},
@@ -60,7 +63,9 @@ export const calendarEvents = create((set, get) => ({
     setDescription : (value) => {set({description: value})},
     setCreatedBy : (value) => {set({createdBy: value})},
     setCreatedAt : (value) => {set({createdAt: value})},
-    setProjectId : (value) => {set({projectId: value})}
+    setProjectId : (value) => {set({projectId: value})},
+    
+    setColor : (value) => {set({color: value})}
 
 }));
 
@@ -96,3 +101,16 @@ export const stateValue = create((set, get)=> ({
     }
 
 }));
+
+
+// 프로젝트 참여자 목록
+export const friendsList = create((set, get)=> ({
+
+    participants: [],
+
+    setParticipants:(value) => {
+        set({setParticipants : value})
+    }
+
+}));
+
