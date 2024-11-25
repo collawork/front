@@ -18,6 +18,7 @@ const ProjectInformation = () => {
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
   const { projectName, projectData, userData, PlusProjectData, PlusUserData } = projectStore();
   const { userId } = useUser();
+  const [title, setTitle] = useState();
 
   useEffect(() => {
     if (projectName) {
@@ -53,6 +54,8 @@ const ProjectInformation = () => {
     }).catch(err => console.error("프로젝트 정보 조회 오류:", err));
   }
 
+
+
   function calendarSend() { // 다가오는 프로젝트 캘린더
     const token = localStorage.getItem('token');
     const userIdValue =
@@ -63,16 +66,18 @@ const ProjectInformation = () => {
       url: `${API_URL}/api/user/projects/calendarList`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { projectData:projectData.id, userId:userId }, // 프로젝트 id, userId 
+      params: { projectId:projectData?.id, userId:userId }, // 프로젝트 id, userId 
       baseURL: 'http://localhost:8080',
     }).then(function (response) {
-      console.log(response);
-      if (response?.data) {
-        setCalendarList(response.data); // 캘린더 데이터를 설정
+      console.log(response.data[0]);
+      if (response) {
+        setCalendarList(response.data[0]); // 캘린더 데이터를 설정
+        console.log(response.data[0].title);
+        setTitle(response.data[0].title);
       } else {
         setCalendarList([]); // 응답이 없을 경우 빈 배열로 설정
       }
-    });
+    }).catch(err => console.error("캘린더 조회 오류:", err));
   };
 
 
@@ -115,23 +120,27 @@ const ProjectInformation = () => {
       {show && (
         <div>
           <h5>다가오는 일정</h5>
+          {console.log("왜안떠:: " + calendarList.title)}
          
-         {calendarList.length ? (
+         {calendarList? (
             <ul>
-              {calendarList.map((list, index) => (
+              {console.log("왜안떠:: " + calendarList.title)}
+              <li>{calendarList.title}</li>
+              <h6>{calendarList.start_time}--{calendarList.end_time}</h6>
+             
+              {/* {calendarList.map((list, index) => (
                 <li key={index}>
                   <h5>{list.title}</h5>
-                  <h6>{list.startTime} -- {list.endTime}</h6>
-                  {/* 시작시간이 빠른 것부터 보여주기 */}
+                  <h6>{list.start_time} -- {list.end_time}</h6>
                 </li>
-              ))}
+              ))} */}
             </ul>
           ) : (
             <p>다가오는 일정이 없습니다.</p>
           )}
 
         <h5>중요 공지사항</h5>
-        {noticesList.length ? (
+        {noticesList.length? (
           <ul>
             {noticesList.map((list, index)=>(
               <li key={index}>
@@ -148,7 +157,7 @@ const ProjectInformation = () => {
          
           <h3>프로젝트 이름 : {projectData.projectName}</h3>
           <h5>- {projectData.projectCode}</h5>
-          <button onClick={()=> modify? setModify(false):setModify(true)}><FontAwesomeIcon icon={faBars}/></button>
+          <button onClick={()=>setModify(true)}><FontAwesomeIcon icon={faBars}/></button>
           <div className="user-info-dropdown" ref={modalRef} style={{ position: 'relative' }}>
             <img
               src={userData?.profileImageUrl || defaultImage}
