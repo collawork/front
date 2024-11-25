@@ -258,14 +258,14 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                     <div className="sidebar">
                         <h3>카테고리</h3>
                         <button onClick={handleCreateCategory}>+ 카테고리 생성</button>
-                            {selectedCategory && (
-                                <button
-                                    onClick={() => handleDeleteCategory(selectedCategory.id)}
-                                    className="delete-category-button"
-                                >
-                                    삭제
-                                </button>
-                            )}
+                        {selectedCategory && (
+                            <button
+                                onClick={() => handleDeleteCategory(selectedCategory.id)}
+                                className="delete-category-button"
+                            >
+                                삭제
+                            </button>
+                        )}
                         <input
                             type="text"
                             value={newCategoryName}
@@ -310,7 +310,9 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                                 checked={addToCategory.includes(friend.id)}
                                                 onChange={() => handleCategoryFriendSelection(friend.id)}
                                             />
-                                            {friend.username} ({friend.email})
+                                            <span onClick={() => handleFriendClick(friend)}>
+                                                {friend.username} ({friend.email})
+                                            </span>
                                         </li>
                                     ))}
                                 </ul>
@@ -340,25 +342,32 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                         checked={selectedFriends.includes(friend.id)}
                                         onChange={() => handleFriendSelection(friend.id)}
                                     />
-                                    {friend.username} ({friend.email})
+                                    <span onClick={() => handleFriendClick(friend)}>
+                                        {friend.username} ({friend.email})
+                                    </span>
                                 </li>
                             ))}
                         </ul>
                         <button onClick={handleAddFriendsToCategory}>추가하기</button>
                     </div>
                 </div>
-                {showUserDetail && selectedFriend && (
-                    <UserDetail
-                        type="user"
-                        item={selectedFriend}  // 선택된 친구 정보 전달
-                        closeModal={() => setShowUserDetail(false)}  // 모달 닫기 핸들러
-                        currentUser={userId}   // 현재 사용자 ID 전달
-                    />
-                )}
-
             </div>
+    
+            {/* UserDetail 모달 */}
+            {showUserDetail && selectedFriend && (
+                <div className="user-detail-modal-right">
+                    <div className="user-detail-modal2">
+                        <UserDetail
+                            type="user"
+                            item={selectedFriend}
+                            closeModal={() => setShowUserDetail(false)}
+                            currentUser={userId}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
-    );
+    );   
 };
 
 export default FriendCategoryManager;
