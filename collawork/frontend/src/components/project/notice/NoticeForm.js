@@ -35,29 +35,34 @@ const NoticeForm = ({ projectId, notice, onSubmit, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("important", important);
-
-    // 기존 첨부파일 정보 포함
+    formData.append("title", title || ""); // 제목 추가
+    formData.append("content", content || ""); // 내용 추가
+    formData.append("important", important ? "true" : "false"); // 중요 여부 추가
+  
+    // 기존 첨부파일 처리
     existingAttachments.forEach((file, index) => {
-      formData.append(`existingAttachments[${index}]`, file);
+      formData.append(`existingAttachments[${index}]`, JSON.stringify(file));
     });
-
-    // 새 첨부파일 추가
+  
+    // 새 첨부파일 처리
     attachments.forEach((file) => {
       formData.append("attachments", file);
     });
-
+  
+    console.log("NoticeForm에서 생성된 FormData:");
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+  
     try {
-      await onSubmit(formData);
-      onClose();
+      await onSubmit(formData); // 여기에서 FormData 전달
     } catch (error) {
-      console.error("작업 중 오류 발생:", error);
-      alert("작업 중 오류가 발생했습니다.");
+      console.error("onSubmit 호출 중 오류 발생:", error);
     }
   };
+  
 
   if (!notice && !onClose) return null;
 
