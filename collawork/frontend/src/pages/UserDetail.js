@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import FriendRequest from '../components/Friend/FriendRequest';
 import "../components/assest/css/UserDetail.css";
+import defaultImage from '../components/assest/images/default-profile.png'
 
 const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
@@ -44,7 +45,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
         <>
           <h3>사용자 정보</h3>
           <img
-            src={data.profileImage ? `http://localhost:8080/uploads/${data.profileImage}` : '/default-profile.png'}
+            src={data.profileImage ? `http://localhost:8080/uploads/${data.profileImage}` : defaultImage}
             alt={`${data.username || '사용자'}의 프로필 이미지`}
           />
           <p>이름: {data.username || '정보 없음'}</p>

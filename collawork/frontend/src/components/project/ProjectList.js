@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import Pagination from '../Pagination'; // 기존에 구현한 Pagination 컴포넌트 사용
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectList = ({ onProjectSelect }) => {
-    const [projects, setProjects] = useState([]); // 프로젝트 데이터 (id, name 포함)
+    const [projects, setProjects] = useState([]); // 전체 프로젝트 데이터
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const [pageSize] = useState(5); // 한 페이지당 표시할 프로젝트 수
     const { userId } = useUser();
     const navigate = useNavigate();
 
@@ -23,10 +26,9 @@ const ProjectList = ({ onProjectSelect }) => {
 
         axios.post(
             `/api/user/projects/selectAll`,
-            { userId: userIdValue }, // JSON 형식
+            { userId: userIdValue },
             {
                 baseURL: API_URL,
-                
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -35,23 +37,33 @@ const ProjectList = ({ onProjectSelect }) => {
         )
         .then((response) => {
             console.log("프로젝트 목록 응답:", response.data);
-
-            // 응답 데이터가 배열인지 확인용도
             if (Array.isArray(response.data)) {
-                setProjects(response.data); // 데이터 설정
+                setProjects(response.data); // 전체 데이터 설정
             } else {
                 console.warn("API 응답이 배열이 아닙니다:", response.data);
-                setProjects([]); // 배열이 아니면 빈 배열로 초기화
+                setProjects([]);
             }
         })
         .catch((error) => {
             console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
-            setProjects([]); // 오류 발생 시 빈 배열로 초기화
+            setProjects([]); // 오류 시 빈 배열로 초기화
         });
     };
 
     const handleMoreClick = () => {
         navigate('/project'); // '더보기' 클릭 시 프로젝트 페이지로 이동
+    };
+
+    // 현재 페이지에 표시할 프로젝트 계산
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedProjects = projects.slice(startIndex, endIndex);
+
+    // 총 페이지 수 계산
+    const totalPages = Math.ceil(projects.length / pageSize);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -61,16 +73,16 @@ const ProjectList = ({ onProjectSelect }) => {
                 + 더보기
             </button>
             <ul>
-                {Array.isArray(projects) && projects.length > 0 ? (
-                    projects.map((project) => (
+                {paginatedProjects.length > 0 ? (
+                    paginatedProjects.map((project) => (
                         <li key={project.id}>
                             <button
                                 onClick={() => {
                                     console.log("선택된 프로젝트:", project);
-                                    onProjectSelect(project); // 선택한 프로젝트 상위로 전달해야댐
+                                    onProjectSelect(project); // 선택한 프로젝트 상위로 전달
                                 }}
                             >
-                                {project.name} {/* 프로젝트 이름임 */}
+                                {project.name} {/* 프로젝트 이름 */}
                             </button>
                         </li>
                     ))
@@ -78,6 +90,11 @@ const ProjectList = ({ onProjectSelect }) => {
                     <li>프로젝트가 없습니다.</li>
                 )}
             </ul>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };
