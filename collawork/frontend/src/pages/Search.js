@@ -33,21 +33,26 @@ const Search = ({ currentUser}) => {
             params: { query: searchQuery },
         });
 
+        console.log("API 응답 데이터:", response.data);
+        console.log("현재 로그인된 사용자:", currentUser);
+
+        // 응답 데이터 검증 및 기본값 설정
+        const users = Array.isArray(response.data.users) ? response.data.users : [];
+        const projects = Array.isArray(response.data.projects) ? response.data.projects : [];
+
+        // 로그인된 사용자 제외 및 필터링
         const filteredResults = {
-            users: response.data.users.filter(user => 
+            users: users.filter(user =>
                 (user.username.includes(searchQuery) || user.email.includes(searchQuery)) &&
-                user.id !== currentUser.id
+                Number(currentUser.id) !== Number(user.id) // 타입 변환 후 비교
             ),
-            projects: response.data.projects.filter(project =>
+            projects: projects.filter(project =>
                 project.projectName.includes(searchQuery)
             ),
-            chatRooms: []
-            // chatRooms: response.data.chatRooms.filter(chatRoom =>
-            //     chatRoom.roomName.includes(searchQuery)
-            //  )
-            
+            chatRooms: [],
         };
 
+        // 결과 확인
         const isEmptyResults = 
             filteredResults.users.length === 0 &&
             filteredResults.projects.length === 0 &&
@@ -61,6 +66,7 @@ const Search = ({ currentUser}) => {
         setNoResults(true);
     }
 };
+
 
 
   const handleResultClick = (type, item) => {

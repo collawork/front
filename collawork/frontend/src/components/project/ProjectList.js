@@ -19,6 +19,7 @@ const ProjectList = ({ onProjectSelect }) => {
     const navigate = useNavigate();
 
     console.log("ProjectList userId:", userId);
+    console.log("localStorage.getItem : ", localStorage.getItem("userId"));
 
     useEffect(() => {
         console.log("ProjectList useEffect 호출됨");

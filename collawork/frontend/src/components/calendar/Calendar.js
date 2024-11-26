@@ -97,8 +97,8 @@ export const Calendar = () => {
 
         // 스케쥴을 등록한 유저 정보를 저장
         const fetchUserInfo = async () => {
-            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::useId ",userId.userId);
-            setCreatedBy(userId.userId);
+            // console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::useId ",userId.userId);
+            // setCreatedBy(userId.userId);
         };
         fetchUserInfo();
 
