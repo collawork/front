@@ -90,15 +90,29 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     // 프로젝트 목록 가져오기
     const selectProjectName = async () => {
         const token = localStorage.getItem("token");
+    
         if (!token) {
             console.error("토큰이 없습니다.");
             return;
         }
     
+        // userId 처리: 객체인지 확인하고 필요한 값 추출
+        let userIdValue = typeof userId === "object" && userId !== null
+            ? userId.id || userId.userId // 객체에서 id 또는 userId 추출
+            : userId;
+    
+        // userId가 숫자인지 확인하고 변환
+        if (!userIdValue || isNaN(Number(userIdValue))) {
+            console.error("유효하지 않은 userId:", userIdValue);
+            return;
+        }
+        userIdValue = Number(userIdValue);
+    
         try {
+            // API 요청
             const response = await axios.post(
                 `${API_URL}/api/user/projects/selectAll`,
-                { userId: Number(userId) },
+                { userId: userIdValue }, // 숫자 userId 전달
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -109,17 +123,19 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     
             if (Array.isArray(response.data)) {
                 const allProjects = response.data;
-                setTotalPages(Math.ceil(allProjects.length / pageSize)); // 전체 페이지 수 계산
-                const startIndex = (currentPage - 1) * pageSize; // 현재 페이지의 시작 인덱스
-                const endIndex = Math.min(startIndex + pageSize, allProjects.length); // 현재 페이지의 끝 인덱스
-                setProjectName(allProjects.slice(startIndex, endIndex)); // 슬라이싱한 데이터 저장
+                setTotalPages(Math.ceil(allProjects.length / pageSize));
+                const startIndex = (currentPage - 1) * pageSize;
+                const endIndex = Math.min(startIndex + pageSize, allProjects.length);
+                setProjectName(allProjects.slice(startIndex, endIndex));
             } else {
-                console.warn("API 응답이 예상한 형식이 아닙니다.");
+                console.warn("API 응답이 배열이 아닙니다:", response.data);
             }
         } catch (error) {
             console.error("프로젝트 목록을 불러오는 중 오류 발생:", error);
         }
     };
+    
+    
     
 
     // 선택된 프로젝트의 role 가져오기
@@ -186,6 +202,23 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
             fetchFriends();
         }
     }, [newShow]);
+
+    useEffect(() => {
+        console.log("초기 userId:", userId);
+    
+        // userId가 객체일 경우 처리
+        let userIdValue = typeof userId === "object" && userId !== null
+            ? userId.id || userId.userId
+            : userId;
+    
+        if (!userIdValue || isNaN(Number(userIdValue))) {
+            console.error("userId가 초기화되지 않았습니다. 기본값 설정.");
+            userIdValue = 1; // 기본값
+        }
+    
+        selectProjectName();
+    }, [userId]);
+    
 
     const handleFriendSelection = (friend) => {
         setSelectedFriends((prev) =>
