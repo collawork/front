@@ -124,10 +124,10 @@ const Project = ({projectId}) => {
     
           <div className="content-area">
             {selected === "home" && <ProjectHome />}
-            {selected === "noti" && <NoticeList />}
-            {selected === "chat" && <ChatRoom />}
-            {selected === "calendar" && <Calendar />}
-            {selected === "voting" && <Voting />}
+            {selected === "noti" && projectData && <NoticeList projectId={projectData.id} />}
+            {selected === "chat" && projectData && <ChatRoom projectId={projectData.id}/>}
+            {selected === "calendar" && projectData && <Calendar projectId={projectData.id}/>}
+            {selected === "voting" && projectData && <Voting projectId={projectData.id}/>}
           </div>
         </div>
       );
