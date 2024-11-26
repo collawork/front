@@ -10,22 +10,27 @@ import { calendarEvents, projectStore } from '../../store';
 import { useUser } from '../../context/UserContext';
 import CalendarService from '../../services/CalendarService';
 
+import '../../components/assest/css/Calendar.css';
+import { set } from 'lodash';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import Button from 'react-bootstrap/Button';
+// import Card from 'react-bootstrap/Card';
+
+
 // Modal 스타일 설정
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
-    }
-};
+// const customStyles = {
+//     content: {
+//         top: '50%',
+//         left: '50%',
+//         right: 'auto',
+//         bottom: 'auto',
+//         marginRight: '-50%',
+//         transform: 'translate(-50%, -50%)'
+//     }
+// };
 
 
 export const Calendar = () => {
-    // 선택된 컬러 상태
-    const [selectedColor, setSelectedColor] = useState('#2196f3'); // 초기값 설정
     // 스케쥴 색상 종류
     const colors = [/*'#f44336', '#e91e63',*/ '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
     // 현재 뷰를 설정. (Month 또는 Week)
@@ -39,6 +44,8 @@ export const Calendar = () => {
         id, title, start, end, allDay, description, createdBy, createdAt, projectId, color,
         setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId, setColor
     } = calendarEvents();
+    // 한국의 휴일 정보
+    const [krHoliday, setKrHoliday] = useState([]);
     // 스케쥴 등록과 수정을 같은 모달을 통해 할 수 있도록 한다.
     const [isInserting, setIsInserting] = useState(true);
     // ↳ 바로 그 모달이다.
@@ -47,15 +54,80 @@ export const Calendar = () => {
     const [events, setEvents] = useState([]);
     // 스케쥴이 등록됐을 때 DB로부터 가장 최신의 스케쥴까지 사용자에게 보여줄 수 있도록 한다.
     const [isEventAdded, setIsEventAdded] = useState(false);
-    
+
     const API_URL = process.env.REACT_APP_API_URL;
     const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
     const GOOGLE_CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_KR_HOLIDAY_ID
 
+    const now = new Date();
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(now.getMonth() - 2);
+    const sixMonthsLater = new Date(now);
+    sixMonthsLater.setMonth(now.getMonth() + 2);
+
+    const timeMin = sixMonthsAgo.toISOString();
+    const timeMax = sixMonthsLater.toISOString();
+
+
+    useEffect(() => {
+
+        // 구글 캘린더에서 한국의 공휴일 정보를 가져와 보자
+        const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+        const GOOGLE_CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_KR_HOLIDAY_ID
+
+        const fetchKrHoliday = async () => {
+            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 구글에서 정보 좀 가져오려는데..");
+            console.log(GOOGLE_API_KEY);
+            console.log(GOOGLE_CALENDAR_ID);
+            try {
+                //                 const response = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${GOOGLE_CALENDAR_ID}/events?timeMin=${timeMin}&timeMax=${timeMax}&key=${GOOGLE_API_KEY}`,
+                // );
+                //                 console.log("구글에서 가져온 휴일 정보... ", response.data);
+                //                 console.log(response.data.items);
+                //                 const krH =response.data.items;
+
+                //                 for(let i=0; i<response.data.length; i++){
+                //                     let title = krH.i.summary;
+                //                     let description = krH.i.description;
+                //                     let start = krH.i.start;
+
+                //                     setKrHoliday(...krHoliday, {title: title, description:description, start:start});
+                //                 };
+                //                 return krHoliday;
+                const response = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${GOOGLE_CALENDAR_ID}/events?timeMin=${timeMin}&timeMax=${timeMax}&key=${GOOGLE_API_KEY}`,
+                );
+                console.log("구글에서 가져온 휴일 정보... ", response.data);
+                console.log(response.data.items);
+                const krH = response.data.items;
+
+                for (let i = 0; i < response.data.items.length; i++) {
+                    let title = krH[i].summary;
+                    let description = krH[i].description;
+                    let start = krH[i].start.date;
+                    let color = "white";
+                    let textColor = "red";
+
+                    setKrHoliday((prev) => [...prev, { title: title, extendedProps: { description: description }, start: start, color: color, textColor: textColor }]);
+                };
+                return response.data.itiems;
+
+            } catch (error) {
+                console.error('Error fetching calendar events:', error);
+                return null;
+            }
+
+        }
+        fetchKrHoliday();
+        // console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
+    }, []);
+
+    console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
+    console.log("::::::::::::::::::::",events);
+
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
         // DB로부터 최신 스케쥴을 받을 수 있도록 돕는다.
-        setIsEventAdded(false); 
+        setIsEventAdded(false);
         // 선택된 프로젝트 아이디 저장. 선택된 프로젝트 아이디가 없으면 개인 달력으로 사용된다.
         const fetchProjectId = async () => {
             setProjectId(projectData.id);
@@ -119,6 +191,7 @@ export const Calendar = () => {
     // 모달을 닫는 함수
     const handleModalClose = () => {
         setModalIsOpen(false);
+        //setIsEventAdded(true);
     };
 
     // 빈 날짜를 클릭할 때 발동하는 함수
@@ -144,9 +217,10 @@ export const Calendar = () => {
         // 모달을 열면 상기에 적어둔 초기값들이 보여진다. 이후 사용자는 title, description, color를 변경할 수 있다.
         setModalIsOpen(true);
         setIsEventAdded(true);
-        
+
         // 선택 영역을 해제합니다.
         info.view.calendar.unselect();
+
     };
 
     // 스케쥴 등록 함수
@@ -169,7 +243,14 @@ export const Calendar = () => {
 
     // 특정 일정의 제목 설명을 가져오는 함수
     const handleEventClick = (info) => {
+        // info.jsEvent.preventDefault(); // 공휴일을 클릭했을 때 구글 캘린더로 넘어가는 것을 방지
+        // console.log("구글 캘린더에서 가져온 휴일 정보를 클릭했을 때 정보를 확인하기 위함.. ", info.event);
+        if(!info.event.id){
+            // setIsHoliday(true);
+        }
+
         setIsInserting(false);
+        setIsEventAdded(true);
         setId(info.event.id);
         setTitle(info.event.title);
         setDescription(info.event.extendedProps.description);
@@ -233,9 +314,31 @@ export const Calendar = () => {
     };
 
     return (
-        <div>
+        <div className='fullCalendarContainer'>
+            {/* <Card style={{ width: '18rem' }}>
+                <Card.Img variant="top" src="holder.js/100px180" />
+                <Card.Body>
+                    <Card.Title>Card Title</Card.Title>
+                    <Card.Text>
+                        Some quick example text to build on the card title and make up the
+                        bulk of the card's content.
+                    </Card.Text>
+                    <Button variant="primary">Go somewhere</Button>
+                </Card.Body>
+            </Card> */}
+            {/* <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a>
+                </div>
+            </div> */}
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, googleCalendarPlugin]}
+                height={600}
+                //aspectRatio= {100}
                 key={currentView}
                 initialView={currentView} // 현재 뷰
                 weekends={true} // 토일 표시
@@ -294,26 +397,44 @@ export const Calendar = () => {
                 //     ]
                 // }
 
-                eventSources={
-                    [
-                        {events},
-                        {
-                            googleCalendarId: GOOGLE_CALENDAR_ID,
-                            display:'background',
-                            color: 'red',
-                            textColor: 'red'
-                        }
-                    ]
-                }
+                // eventSources={ // 동기
+                //     [
+                //         { events },
+                //         // {
+                //         //     googleCalendarId: GOOGLE_CALENDAR_ID,
+                //         //     display: 'background',
+                //         //     color: 'red',
+                //         //     textColor: 'red'
+                //         // }
+                //     ]
+                // }
 
-                // events={events} // 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능
+                // eventSources={ // 동기
+                //     [
+                //         { events },
+                //         { krHoliday },
+                //         // {
+                //         //     googleCalendarId: GOOGLE_CALENDAR_ID,
+                //         //     //display: 'background',
+                //         //     color: 'white',
+                //         //     textColor: 'red',
+                //         //     editable: false,
+                //         //     // textBord: true
+                //         //     start: '2024-10-01',
+                //         //     end: '2025-02-01'
+                //         // }
+                //     ]
+                // }
+
+                events={[ ...krHoliday, ...events ]}// 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능. 비동기
 
             />
             < ReactModal // 등록, 수정을 함꼐하는 모달
                 isOpen={modalIsOpen} // 모달 여닫는 기능
                 onRequestClose={handleModalClose}
-                style={customStyles}
+                //style={customStyles}
                 contentLabel="insertOrUpdateModal"
+                className="calendar-modal"
             >
                 <form onSubmit={isInserting ? insertEvent : updateSelectedEvent}>
                     제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' required />
