@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserDetail from './UserDetail';
 import "../components/assest/css/Search.css";
 
-const Search = ({ currentUser }) => {
+const Search = ({ currentUser}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState({ users: [], projects: [], chatRooms: [] });
   const [noResults, setNoResults] = useState(false);

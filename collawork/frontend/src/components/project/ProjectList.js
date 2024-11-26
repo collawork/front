@@ -73,7 +73,6 @@ const ProjectList = ({ onProjectSelect }) => {
 
     return (
         <div className="project-list">
-            <h3>프로젝트 목록</h3>
             <button onClick={handleMoreClick} className="more-button">
                 + 더보기
             </button>
