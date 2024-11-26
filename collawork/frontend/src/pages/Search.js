@@ -11,8 +11,6 @@ const Search = ({ currentUser}) => {
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  console.log("Search currentUser:", currentUser);
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
