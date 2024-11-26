@@ -198,7 +198,6 @@ const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
 
     return (
         <div className="notification-list">
-            <h3>새로운 알림</h3>
             <ul>
                 {paginatedNotifications.map(notification => (
                     <li key={notification.id}>
