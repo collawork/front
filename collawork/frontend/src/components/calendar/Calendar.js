@@ -81,8 +81,8 @@ export const Calendar = () => {
         // console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
     }, []);
 
-    console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
-    console.log("::::::::::::::::::::", events);
+    // console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
+    // console.log("::::::::::::::::::::", events);
 
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
@@ -97,7 +97,8 @@ export const Calendar = () => {
 
         // 스케쥴을 등록한 유저 정보를 저장
         const fetchUserInfo = async () => {
-            setCreatedBy(userId);
+            console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::useId ",userId.userId);
+            setCreatedBy(userId.userId);
         };
         fetchUserInfo();
 
@@ -176,6 +177,7 @@ export const Calendar = () => {
     // 스케쥴 등록 함수
     const insertEvent = async (e) => {
         e.preventDefault(); // form의 submit 기본 동작을 막는다. (새로고침 막는 용도)
+        console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",createdBy);
         const newEvent = {
             title, description, start, end, allDay, projectId, createdBy, color // 모달을 통해 사용자가 초기화한 새로운 값들을 담았다.
         }
