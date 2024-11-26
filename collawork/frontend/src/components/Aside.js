@@ -428,14 +428,17 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 </div>
 
                 <div className="aside-bottom">
-                    {projectName.map((project) => (
-                        <section key={project.id}>
-                            <li>
-                                <button onClick={() => moveProjectHome(project)}>{project.name}</button>
-                            </li>
-                        </section>
-                    ))}
-                </div>
+                {projectName.map((project) => (
+                <section key={project.id}>
+                <li>
+                    <span className="clickable-text" onClick={() => moveProjectHome(project)}>
+                    {project.name}
+                </span>
+                </li>
+         </section>
+             ))}
+                    </div>
+
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
