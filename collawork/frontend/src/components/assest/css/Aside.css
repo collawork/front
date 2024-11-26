@@ -49,3 +49,40 @@
     position: relative;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.aside-bottom {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  .aside-bottom li {
+    margin-bottom: 10px;
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically align the text with the circle */
+  }
+  
+  .aside-bottom li::before {
+    content: ''; /* Creates the circle */
+    display: inline-block;
+    width: 6px; /* Diameter of the circle */
+    height: 6px; /* Diameter of the circle */
+    margin-right: 10px; /* Space between the circle and text */
+    background-color: rgb(136, 84, 219); /* Circle color */
+    border-radius: 50%; /* Makes it a perfect circle */
+  }
+  
+  .clickable-text {
+    cursor: pointer; /* Indicates interactivity */
+    color: inherit; /* Matches the surrounding text color */
+    font-size: 16px; /* Slightly larger text */
+    text-decoration: none; /* Removes underline */
+    font-weight: normal; /* Keeps it looking like plain text */
+  }
+  
+  .clickable-text:hover {
+    color: inherit; /* No color change on hover */
+    text-decoration: none; /* Ensures no underline on hover */
+  }
+  
+  
