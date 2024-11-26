@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "../../components/assest/css/FriendCategoryManager.css";
 import UserDetail from "../../pages/UserDetail";
+import Pagination from "../Pagination";
 
 const FriendCategoryManager = ({ userId, onClose }) => {
     const [categories, setCategories] = useState([]);
@@ -16,6 +17,13 @@ const FriendCategoryManager = ({ userId, onClose }) => {
     const modalRef = useRef(null);
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [showUserDetail, setShowUserDetail] = useState(false);   
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentCategoryPage, setCurrentCategoryPage] = useState(1);
+    const pageSize = 5;
+    const paginatedFriends = Pagination(filteredFriends, currentPage);
+    const paginatedCategoryFriends = Pagination(selectedCategoryFriends, currentCategoryPage);
+
+
 
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -220,8 +228,11 @@ const FriendCategoryManager = ({ userId, onClose }) => {
         }
     };
     
+    const paginate = (items, page) => {
+        const startIndex = (page - 1) * pageSize;
+        return items.slice(startIndex, startIndex + pageSize);
+    };
     
-
     const handleFriendSelection = (friendId) => {
         setSelectedFriends((prev) =>
             prev.includes(friendId)
@@ -250,6 +261,10 @@ const FriendCategoryManager = ({ userId, onClose }) => {
         setSelectedFriend(friend);
         setShowUserDetail(true);
     };
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filteredFriends]);
 
     return (
         <div className="modal-overlay">
@@ -283,6 +298,21 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                 </li>
                             ))}
                         </ul>
+                        <div className="pagination">
+                        <button
+                            disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
+                            onClick={() => setCurrentPage((prev) => prev - 1)}
+                        >
+                            이전
+                        </button>
+                        <span>{currentPage}</span>
+                        <button
+                            disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                        >
+                            다음
+                        </button>
+                    </div>
                     </div>
                     <div className="content">
                         {selectedCategory && (
@@ -316,6 +346,22 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                         </li>
                                     ))}
                                 </ul>
+                                <div className="pagination">
+                                <button
+                                    disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
+                                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                                >
+                                    이전
+                                </button>
+                                <span>{currentPage}</span>
+                                <button
+                                    disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
+                                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                                >
+                                    다음
+                                </button>
+                            </div>
+
                                 <button onClick={handleRemoveFromCategory}>제외하기</button>
                             </>
                         )}
@@ -348,6 +394,22 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                 </li>
                             ))}
                         </ul>
+                        <div className="pagination">
+                            <button
+                                disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
+                                onClick={() => setCurrentPage((prev) => prev - 1)}
+                            >
+                                이전
+                            </button>
+                            <span>{currentPage}</span>
+                            <button
+                                disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
+                                onClick={() => setCurrentPage((prev) => prev + 1)}
+                            >
+                                다음
+                            </button>
+                        </div>
+
                         <button onClick={handleAddFriendsToCategory}>추가하기</button>
                     </div>
                 </div>

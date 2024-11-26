@@ -11,10 +11,10 @@ const ProjectModify = ({ setModify }) => {
   const [modalShow, setModalShow] = useState(true); 
   // const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [nameModalOpen, setNameModalOpen] = useState(false); 
-  const [managerModalOpen, setManagerModalOpen] = useState(false); 
+  // const [managerModalOpen, setManagerModalOpen] = useState(false); 
   const [exitModalOpen, setExitModalOpen] = useState(false); 
   const [participant, setParticipant] = useState([]);
-  const [id, setId] = useState(null);
+  // const [id, setId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   // const [modalContent, setModalContent] = useState("");
   const { projectData, userData ,PlusListState} = projectStore();
@@ -23,27 +23,6 @@ const ProjectModify = ({ setModify }) => {
   const {setHomeShow, setChatShow,setCalShow,setNotiShow,setVotig, PlusProjectInformationState} = stateValue();
 
 
-  const fetchAcceptedParticipants = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(
-        `${API_URL}/api/user/projects/${projectData.id}/participants/accepted`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const formattedParticipants = response.data.map((participant) => ({
-        name: participant.username || "이름 없음",
-        email: participant.email || "이메일 없음",
-      }));
-      setParticipant(formattedParticipants);
-      console.log(formattedParticipants);
-    } catch (error) {
-      console.error("참여자 목록을 가져오는 중 오류 발생:", error);
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -62,20 +41,6 @@ const ProjectModify = ({ setModify }) => {
   }, []);
 
 
-  useEffect(() => {
-    if (managerModalOpen) {
-      fetchAcceptedParticipants();
-    }
-  }, [managerModalOpen]);
-
-  const managerModifyHandler = () => {
-    if (String(userId) === String(userData.id)) {
-      setManagerModalOpen(true);
-      // setModify(false);
-    } else {
-      alert("관리자 권한이 없습니다.");
-    }
-  };
 
   const projectNameModifyHandler = () => {
     if (String(userId) === String(userData.id)) {
@@ -101,31 +66,7 @@ const ProjectModify = ({ setModify }) => {
     });
   };
 
-  const managerModify = () => {
-    // const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
-    const token = localStorage.getItem('token');
-    axios({
-      url: `${API_URL}/api/user/projects/managerModify`,
-      headers: { 'Authorization': `Bearer ${token}` },
-      method: 'post',
-      params: { email:id, projectId: projectData.id },
-    }).then(response => {
-      console.log(response.data);
-      setManagerModalOpen(false);
-      setModify(false);
-      // PlusProjectInformationState(false);
-    });
-  };
-
-  const onSubmitHandler = () => {
-    // e.preventDefault();
-    console.log("클릭하면 넘오와댜되는 id :: " + id)
-    if (id) {
-      managerModify();
-    } else {
-      alert("변경할 참여자를 선택해주세요.");
-    }
-  };
+  
 
   const outSend = () => {
     if (String(userId) === String(userData.id)) {
@@ -208,13 +149,6 @@ const ProjectModify = ({ setModify }) => {
     }
   }
 
-  const changeHandler = (e) => {
-    e.preventDefault();
-    console.log(e.target.value);
-    setId(e.target.value);
-    console.log(id);
-  }
-
 
   return (
     <>
@@ -239,7 +173,7 @@ const ProjectModify = ({ setModify }) => {
     },
   }}
 >
-  <button onClick={managerModifyHandler}>관리자 변경</button>
+  {/* <button onClick={managerModifyHandler}>관리자 변경</button> */}
   <button onClick={projectNameModifyHandler}>프로젝트 이름 변경</button>
   <button onClick={ExitModalOpen}>이 프로젝트 나가기</button>
   <button onClick={projectDeleteHandler}>프로젝트 삭제</button>
@@ -278,49 +212,7 @@ const ProjectModify = ({ setModify }) => {
 </ReactModal>
 
 
-<ReactModal
-  isOpen={managerModalOpen}
-  onRequestClose={() => setManagerModalOpen(false)}
-  contentLabel="managerModify"
-  appElement={document.getElementById("root")}
-  style={{
-    content: {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "300px",
-      padding: "10px",
-      borderRadius: "10px",
-      border: "1px solid #ccc",
-    },
-    overlay: {
-      backgroundColor:  "transparent",
-    },
-  }}
->
-  <ul>
-    <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
-    {participant.map((part) => (
-    <li key={part.email}>
-      <input
-        type="radio"
-        id={`participant-${part.email}`}
-        name="adminParticipant"
-        value={part.email}
-        onChange={(e) => changeHandler(e)}
-        // checked={id === part.id} 
-      />
-      <label htmlFor={`participant-${part.email}`}>
-        {console.log(part.email)}
-        {part.id}
-        {part.name} - {part.email}
-      </label>
-    </li>
-  ))}
-  </ul>
-  <button onClick={onSubmitHandler}>변경하기</button>
-  <button onClick={() => setManagerModalOpen(false)}>취소</button>
-</ReactModal>
+
   </>
   )
 }
