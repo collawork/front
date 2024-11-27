@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "../components/assest/css/Home.css"
 
 function Home() {
+    
     const navigate = useNavigate();
 
     const handleStartClick = () => {
