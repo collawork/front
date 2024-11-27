@@ -3,6 +3,7 @@ import ChatRoom from "../components/Chat/ChatRoom";
 //import ProjectCalendar from "../components/project/ProjectCalendar";
 import '../components/assest/css/Project.css'; 
 import Board from '../components/project/Board';
+import { useState } from "react";
 import { useUser } from '../context/UserContext';
 import { stateValue } from '../store';
 import Voting from '../components/project/Voting/ShowVoting';
@@ -15,10 +16,10 @@ import NoticeList from '../components/project/notice/NoticeList';
 
 
 
-const Project = () => {
+const Project = ({projectId}) => {
 
     const {projectData} = projectStore(); 
-    
+    const [selected, setSelected] = useState("home"); // Default selected item
     const token = localStorage.getItem("token");
     console.log("현재 로그인한 사용자의 token : " + token);
 
@@ -36,6 +37,7 @@ const Project = () => {
             setCalShow(false);
             setNotiShow(false);
             setVotig(false);
+            setSelected("home")
         }
     };
 
@@ -46,6 +48,8 @@ const Project = () => {
         setCalShow(false);
         setNotiShow(false);
         setVotig(false);
+        setSelected("chat")
+
         }
     };
 
@@ -56,6 +60,7 @@ const Project = () => {
         setCalShow(true);
         setNotiShow(false);
         setVotig(false);
+        setSelected("calendar")
         }
     };
 
@@ -66,6 +71,7 @@ const Project = () => {
         setChatShow(false);
         setCalShow(false);
         setVotig(false);
+        setSelected("noti")
         }
 
     }
@@ -77,32 +83,54 @@ const Project = () => {
         setChatShow(false);
         setCalShow(false);
         setVotig(true);
+        setSelected("voting")
         }
     }
 
     return (
-        
         <div className="project-container">
-            <div className="button-group">
-                <button onClick={homeClickHandler}><FontAwesomeIcon icon={faHouse}/> 피드</button>
-                <button onClick={notiClickHandler}><FontAwesomeIcon icon={faBell} /> 공지사항</button>
-                <button onClick={chatClickHandler}><FontAwesomeIcon icon={faComment} /> 채팅방</button>
-                <button onClick={onClickHandler}><FontAwesomeIcon icon={faCalendarDays} /> 캘린더</button>
-                <button onClick={AllOnClickHandler}><FontAwesomeIcon icon={faCheckToSlot} /> 투표</button>
+          <div className="button-group">
+            <div
+              className={`menu-item ${selected === "home" ? "active" : ""}`}
+              onClick={homeClickHandler}
+            >
+              <span className="menu-label"> <FontAwesomeIcon icon={faHouse} /> 피드</span>
             </div>
-
-            <div className="content-area">
-
-                {homeShow && <ProjectHome />}
-                {chatShow && <ChatRoom />}
-                {calShow && <Calendar />}
-                {/* {calShow && <ProjectCalendar />} */}
-                {/* {notiShow && <Board />} */}
-                {notiShow && <NoticeList projectId={projectData?.id} />}
-                {voting && <Voting/>}
+            <div
+              className={`menu-item ${selected === "noti" ? "active" : ""}`}
+              onClick={notiClickHandler}
+            >
+              <span className="menu-label"><FontAwesomeIcon icon={faBell} /> 공지사항</span>
             </div>
+            <div
+              className={`menu-item ${selected === "chat" ? "active" : ""}`}
+              onClick={chatClickHandler}
+            >
+              <span className="menu-label"><FontAwesomeIcon icon={faComment} /> 채팅방</span>
+            </div>
+            <div
+              className={`menu-item ${selected === "calendar" ? "active" : ""}`}
+              onClick={onClickHandler}
+            >
+              <span className="menu-label"><FontAwesomeIcon icon={faCalendarDays} /> 캘린더</span>
+            </div>
+            <div
+              className={`menu-item ${selected === "voting" ? "active" : ""}`}
+              onClick={AllOnClickHandler}
+            >
+              <span className="menu-label"><FontAwesomeIcon icon={faCheckToSlot} /> 투표</span>
+            </div>
+          </div>
+    
+          <div className="content-area">
+            {selected === "home" && <ProjectHome />}
+            {selected === "noti" && projectData && <NoticeList projectId={projectData.id} />}
+            {selected === "chat" && projectData && <ChatRoom projectId={projectData.id}/>}
+            {selected === "calendar" && projectData && <Calendar projectId={projectData.id}/>}
+            {selected === "voting" && projectData && <Voting projectId={projectData.id}/>}
+          </div>
         </div>
-    );
-};
+      );
+    }
 
 export default Project;
