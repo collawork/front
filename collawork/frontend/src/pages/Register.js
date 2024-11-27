@@ -120,18 +120,21 @@ function Register() {
                     {errors.username && <p className="error-text">{errors.username}</p>}
                 </div>
 
-                <div className="input-group email-group">
+                <div class="input-group email-group">
                     <label>이메일</label>
-                    <input type="text" name="email" placeholder="이메일" onChange={handleChange} required />
-                    <span>@</span>
-                    <input type="text" name="emailDomain" placeholder="도메인" value={formData.emailDomain} onChange={handleChange} required />
-                    <select onChange={(e) => setFormData({ ...formData, emailDomain: e.target.value })}>
-                        <option value="">직접 입력</option>
-                        {domains.map(domain => (
-                            <option key={domain} value={domain}>{domain}</option>
-                        ))}
-                    </select>
+                    <div class="inputs-container">
+                        <input type="text" name="email" placeholder="이메일" required />
+                        <span>@</span>
+                        <input type="text" name="emailDomain" placeholder="도메인" required />
+                        <select onChange="handleChange">
+                            <option value="">직접 입력</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="yahoo.com">yahoo.com</option>
+                        </select>
+                    </div>
                 </div>
+
                 {errors.email && <p className="error-text">{errors.email}</p>}
 
                 <div className="input-group">

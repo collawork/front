@@ -10,22 +10,9 @@ import { calendarEvents, projectStore } from '../../store';
 import { useUser } from '../../context/UserContext';
 import CalendarService from '../../services/CalendarService';
 
-// Modal 스타일 설정
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
-    }
-};
-
+import '../../components/assest/css/Calendar.css';
 
 export const Calendar = () => {
-    // 선택된 컬러 상태
-    const [selectedColor, setSelectedColor] = useState('#2196f3'); // 초기값 설정
     // 스케쥴 색상 종류
     const colors = [/*'#f44336', '#e91e63',*/ '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
     // 현재 뷰를 설정. (Month 또는 Week)
@@ -39,8 +26,12 @@ export const Calendar = () => {
         id, title, start, end, allDay, description, createdBy, createdAt, projectId, color,
         setId, setTitle, setStart, setEnd, setAllDay, setDescription, setCreatedBy, setCreatedAt, setProjectId, setColor
     } = calendarEvents();
+    // 한국의 휴일 정보
+    const [krHoliday, setKrHoliday] = useState([]);
     // 스케쥴 등록과 수정을 같은 모달을 통해 할 수 있도록 한다.
     const [isInserting, setIsInserting] = useState(true);
+    // 마찬가지로 하나의 모달로 휴일 정보도 보여줄 수 있도록 한다.
+    const [isHoliday, setIsHoliday] = useState(false);
     // ↳ 바로 그 모달이다.
     const [modalIsOpen, setModalIsOpen] = useState(false);
     // DB로부터 전달 받은 스케쥴 목록을 담는다.
@@ -52,8 +43,48 @@ export const Calendar = () => {
     const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
     const GOOGLE_CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_KR_HOLIDAY_ID
 
+    // 현재 날짜로부터 +-6개월 치의 휴일 정보를 받기위한 날짜 변수
+    const now = new Date();
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(now.getMonth() - 6);
+    const sixMonthsLater = new Date(now);
+    sixMonthsLater.setMonth(now.getMonth() + 6);
+
+    const timeMin = sixMonthsAgo.toISOString();
+    const timeMax = sixMonthsLater.toISOString();
+
+    // 구글 캘린더에서 한국의 공휴일 정보를 가져와 보자
+    useEffect(() => {
+        const fetchKrHoliday = async () => {
+            try {
+                const response = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${GOOGLE_CALENDAR_ID}/events?timeMin=${timeMin}&timeMax=${timeMax}&key=${GOOGLE_API_KEY}`,
+                );
+                const krH = response.data.items;
+                for (let i = 0; i < response.data.items.length; i++) {
+                    let title = krH[i].summary;
+                    let description = krH[i].description;
+                    let start = krH[i].start.date;
+                    let color = "#ffffff00";
+                    let textColor = "red";
+                    
+
+                    setKrHoliday((prev) => [...prev, { title: title, extendedProps: { description: description }, start: start, color: color, textColor: textColor }]);
+                };
+                return response.data.itiems;
+
+            } catch (error) {
+                console.error('Error fetching calendar events:', error);
+                return null;
+            }
+
+        }
+        fetchKrHoliday();
+    }, []);
+
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
+        // DB로부터 최신 스케쥴을 받을 수 있도록 돕는다.
+        setIsEventAdded(false);
         // 선택된 프로젝트 아이디 저장. 선택된 프로젝트 아이디가 없으면 개인 달력으로 사용된다.
         const fetchProjectId = async () => {
             setProjectId(projectData.id);
@@ -97,17 +128,18 @@ export const Calendar = () => {
             };
         };
         fetchEvents();
-        setIsEventAdded(false); // DB로부터 최신 스케쥴을 받을 수 있도록 돕는다.
     }, [projectId, userId, isEventAdded]);
 
     // 뷰를 바꾸는 함수
     const changeView = () => {
+        setIsEventAdded(true);
         setCurrentView(currentView === 'dayGridMonth' ? 'timeGridWeek' : 'dayGridMonth');
     };
 
     // 모달을 닫는 함수
     const handleModalClose = () => {
         setModalIsOpen(false);
+        //setIsEventAdded(true);
     };
 
     // 빈 날짜를 클릭할 때 발동하는 함수
@@ -121,19 +153,22 @@ export const Calendar = () => {
             allDay = false;
         }
 
-        //선택한 영역에 대한 스케쥴 상태를 받아두고 이를 모달을 열어서 사용자에게 초기값으로 보여 준다.
+        // 선택한 영역에 대한 스케쥴 상태를 받아두고 이를 모달을 열어서 사용자에게 초기값으로 보여 준다.
         // 같은 모달로 수정도 진행하기 때문에 선택한 이벤트의 설정 값을 담고 있다.
         setTitle("");
         setDescription("");
         setStart(info.startStr);
         setEnd(info.endStr);
         setAllDay(allDay); // 바로 위에서 초기화한 allDay
-        setColor("#2196f3")
+        setColor("#9c27b0")
 
         // 모달을 열면 상기에 적어둔 초기값들이 보여진다. 이후 사용자는 title, description, color를 변경할 수 있다.
         setModalIsOpen(true);
+        setIsEventAdded(true);
+
         // 선택 영역을 해제합니다.
         info.view.calendar.unselect();
+
     };
 
     // 스케쥴 등록 함수
@@ -156,7 +191,13 @@ export const Calendar = () => {
 
     // 특정 일정의 제목 설명을 가져오는 함수
     const handleEventClick = (info) => {
+        // info.jsEvent.preventDefault(); // 공휴일을 클릭했을 때 구글 캘린더로 넘어가는 것을 방지
+        if (!info.event.id) {
+            setIsHoliday(true);
+        } else { setIsHoliday(false) }
+
         setIsInserting(false);
+        setIsEventAdded(true);
         setId(info.event.id);
         setTitle(info.event.title);
         setDescription(info.event.extendedProps.description);
@@ -194,7 +235,7 @@ export const Calendar = () => {
                 await CalendarService.updataEventDate(id, start, end, allDay)
                     .then(result => {
                         if (result) {
-                            alert("일정 변경에 성공하였습니다.");
+                            //alert("일정 변경에 성공하였습니다.");
                         } else {
                             alert("일정 변경에 실패하였습니다.")
                         }
@@ -220,7 +261,7 @@ export const Calendar = () => {
     };
 
     return (
-        <div>
+        <div className='fullCalendarContainer'>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, googleCalendarPlugin]}
                 key={currentView}
@@ -248,52 +289,49 @@ export const Calendar = () => {
                     },
                 }}
                 googleCalendarApiKey={`${GOOGLE_API_KEY}`}
-
-
-                eventSources={
-                    [
-                        {
-                            googleCalendarId: GOOGLE_CALENDAR_ID, // 한국의 공휴일 정보 
-                            color: 'white',
-                            textColor: 'red'
-                        }
-                    ]
-                }
-
-                events={events} // 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능
+                events={[...krHoliday, ...events]}// 이곳에 존재하는 스케쥴 객체를 달력으로 보여주는 기능. 비동기
 
             />
             < ReactModal // 등록, 수정을 함꼐하는 모달
                 isOpen={modalIsOpen} // 모달 여닫는 기능
                 onRequestClose={handleModalClose}
-                style={customStyles}
+                //style={customStyles}
                 contentLabel="insertOrUpdateModal"
+                className="calendar-modal"
             >
                 <form onSubmit={isInserting ? insertEvent : updateSelectedEvent}>
-                    제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' required />
-                    설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} value={description} placeholder='일정의 상세 설명을 입력해 주세요.' />
-                    색상 :
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        {colors.map((theColor) => (
-                            <div
-                                key={theColor}
-                                style={{
-                                    backgroundColor: theColor,
-                                    width: '30px',
-                                    height: '25px',
-                                    border: `2px solid ${color === theColor ? 'black' : 'transparent'}`,
-                                    cursor: 'pointer',
-                                    flex: 1 // 각 아이템이 공간을 균등하게 차지
-                                }}
-                                onChange={(e) => setColor(e.target.value)}
-                                value={color}
-                                onClick={() => setColor(theColor)}
-                            />
-                        ))}
-                    </div>
-                    <button type='submit'>저장</button>
+                    제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' required disabled={isHoliday} />
+                    설명 : <input type='text' name='description' onChange={(e) => setDescription(e.target.value)} value={description} placeholder='일정의 상세 설명을 입력해 주세요.' readOnly={isHoliday} />
+                    {isHoliday ?
+                        <button onClick={handleModalClose}>
+                            확인
+                        </button>
+                        :
+                        <>
+                            색상 :
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                {colors.map((theColor) => (
+                                    <div
+                                        key={theColor}
+                                        style={{
+                                            backgroundColor: theColor,
+                                            width: '30px',
+                                            height: '25px',
+                                            border: `2px solid ${color === theColor ? 'black' : 'transparent'}`,
+                                            cursor: 'pointer',
+                                            flex: 1 // 각 아이템이 공간을 균등하게 차지
+                                        }}
+                                        onChange={(e) => setColor(e.target.value)}
+                                        value={color}
+                                        onClick={() => setColor(theColor)}
+                                    />
+                                ))}
+                            </div>
+                            <button type='submit'>저장</button>
+                        </>
+                    }
                 </form>
-                {isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button>}
+                {isHoliday ? <></> : isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button>}
             </ReactModal>
         </div >
     );

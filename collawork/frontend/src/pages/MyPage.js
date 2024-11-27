@@ -5,65 +5,63 @@
 날씨 API 예정
 fullcalendar API
 */
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from "react-router-dom";
-import NotificationList from '../components/NotificationList/NotificationList';
-import FriendList from '../components/Friend/FriendList';
-import '../components/assest/css/MyPage.css';
-import { useUser } from '../context/UserContext';
-import ProjectList from '../components/project/ProjectList'
-import MyProfileIcon from '../pages/MyProfileIcon'
-import { Calendar } from '../components/calendar/Calendar';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import NotificationList from "../components/NotificationList/NotificationList";
+import FriendList from "../components/Friend/FriendList";
+import "../components/assest/css/MyPage.css";
+import ProjectList from "../components/project/ProjectList";
+import { Calendar } from "../components/calendar/Calendar";
 import ChatList from '../components/Chat/ChatList';
+import WeatherBackground from "./WeatherBackground";
+import MyProfileIcon from "../pages/MyProfileIcon";
+import Search from "./Search";
+import Temperature from '../components/assest/images/temperature.png'
+import Weather from '../components/assest/images/weather.png'
+import Wind from '../components/assest/images/wind.png'
 
 const MyPage = () => {
-    const navigate = useNavigate();
-    const [user, setUser] = useState({ username: '' });
-    const { userId, setUserId } = useUser();
-    const [currentDate, setCurrentDate] = useState('');
+    const [userId, setUserId] = useState(null);
+    const [user, setUser] = useState({ username: "" });
+    const [currentDate, setCurrentDate] = useState("");
     const [greeting, setGreeting] = useState("어서오세요.");
-   
-    const [friends, setFriends] = useState([]);
+    const [weatherData, setWeatherData] = useState(null);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
+        const token = params.get("token");
 
         if (token) {
-            localStorage.setItem('token', token);
+            localStorage.setItem("token", token);
         }
 
         const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem("token");
             if (!token) {
-                console.error('토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.');
+                console.error("토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.");
                 return;
             }
-        
+
             try {
-                const response = await axios.get('http://localhost:8080/api/user/info', {
+                const response = await axios.get("http://localhost:8080/api/user/info", {
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
                 if (response.data) {
-                    setUser({ username: response.data.username });
                     setUserId(response.data.id);
-                    console.log("Fetched userId:", response.data.id);
+                    setUser({ username: response.data.username });
                 } else {
-                    console.error('서버로부터 사용자 정보를 가져오지 못했습니다.');
+                    console.error("서버로부터 사용자 정보를 가져오지 못했습니다.");
                 }
             } catch (error) {
                 if (error.response?.status === 403) {
-                    console.error('인증 오류: 토큰이 만료되었거나 권한이 없습니다.');
+                    console.error("인증 오류: 토큰이 만료되었거나 권한이 없습니다.");
                 } else {
-                    console.error('사용자 정보를 불러오는 중 에러 발생:', error);
+                    console.error("사용자 정보를 불러오는 중 에러 발생:", error);
                 }
             }
         };
-        
 
         fetchUserData();
 
@@ -75,74 +73,71 @@ const MyPage = () => {
         setGreeting(currentHour < 11 ? "좋은 아침이예요!" : "어서오세요.");
     }, []);
 
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/');
-    };
-
-
-
-
-    
-
-    // 친구 목록 새로고침 함수 추가
-    const fetchFriends = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
-            
-            const response = await axios.get(`http://localhost:8080/api/friends/list`, {
-                headers: {
-                    
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                params: { userId: userIdValue },
-            });
-            setFriends(response.data);
-        } catch (error) {
-            console.error('친구 목록을 불러오는 중 오류 발생:', error);
-        }
-    };
-
+    console.log("weatherData : ",weatherData);
 
     return (
         <>
-            <div className="header">
-                <span className="hi-user-name">
-                    안녕하세요 {user.username || '사용자'}님, {greeting}
-                </span>
+            {/* 헤더 */}
+            <div className="mypage-header">
+                <div className="mypage-header-content">
+                    <span className="hi-user-name">
+                        안녕하세요 {user.username || "사용자"}님, {greeting}
+                    </span>
+                    <span className="today">{currentDate}</span>
+                </div>
+                {/* 검색 컴포넌트 */}
+                <div className="search-wrapper">
+                <Search currentUser={{ id: userId }} />
+                </div>
+                <div className="profile-weather-container">
+                {/* 날씨 정보 */}
+                <WeatherBackground setWeatherData={setWeatherData} />
+                {weatherData && (
+                    <div className="weather-summary">
+                    <div className="weather-item">
+                        <img src={Weather} alt="Weather icon" className="weather-icon" />
+                        <span>{weatherData.condition}</span>
+                    </div>
+                    <div className="weather-item">
+                        <img src={Temperature} alt="Temperature icon" className="weather-icon" />
+                        <span>{weatherData.temperature}°C</span>
+                    </div>
+                    <div className="weather-item">
+                        <img src={Wind} alt="Wind icon" className="weather-icon" />
+                        <span>{weatherData.windSpeed}m/s</span>
+                    </div>
+                </div>
                 
-                {/* 사용자 정보 컴포넌트 */}
+                )}
+                {/* 프로필 아이콘 */}
                 <MyProfileIcon profileImage={user?.profileImage} user={user} />
-
-                <button className="logout-button" onClick={handleLogout}>
-                    로그아웃
-                </button>
-                <span className="today">{currentDate}</span>
             </div>
+        </div>
 
-            <div className="centered-vertically">
-                <div className="calender-mypage">
-                    <span className="text">달력</span>
-                    {/* 달력 컴포넌트 */}
-                    <Calendar/>
+            {/* 주요 섹션 */}
+            <div className="mypage-container">
+                {/* 캘린더 */}
+                <div className="mypage-calendar-section">
+                    <Calendar />
                 </div>
 
-                <div className="horizontal-alignment">
-                    {/* 프로젝트 목록 컴포넌트 */}
+                {/* 프로젝트 */}
+                <div className="mypage-section mypage-project-section">
                     {userId && <ProjectList userId={userId} />}
-
-                    {/* 친구 목록 컴포넌트 */}
-                    {userId && <FriendList userId={userId} fetchFriends={fetchFriends} />}
-
-
-                    {/* 알림 컴포넌트 */}
-                    {userId && <NotificationList userId={userId} fetchFriends={fetchFriends} />}
                 </div>
+
+                {/* 알림 */}
+                <div className="mypage-section mypage-notification-section">
+                    {userId && <NotificationList userId={userId} />}
+                </div>
+
+                {/* 친구 목록 */}
+                <div className="mypage-section mypage-friend-section">
+                    {userId && <FriendList userId={userId} />}
+                </div>
+
+                {/* 채팅방 목록 컴포넌트*/}
                 <div className='chatList'>
-                    {/* 채팅방 목록 컴포넌트*/}
                     {userId && <ChatList userId ={userId}/>}
                 </div>
             </div>
