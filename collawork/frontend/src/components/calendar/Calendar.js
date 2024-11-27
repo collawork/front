@@ -55,7 +55,7 @@ export const Calendar = () => {
 
     // 구글 캘린더에서 한국의 공휴일 정보를 가져와 보자
     useEffect(() => {
-          const fetchKrHoliday = async () => {
+        const fetchKrHoliday = async () => {
             try {
                 const response = await axios.get(`https://www.googleapis.com/calendar/v3/calendars/${GOOGLE_CALENDAR_ID}/events?timeMin=${timeMin}&timeMax=${timeMax}&key=${GOOGLE_API_KEY}`,
                 );
@@ -64,8 +64,9 @@ export const Calendar = () => {
                     let title = krH[i].summary;
                     let description = krH[i].description;
                     let start = krH[i].start.date;
-                    let color = "white";
+                    let color = "#ffffff00";
                     let textColor = "red";
+                    
 
                     setKrHoliday((prev) => [...prev, { title: title, extendedProps: { description: description }, start: start, color: color, textColor: textColor }]);
                 };
@@ -78,11 +79,7 @@ export const Calendar = () => {
 
         }
         fetchKrHoliday();
-        // console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
     }, []);
-
-    // console.log("::::::::::::::::::::::::: 한국의 휴일 정보 (가공한 데이터)", krHoliday);
-    // console.log("::::::::::::::::::::", events);
 
     // 달력이 불려질 때 바로 실행될 함수들..
     useEffect(() => {
@@ -97,8 +94,7 @@ export const Calendar = () => {
 
         // 스케쥴을 등록한 유저 정보를 저장
         const fetchUserInfo = async () => {
-            // console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::useId ",userId.userId);
-            // setCreatedBy(userId.userId);
+            setCreatedBy(userId);
         };
         fetchUserInfo();
 
@@ -177,7 +173,6 @@ export const Calendar = () => {
     // 스케쥴 등록 함수
     const insertEvent = async (e) => {
         e.preventDefault(); // form의 submit 기본 동작을 막는다. (새로고침 막는 용도)
-        console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",createdBy);
         const newEvent = {
             title, description, start, end, allDay, projectId, createdBy, color // 모달을 통해 사용자가 초기화한 새로운 값들을 담았다.
         }
@@ -196,7 +191,6 @@ export const Calendar = () => {
     // 특정 일정의 제목 설명을 가져오는 함수
     const handleEventClick = (info) => {
         // info.jsEvent.preventDefault(); // 공휴일을 클릭했을 때 구글 캘린더로 넘어가는 것을 방지
-        // console.log("구글 캘린더에서 가져온 휴일 정보를 클릭했을 때 정보를 확인하기 위함.. ", info.event);
         if (!info.event.id) {
             setIsHoliday(true);
         } else { setIsHoliday(false) }
@@ -336,8 +330,7 @@ export const Calendar = () => {
                         </>
                     }
                 </form>
-
-                    { isHoliday ? <></> : isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button> }
+                {isHoliday ? <></> : isInserting ? <></> : <button onClick={deleteSelectedEvent}>일정 삭제</button>}
             </ReactModal>
         </div >
     );
