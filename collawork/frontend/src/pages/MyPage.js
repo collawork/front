@@ -8,12 +8,16 @@ import { Calendar } from "../components/calendar/Calendar";
 import WeatherBackground from "./WeatherBackground";
 import MyProfileIcon from "../pages/MyProfileIcon";
 import Search from "./Search";
+import Temperature from '../components/assest/images/temperature.png'
+import Weather from '../components/assest/images/weather.png'
+import Wind from '../components/assest/images/wind.png'
 
 const MyPage = () => {
     const [userId, setUserId] = useState(null);
     const [user, setUser] = useState({ username: "" });
     const [currentDate, setCurrentDate] = useState("");
     const [greeting, setGreeting] = useState("어서오세요.");
+    const [weatherData, setWeatherData] = useState(null);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -61,6 +65,8 @@ const MyPage = () => {
         setGreeting(currentHour < 11 ? "좋은 아침이예요!" : "어서오세요.");
     }, []);
 
+    console.log("weatherData : ",weatherData);
+
     return (
         <>
             {/* 날씨 백그라운드 */}
@@ -78,8 +84,30 @@ const MyPage = () => {
                 <div className="search-wrapper">
                 <Search currentUser={{ id: userId }} />
                 </div>
+                <div className="profile-weather-container">
+                {/* 날씨 정보 */}
+                <WeatherBackground setWeatherData={setWeatherData} />
+                {weatherData && (
+                    <div className="weather-summary">
+                    <div className="weather-item">
+                        <img src={Weather} alt="Weather icon" className="weather-icon" />
+                        <span>{weatherData.condition}</span>
+                    </div>
+                    <div className="weather-item">
+                        <img src={Temperature} alt="Temperature icon" className="weather-icon" />
+                        <span>{weatherData.temperature}°C</span>
+                    </div>
+                    <div className="weather-item">
+                        <img src={Wind} alt="Wind icon" className="weather-icon" />
+                        <span>{weatherData.windSpeed}m/s</span>
+                    </div>
+                </div>
+                
+                )}
+                {/* 프로필 아이콘 */}
                 <MyProfileIcon profileImage={user?.profileImage} user={user} />
             </div>
+        </div>
 
             {/* 주요 섹션 */}
             <div className="mypage-container">
