@@ -304,14 +304,13 @@ const ProjectInformation = () => {
               </ul>
             )}
   
-            <ProjectBox />
   
             {/* 새로운 슬라이더 기능 추가 */}
-            <div className="slider-section">
+            {/* <div className="slider-section">
               <h3>프로젝트 진행률</h3>
               <ProjectBox />
             </div>
-  
+   */}
             {modify && (
               <ProjectModify
                 setModify={(value) => {
@@ -319,8 +318,16 @@ const ProjectInformation = () => {
                 }}
               />
             )}
-  
-            <img
+             <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                    position: "relative",
+                  }}
+                >
+            
+              <img
               src={userData?.profileImageUrl || defaultImage}
               alt={`${userData?.username || "사용자"}의 프로필 이미지`}
               onClick={() => setModal(!modal)}
@@ -331,11 +338,11 @@ const ProjectInformation = () => {
                 borderRadius: "50%",
                 marginRight: "10px",
                 cursor: "pointer",
-                objectFit: "cover",
               }}
             />
-            <h3>{userData?.username || "정보 없음"}</h3>
+            관리자 : <h3>{userData?.username || "정보 없음"}</h3>
             <button onClick={managerModifyHandler}>관리자 변경</button>
+            </div>
             <ReactModal
               isOpen={managerModalOpen}
               onRequestClose={() => setManagerModalOpen(false)}

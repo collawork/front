@@ -1,103 +1,59 @@
-
-  * {
-    margin: 0;
-    padding: 0;
-    font-family: "Noto sans KR";
-    letter-spacing: -0.5px;
+.progress-container {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;   /* Center-align the text and bar */
+    justify-content: center;
+    width: 100%;
+    margin: 20px auto; /* Add space around the container */
+    overflow-x: hidden; /* 가로 넘침 방지 */
   }
-
-  .percent {
-    border: 1px solid #ddd;
-    padding: 3rem;
-    margin-bottom: 30px;
+  
+  .progress-header {
+    font-size: 1.5rem; /* Adjust the header size */
+    color: #333; /* Darker text for the header */
+    font-weight: bold;
+    margin-bottom: 20px; /* Space below the title */
   }
-
-  span {
-    &.bar {
-      display: block;
-      position: relative;
-      height: 15px;
-      margin-bottom: 30px;
-      background: pink;
-    }
-
-    &.progress {
-      display: block;
-      width: 0px;
-      height: 100%;
-      background: hotpink;
-      position: absolute;
-      border-radius: 1rem 0 0 1rem;
-      padding-left: 0;
-    }
+  
+  .progress-content {
+    display: flex;
+    flex-direction: column; /* Text and bar stacked */
+    align-items: center; /* Align items horizontally at center */
+    gap: 15px; /* Space between the percentage text and bar */
   }
-
-  .num {
-    display: block;
+  
+  .progress-text {
+    font-size: 2rem; /* Larger percentage text */
+    color: #6a5af9; /* Matching the progress bar color */
+    font-weight: bold;
+  }
+  
+  .progress-bar {
+    width: 80%; /* Adjust width to match the design */
+    height: 10px; /* Set height of the bar */
+    background: #e0e0e0; /* Light gray background */
+    border-radius: 5px;
+    position: relative; /* Relative for the inner bar */
+    overflow: hidden; /* Hide overflowing progress */
+  }
+  
+  .bar {
     position: relative;
-    padding-top: 2rem;
-    font-weight: 300;
-
-    span {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      background: rgb(243, 225, 228);
-      border-radius: 5px;
-      margin-top: 10px;
-      padding: 3px;
-      font-size: 14px;
-      cursor: pointer;
-
-     
-    }
-
-    /* Position the percentage labels dynamically */
-    span.percent0 {
-      left: 0%;
-    }
-    span.percent1 {
-      left: 25%;
-    }
-    span.percent2 {
-      left: 50%;
-    }
-    span.percent3 {
-      left: 75%;
-    }
-    span.percent4 {
-      left: 100%;
-    }
+    width: 100%;
+    height: 100%;
   }
-
-  .circles {
-    span {
-      position: absolute;
-      top: -5px;
-      width: 25px;
-      height: 25px;
-      background: pink;
-      border-radius: 50%;
-      transform: translateX(-50%);
-
-      &.on {
-        background: hotpink;
-      }
-    }
-
-    /* Position the circles dynamically */
-    span:nth-child(1) {
-      left: 0%;
-    }
-    span:nth-child(2) {
-      left: 25%;
-    }
-    span:nth-child(3) {
-      left: 50%;
-    }
-    span:nth-child(4) {
-      left: 75%;
-    }
-    span:nth-child(5) {
-      left: 100%;
-    }
+  
+  .progress {
+    background: #6a5af9; /* Blue for the progress indicator */
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease; /* Smooth width transition */
   }
+  
+  .num {
+    display: flex;
+    justify-content: space-between; /* Space out the labels evenly */
+    font-size: 0.8rem; /* Smaller font for the numbers */
+    margin-top: 5px;
+  }
+  

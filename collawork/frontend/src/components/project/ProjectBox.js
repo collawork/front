@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import '../../components/assest/css/ProjectBox.css';
 
 const App = () => {
   const circle = useRef(null);
@@ -57,53 +58,58 @@ const App = () => {
 
   return (
     <div className="container">
-      {/* Percent Display */}
-      <div className="percent">
-        <h1 ref={h1}>0%</h1>
-      </div>
+  {/* 퍼센트 표시 */}
+  <div className="percent">
+    <h1 ref={h1}>0%</h1>
+  </div>
 
-      {/* Bar and Progress */}
-      <div>
-        <span
-          className="bar"
-          ref={box}
-          onMouseMove={(e) => {
-            move(e);
-            getPercent(e);
-          }}
-          onMouseUp={(e) => {
-            stop(e);
-            init(e);
-          }}
-          onMouseLeave={() => {
-            stop();
-          }}
-        >
-          {/* Circles */}
-          <div className="circles">
-            {[0, 25, 50, 75, 100].map((el, index) => (
-              <span key={index} className={num >= el ? "on" : ""}></span>
-            ))}
-          </div>
+  {/* 슬라이더 바 */}
+  <div
+    className="bar"
+    onMouseMove={(e) => {
+      move(e);
+      getPercent(e);
+    }}
+    ref={box}
+    onMouseUp={(e) => {
+      stop(e);
+      init(e);
+    }}
+    onMouseLeave={(e) => {
+      stop(e);
+    }}
+  >
+    {/* 진행 바 */}
+    <span className="progress" ref={circle} onMouseDown={(e) => drag(e)}></span>
 
-          {/* Draggable Progress Handle */}
-          <span
-            className="progress"
-            onMouseDown={(e) => drag(e)}
-            ref={circle}
-          ></span>
-
-          {/* Percent Labels */}
-          <div className="num">
-            {[0, 25, 50, 75, 100].map((el, index) => (
-              <span key={index} className={"percent" + index}>
-                {el}%
-              </span>
-            ))}
-          </div>
-        </span>
-      </div>
+    {/* 원(마커) */}
+    <div className="circles">
+      {[0, 25, 50, 75, 100].map((el, index) => (
+        <span key={index} className={num >= el ? "on" : ""}></span>
+      ))}
     </div>
+  </div>
+
+  <div className="progress-container">
+  <div className="progress-header">
+    <h2>프로젝트 진행률</h2>
+  </div>
+  <div className="progress-content">
+    <h1 ref={h1} className="progress-text">45%</h1>
+    <div className="progress-bar">
+      <span className="bar" ref={box}>
+        <span className="progress" ref={circle}></span>
+        <div className="num">
+          {[0, 25, 50, 75, 100].map((el, index) => (
+            <span key={index}>{el}%</span>
+          ))}
+        </div>
+      </span>
+    </div>
+  </div>
+</div>
+</div>
+
   );
 };
 

@@ -187,6 +187,8 @@
   padding: 50px; /* 내부 여백 */
   margin: 20px; /* 외부 여백 */
   background-color: #f9f9f9; /* 배경색 */
+  margin-left: 104px;
+  margin-top: 54px;
 
   /* 고정된 크기 설정 */
   width: 1050px; /* 가로 길이 고정 */
