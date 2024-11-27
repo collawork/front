@@ -13,7 +13,7 @@ import sunset from '../components/assest/videos/sunset.mp4';
 import thunderstorm from '../components/assest/videos/thunder.mp4';
 import night from '../components/assest/videos/night.mp4';
 
-const WeatherBackground = () => {
+const WeatherBackground = ({ setWeatherData = () => {} }) => {
     const [weather, setWeather] = useState(null);
     const [videoSrc, setVideoSrc] = useState("");
 
@@ -53,8 +53,14 @@ const WeatherBackground = () => {
             const response = await axios.get(
                 `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
             );
+            const data = response.data;
             const weatherCondition = response.data.weather[0].main.toLowerCase();
-            setWeather(weatherCondition);
+            // setWeather(weatherCondition);
+            setWeatherData({
+                condition: weatherCondition,
+                temperature: data.main.temp,
+                windSpeed: data.wind.speed,
+            });
 
             // 동영상 선택
             if (weatherCondition.includes("clouds")) {
