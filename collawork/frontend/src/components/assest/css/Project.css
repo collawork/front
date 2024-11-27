@@ -1,71 +1,76 @@
 .project-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center; /* 버튼 그룹도 중앙에 위치 */
   text-align: center;
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* 버튼 중앙 정렬 */
   gap: 32px;
-  width: 109%;
-  margin-left: 200px;
+  width: 100%; /* 가로 크기를 부모에 맞춤 */
+  max-width: 1000px; /* 최대 너비 설정 (필요시 조정) */
+  margin: 0 auto; /* 양쪽 여백 자동 */
   overflow-x: hidden;
 }
 
-/* Make button-group stack vertically on smaller screens */
+
+/* 작은 화면 대응 (1200px 이하) */
 @media screen and (max-width: 1200px) {
   .button-group {
-    flex-direction: column;
-    margin-left: 0; /* Remove extra left margin on smaller screens */
-    width: 100%;
-    align-items: center; /* Center the buttons */
-    gap: 16px; /* Reduce gap between buttons */
+    flex-direction: row; /* 여전히 가로 정렬 유지 */
+    flex-wrap: wrap; /* 버튼들이 필요 시 줄바꿈 */
+    gap: 16px; /* 버튼 간 간격 조정 */
   }
 }
 
-/* Optional: Adjust button-group layout further for even smaller screens */
+/* 더 작은 화면 대응 (768px 이하) */
 @media screen and (max-width: 768px) {
   .button-group {
-    gap: 8px; /* Even smaller gap on very small screens */
+    gap: 8px; /* 버튼 간 간격 더 줄임 */
   }
 }
+
 .menu-item {
   position: relative;
   flex: 1;
   text-align: center;
   cursor: pointer;
-  color: #999; 
+  color: #999;
   padding: 10px 0;
-  font-size: 16px; 
+  font-size: 16px;
   font-weight: 500;
 }
 
 .menu-item::after {
-  content: ""; 
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px; 
-  background-color: transparent; 
+  height: 2px;
+  background-color: transparent;
   transition: background-color 0.3s ease-in-out;
 }
 
 .menu-item.active {
-  color: rgb(136, 84, 219); 
+  color: rgb(136, 84, 219);
 }
 
 .menu-item.active::after {
-  background-color: rgb(136, 84, 219); 
+  background-color: rgb(136, 84, 219);
 }
 
 .menu-item:not(.active):hover {
-  color: #666; 
+  color: #666;
 }
 
+/* 컨텐츠 영역 */
 .content-area {
   margin-top: 20px;
-  width: 1000px; 
+  width: 100%;
+  max-width: 1000px; /* 컨텐츠도 최대 너비 제한 */
+  margin: 20px auto;
 }
+
