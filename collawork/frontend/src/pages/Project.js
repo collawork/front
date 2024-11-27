@@ -123,11 +123,11 @@ const Project = ({projectId}) => {
           </div>
     
           <div className="content-area">
-            {selected === "home" && <ProjectHome />}
-            {selected === "noti" && <NoticeList />}
-            {selected === "chat" && <ChatRoom />}
-            {selected === "calendar" && <Calendar />}
-            {selected === "voting" && <Voting />}
+            {homeShow && <ProjectHome />}
+            {notiShow && <NoticeList />}
+            {chatShow  && <ChatRoom />}
+            {calShow && <Calendar />}
+            {voting && <Voting />}
           </div>
         </div>
       );

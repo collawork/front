@@ -7,16 +7,16 @@
 }
 
 .profile-icon {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    border: 2px solid #7a4bff;
+    border: 2px solid #e0f1e933;
     object-fit: cover;
 }
 
 .dropdown-menu {
     position: absolute;
-    top: 50px; /* 아이콘 바로 아래 위치 */
+    top: 70px; /* 아이콘 바로 아래 위치 */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -47,10 +47,4 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.hi-user-name {
-    font-size: 16px;
-    color: #333;
-    margin-right: 20px;
 }

@@ -1,0 +1,24 @@
+.fullCalendarContainer { /* FullCalendar을 감싸는 div에 클래스명 추가 */
+    width: 800px; /* 원하는 너비로 설정 */
+    height: 600px;
+  }
+
+/* .calendar-modal {
+    top: '50%';
+        left: '50%';
+        right: 'auto';
+        bottom: 'auto';
+        marginRight: '-50%';
+        transform: 'translate(-50%, -50%)';
+} */
+  
+/* const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+}; */

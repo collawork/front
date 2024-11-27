@@ -23,7 +23,7 @@
   flex-grow: 1;
   border: none;
   outline: none;
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   padding: 10px;
   font-size: 1em;
   color: #7a4bff;
@@ -39,10 +39,6 @@
   cursor: pointer;
   color: #7a4bff;
   font-size: 1.2em;
-}
-
-.search-bar button:hover {
-  transform: scale(1.1);
 }
 
 .modal-overlay {

@@ -33,18 +33,22 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     // 친구 목록 가져오기
     const fetchFriends = async () => {
         const token = localStorage.getItem('token');
-        if (!token || !userId) {
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        if (!token || !userIdValue) {
             console.warn("토큰 또는 userId가 없습니다.");
             return;
         }
     
         try {
+            console.log(userId);
+            console.log(userIdValue );
+            console.log("토큰토큰 : " + token);
             const response = await axios.get(`${API_URL}/api/friends/list`, {
                 headers: { 
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                params: { userId },
+                params: { userId:userIdValue },
             });
     
             //console.log("친구 목록 데이터:", response.data);
@@ -60,13 +64,13 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                     return acc;
                 }
     
-                if (String(friend.requester.id) === String(userId)) {
+                if (String(friend.requester.id) === String(userIdValue)) {
                     acc.push({
                         id: friend.responder.id,
                         username: friend.responder.username,
                         email: friend.responder.email
                     });
-                } else if (String(friend.responder.id) === String(userId)) {
+                } else if (String(friend.responder.id) === String(userIdValue)) {
                     acc.push({
                         id: friend.requester.id,
                         username: friend.requester.username,
@@ -90,6 +94,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     // 프로젝트 목록 가져오기
     const selectProjectName = async () => {
         const token = localStorage.getItem("token");
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
         if (!token) {
             console.error("토큰이 없습니다.");
             return;
@@ -98,7 +103,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         try {
             const response = await axios.post(
                 `${API_URL}/api/user/projects/selectAll`,
-                { userId: Number(userId) },
+                { userId: Number(userIdValue) },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -167,16 +172,18 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 alert("초대할 친구를 선택하세요.");
             }
         };
-    
+
     
 
     // 초기 데이터 로드
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (userId && token) {
+        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
+        
+        if (userIdValue && token) {
             fetchFriends();
             selectProjectName();
-            console.log("현재 userId:", userId);
+            console.log("현재 userId:", userIdValue);
             console.log("현재 selectedProject:", selectedProject);
         }
     }, [userId,listState]);

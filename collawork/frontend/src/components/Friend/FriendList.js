@@ -12,6 +12,8 @@ const FriendList = ({ userId }) => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [showCategoryManager, setShowCategoryManager] = useState(false);
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     // 친구 목록 불러오기
     const fetchFriends = async () => {
         if (!userId) {
@@ -23,7 +25,7 @@ const FriendList = ({ userId }) => {
             const token = localStorage.getItem('token');
             console.log("API 호출 userId:", userId);
 
-            const response = await axios.get(`http://localhost:8080/api/friends/list`, {
+            const response = await axios.get(`${API_URL}/api/friends/list`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -65,7 +67,7 @@ const FriendList = ({ userId }) => {
     // 친구 삭제 함수
     const handleRemoveFriend = async (friendId) => {
         try {
-            await axios.delete('http://localhost:8080/api/friends/remove', {
+            await axios.delete(`${API_URL}/api/friends/remove`, {
                 params: { requestId: friendId },
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -101,8 +103,6 @@ const FriendList = ({ userId }) => {
 
     return (
         <div className="friend-list">
-            <h3>친구 목록</h3>
-
             <button onClick={() => setShowCategoryManager(true)}>목록 열기</button>
             {showCategoryManager && (
                 <FriendCategoryManager
