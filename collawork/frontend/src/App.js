@@ -15,6 +15,7 @@ import { UserProvider } from './context/UserContext';
 import { Calendar } from './components/calendar/Calendar';
 import NoticeList from './components/project/notice/NoticeList';
 import CreateNotice from './components/project/notice/CreateNotice';
+import ChatRoomOne from './components/Chat/ChatRoomOne';
 
 function App() {
     return (
@@ -33,7 +34,7 @@ function App() {
                     <Route path="/api/kakao/user-info" element={<KakaoUserInfo />} />               {/* 카카오 사용자 정보 목록 테스트 컴포넌트 */}
                     <Route path="/main" element={<MyPage />} />                                     {/* 마이페이지 컴포넌트 */}
                     <Route path="/info" element={<UserProfile />} />                                {/* 사용자 프로필 컴포넌트 */}
-                    <Route path="/chattingServer/:chatRoomId" element={<ChatRoom/>} />              {/* 채팅방 컴포넌트*/}
+                    <Route path="/chattingServer/:chatRoomId" element={<ChatRoomOne/>} />              {/* 채팅방 컴포넌트*/}
                     <Route path="/calendar" element={<Calendar/>}/>
                     {/* <Route path="/*" element={<ErrorPage/>}/> */}
                 </Routes>
