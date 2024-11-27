@@ -16,6 +16,7 @@ import { useUser } from '../context/UserContext';
 import ProjectList from '../components/project/ProjectList'
 import MyProfileIcon from '../pages/MyProfileIcon'
 import { Calendar } from '../components/calendar/Calendar';
+import ChatList from '../components/Chat/ChatList';
 
 const MyPage = () => {
     const navigate = useNavigate();
@@ -136,8 +137,13 @@ const MyPage = () => {
                     {/* 친구 목록 컴포넌트 */}
                     {userId && <FriendList userId={userId} fetchFriends={fetchFriends} />}
 
+
                     {/* 알림 컴포넌트 */}
                     {userId && <NotificationList userId={userId} fetchFriends={fetchFriends} />}
+                </div>
+                <div className='chatList'>
+                    {/* 채팅방 목록 컴포넌트*/}
+                    {userId && <ChatList userId ={userId}/>}
                 </div>
             </div>
         </>
