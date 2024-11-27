@@ -161,7 +161,7 @@ const InviteModal = ({
 
   return (
     <div className="modal-overlay" onClick={(e) => e.target.className === "modal-overlay" && onClose()}>
-      <div className="modal-content">
+      <div className="invite-modal-content">
         <h3>{selectedProject?.name || "프로젝트"}에 초대하기</h3>
         <div className="participants-section">
           {/* 친구 목록 */}

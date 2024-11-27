@@ -5,13 +5,26 @@
     grid-template-rows: 1fr 1fr; /* 상단과 하단 섹션 */
     gap: 20px; /* 섹션 간 간격 */
     width: 90%; /* 전체 컨테이너 너비 */
-    margin: 20px auto; /* 상하좌우 가운데 정렬 */
+    margin: -27px auto; /* 상하좌우 가운데 정렬 */
     padding: 10px;
     position: relative; /* WeatherBackground와 조화를 위해 */
     z-index: 1; /* 콘텐츠를 백그라운드 위로 표시 */
 }
 
-/* 헤더 */
+/* @font-face {
+    font-family: 'GowunBatang-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+} */
+
+@font-face {
+    font-family: 'Chosunilbo_myungjo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* 헤더 */
 .mypage-header {
     display: flex;
@@ -36,6 +49,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
+    font-family: 'Chosunilbo_myungjo';
 }
 
 .today {
@@ -141,7 +155,7 @@
 .mypage-calendar-section {
     grid-column: 1 / span 1; /* 첫 번째 열 */
     grid-row: 1 / span 2; /* 두 줄 차지 */
-    background: rgba(255, 255, 255, 0.5); /* 투명도 */
+    background: rgba(255, 255, 255, 0.6); /* 투명도 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
     border-radius: 10px;
     padding: 15px;
@@ -155,7 +169,7 @@
 .mypage-project-section {
     grid-column: 2 / span 1; /* 오른쪽 첫 번째 칸 */
     grid-row: 1 / span 1; /* 첫 번째 줄 */
-    background: rgba(255, 255, 255, 0.5); /* 투명도 */
+    background: rgba(255, 255, 255, 0.6); /* 투명도 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     padding: 15px;
@@ -169,7 +183,7 @@
 .mypage-notification-section {
     grid-column: 3 / span 1; /* 오른쪽 두 번째 칸 */
     grid-row: 1 / span 1; /* 첫 번째 줄 */
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     padding: 15px;
@@ -183,7 +197,7 @@
 .mypage-friend-section {
     grid-column: 2 / span 1; /* 오른쪽 첫 번째 칸 */
     grid-row: 2 / span 1; /* 두 번째 줄 */
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     padding: 15px;
