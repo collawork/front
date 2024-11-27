@@ -12,7 +12,7 @@ import CalendarService from '../../services/CalendarService';
 
 import '../../components/assest/css/Calendar.css';
 
-export const Calendar = () => {
+export const MyCalendar = () => {
     // 스케쥴 색상 종류
     const colors = [/*'#f44336', '#e91e63',*/ '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
     // 현재 뷰를 설정. (Month 또는 Week)
@@ -20,7 +20,7 @@ export const Calendar = () => {
     // 팀장님이 전역으로 사용 가능하게 만든 유저 아이디
     const { userId } = useUser();
     // 쥬스탄드에 담긴 유저 정보
-    const { projectData } = projectStore();
+    const { projectData, PlusProjectData } = projectStore();
     // 사용자에게 보여주고 입력 받을 스케쥴 정보의 상태를 저장한다.
     const {
         id, title, start, end, allDay, description, createdBy, createdAt, projectId, color,
@@ -87,7 +87,8 @@ export const Calendar = () => {
         setIsEventAdded(false);
         // 선택된 프로젝트 아이디 저장. 선택된 프로젝트 아이디가 없으면 개인 달력으로 사용된다.
         const fetchProjectId = async () => {
-            setProjectId(projectData.id);
+            setProjectId("");
+            PlusProjectData('')
             console.log(projectData.id);
         };
         fetchProjectId();
@@ -111,7 +112,7 @@ export const Calendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: { selectedProjectId: projectData.id ? projectData.id : "0" } // 0은 개인 일정을 뜻함
+                        params: { selectedProjectId: "0" } // 0은 개인 일정을 뜻함
                     }
                 );
                 if (response.data) { // 일정이 객체 배열로 담겨있다.
@@ -128,7 +129,7 @@ export const Calendar = () => {
             };
         };
         fetchEvents();
-    }, [projectData.Id, userId, isEventAdded]);
+    }, [userId, isEventAdded]);
 
     // 뷰를 바꾸는 함수
     const changeView = () => {

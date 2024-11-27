@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import '../../components/assest/css/ProjectBox.css';
+// import '../../components/assest/css/ProjectBox.css';
 
 const App = () => {
   const circle = useRef(null);

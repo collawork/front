@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import ChatRoom from './components/Chat/ChatRoom';
 import { UserProvider } from './context/UserContext';
 import { Calendar } from './components/calendar/Calendar';
+import { MyCalendar } from './components/calendar/Calendar';
 import NoticeList from './components/project/notice/NoticeList';
 import CreateNotice from './components/project/notice/CreateNotice';
 import ChatRoomOne from './components/Chat/ChatRoomOne';
@@ -35,7 +36,7 @@ function App() {
                     <Route path="/main" element={<MyPage />} />                                     {/* 마이페이지 컴포넌트 */}
                     <Route path="/info" element={<UserProfile />} />                                {/* 사용자 프로필 컴포넌트 */}
                     <Route path="/chattingServer/:chatRoomId" element={<ChatRoomOne/>} />              {/* 채팅방 컴포넌트*/}
-                    <Route path="/calendar" element={<Calendar/>}/>
+                    {/* <Route path="/calendar" element={<Calendar/>}/> */}
                     {/* <Route path="/*" element={<ErrorPage/>}/> */}
                 </Routes>
             </Router>

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { projectStore } from '../../store';
+import { projectStore, stateValue } from '../../store';
 import Pagination from '../Pagination'; // 기존에 구현한 Pagination 컴포넌트 사용
 import '../../components/assest/css/ProjectList.css'
+
 
 
 const ProjectList = ({ onProjectSelect }) => {
@@ -16,6 +17,8 @@ const ProjectList = ({ onProjectSelect }) => {
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [pageSize] = useState(5); // 한 페이지당 표시할 프로젝트 수
     const { userId } = useUser();
+    const {projectData, PlusProjectData} = projectStore();
+    const {setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig} = stateValue();
     const navigate = useNavigate();
 
     console.log("ProjectList userId:", userId);
@@ -82,6 +85,13 @@ const ProjectList = ({ onProjectSelect }) => {
     
 
     const handleMoreClick = () => {
+        PlusProjectData('');
+        setHomeShow('');
+        setChatShow('');
+        setCalShow('');
+        setNotiShow('');
+        setVotig('');
+
         navigate('/project'); // '더보기' 클릭 시 프로젝트 페이지로 이동
     };
 
