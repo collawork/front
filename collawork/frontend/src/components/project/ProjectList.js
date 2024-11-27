@@ -18,6 +18,7 @@ const ProjectList = ({ onProjectSelect }) => {
     const navigate = useNavigate();
 
     console.log("ProjectList userId:", userId);
+    console.log("localStorage.getItem : ", localStorage.getItem("userId"));
 
     useEffect(() => {
         console.log("ProjectList useEffect 호출됨");
@@ -25,12 +26,27 @@ const ProjectList = ({ onProjectSelect }) => {
     }, []);
 
     const fetchProjects = () => {
-        const token = localStorage.getItem('token');
-        const userIdValue = typeof userId === 'object' && userId !== null ? userId.userId : userId;
-
+        const token = localStorage.getItem('token'); // 토큰 가져오기
+        if (!token) {
+            console.error("토큰이 없습니다. API 호출을 중단합니다.");
+            return;
+        }
+    
+        // userId 처리
+        const userIdValue = typeof userId === 'object' && userId !== null 
+            ? userId.id || userId.userId  // 객체인 경우 id 또는 userId 속성 추출
+            : userId;
+    
+        // userId 검증
+        if (!userIdValue || isNaN(Number(userIdValue))) {
+            console.error("유효하지 않은 userId:", userIdValue);
+            return;
+        }
+    
+        // API 호출
         axios.post(
             `/api/user/projects/selectAll`,
-            { userId: userIdValue },
+            { userId: Number(userIdValue) }, // 숫자로 변환 후 전달
             {
                 baseURL: API_URL,
                 headers: {
@@ -45,14 +61,24 @@ const ProjectList = ({ onProjectSelect }) => {
                 setProjects(response.data); // 전체 데이터 설정
             } else {
                 console.warn("API 응답이 배열이 아닙니다:", response.data);
-                setProjects([]);
+                setProjects([]); // 초기화
             }
         })
         .catch((error) => {
-            console.error('프로젝트 목록을 불러오는 중 오류 발생:', error);
+            if (error.response) {
+                // 서버 응답이 있는 경우
+                console.error('서버 오류 발생:', error.response.data);
+            } else if (error.request) {
+                // 요청은 보내졌으나 응답이 없는 경우
+                console.error('응답이 없습니다. 네트워크 문제:', error.request);
+            } else {
+                // 기타 에러
+                console.error('API 호출 중 오류 발생:', error.message);
+            }
             setProjects([]); // 오류 시 빈 배열로 초기화
         });
     };
+    
 
     const handleMoreClick = () => {
         navigate('/project'); // '더보기' 클릭 시 프로젝트 페이지로 이동
