@@ -2,18 +2,21 @@ import { useEffect, useState, useRef } from "react";
 import { useUser } from '../../context/UserContext';
 import axios from 'axios';
 import ReactModal from "react-modal";
-import { projectStore } from '../../store';
+import { projectStore, stateValue} from '../../store';
 import defaultImage from '../../components/assest/images/default-profile.png';
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faThumbtack,faCalendar,faFolder,faGear,faBell} from "@fortawesome/free-solid-svg-icons";
 import ProjectModify from "./ProjectModify";
 import '../../components/assest/css/ProjectInformation.css';
+import ProjectBox from './ProjectBox';
 import { Color } from "three";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectInformation = () => {
+
+  
 
   const [id, setId] = useState(null);
   const [participant, setParticipant] = useState([]);
@@ -24,6 +27,7 @@ const ProjectInformation = () => {
   const [noticesList, setNoticesList] = useState([]); // 초기값 빈 배열
   const [modify, setModify] = useState(false);
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
+  const {setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig} = stateValue();
   const { projectName, projectData, userData, PlusProjectData, PlusUserData ,projectInformationState} = projectStore();
   const { userId } = useUser();
 
@@ -207,91 +211,125 @@ const ProjectInformation = () => {
     }
   };
 
+  const calendatHandler = () => {
+    setHomeShow(false);
+    setChatShow(false);
+    setCalShow(true);
+    setNotiShow(false);
+    setVotig(false);
+  }
+
+  const noticesHandler = () => {
+    setHomeShow(false);
+    setChatShow(false);
+    setCalShow(false);
+    setNotiShow(true);
+    setVotig(false);
+  }
+
 
   return (
     <>
       {show && (
-        <div className="project-container">
-          <div className="project-header">
-            <FontAwesomeIcon icon={faFolder} className="project-icon" />
-            <h2>{projectData.projectName}</h2>
-            <span className="project-code">{projectData.projectCode}</span>
-            <button className="icon-button" onClick={() => setModify(true)}>
-                  <FontAwesomeIcon icon={faGear} />
-            </button>
-          </div>
-          
-          {calendarList.length > 0 ? (
-  <ul className="list">
-    {calendarList.map((calendarItem, index) => (
-      <li key={index} className="list-item">
-        <div className="icon-container">
-          <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
-          <FontAwesomeIcon icon={faCalendar} className="icon" />
-        </div>
-        <div className="list-content">
-          <h3>{calendarItem.title}</h3>
-          <p>
-            {new Date(calendarItem.start_time).toLocaleString()} ~ {new Date(calendarItem.end_time).toLocaleString()}
-          </p>
-        </div>
-      </li>
-    ))}
-  </ul>
-) : (
-  <ul className="list">
-    <li className="list-item">
-      <div className="icon-container">
-        <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
-        <FontAwesomeIcon icon={faCalendar} className="icon" />
-      </div>
-      <div className="list-content">
-      <h3>다가오는 일정이 없습니다.</h3>
-      </div>
-    </li>
-  </ul>
-)}
-         {noticesList.length > 0 ? (
-  <ul className="list">
-    {noticesList.map((list, index) => (
-      <li key={index} className="list-item">
-        <div className="icon-container">
-          <FontAwesomeIcon color="purple" icon={faThumbtack}  className="icon" />
-          <FontAwesomeIcon icon={faBell}  className="icon" />
-        </div>
-        <div className="list-content">
-          <h3>{list.title}</h3>
-          <p>{ new Date(list.createdAt).toLocaleString()}</p>
-        </div>
-
-      </li>
-    ))}
-  </ul>
-) : (
-  <ul className="list">
-    <li className="list-item">
-      <div className="icon-container">
-        <FontAwesomeIcon color="purple" icon={faThumbtack}  className="icon" />
-        <FontAwesomeIcon icon={faBell}  className="icon" />
-      </div>
-      <div className="list-content">
-      <h3>주요 공지사항이 없습니다.</h3>
-      </div>
-    </li>
-  </ul>
-)}
-          
-          {modify && (
-            <ProjectModify
-              setModify={(value) => {
-                setModify(value);
-              }}
-            />
-          )}
-          <div className="user-info-dropdown" ref={modalRef} style={{ position: "relative" }}>
-          <img
+        <div className="project-box">
+          <div className="project-container">
+            <div className="project-header">
+              <FontAwesomeIcon icon={faFolder} className="project-icon" />
+              <h2>{projectData.projectName}</h2>
+              <span className="project-code">{projectData.projectCode}</span>
+              <button className="icon-button" onClick={() => setModify(true)}>
+                <FontAwesomeIcon icon={faGear} />
+              </button>
+            </div>
+  
+            {/* 기존의 일정 및 공지사항 섹션 */}
+            {calendarList.length > 0 ? (
+              <ul className="list">
+                {calendarList.map((calendarItem, index) => (
+                  <li key={index} className="list-item">
+                    <div className="icon-container">
+                      <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                      <FontAwesomeIcon icon={faCalendar} className="icon" />
+                    </div>
+                    <div className="list-content" onClick={calendatHandler}>
+                      <h3>{calendarItem.title}</h3>
+                      <p>
+                        {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
+                        {new Date(calendarItem.end_time).toLocaleString()}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul className="list">
+                <li className="list-item">
+                  <div className="icon-container">
+                    <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                    <FontAwesomeIcon icon={faCalendar} className="icon" />
+                  </div>
+                  <div className="list-content" onClick={calendatHandler}>
+                    <h3>다가오는 일정이 없습니다.</h3>
+                  </div>
+                </li>
+              </ul>
+            )}
+  
+            {noticesList.length > 0 ? (
+              <ul className="list">
+                {noticesList.map((list, index) => (
+                  <li key={index} className="list-item">
+                    <div className="icon-container">
+                      <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+                      <FontAwesomeIcon icon={faBell} className="icon" />
+                    </div>
+                    <div className="list-content" onClick={noticesHandler}>
+                      <h3>{list.title}</h3>
+                      <p>{new Date(list.createdAt).toLocaleString()}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul className="list">
+                <li className="list-item">
+                  <div className="icon-container">
+                    <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+                    <FontAwesomeIcon icon={faBell} className="icon" />
+                  </div>
+                  <div className="list-content" onClick={noticesHandler}>
+                    <h3>주요 공지사항이 없습니다.</h3>
+                  </div>
+                </li>
+              </ul>
+            )}
+  
+  
+            {/* 새로운 슬라이더 기능 추가 */}
+            {/* <div className="slider-section">
+              <h3>프로젝트 진행률</h3>
+              <ProjectBox />
+            </div>
+   */}
+            {modify && (
+              <ProjectModify
+                setModify={(value) => {
+                  setModify(value);
+                }}
+              />
+            )}
+             <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                    position: "relative",
+                  }}
+                >
+            
+              <img
               src={userData?.profileImageUrl || defaultImage}
-              alt={`${userData?.username || '사용자'}의 프로필 이미지`}
+              alt={`${userData?.username || "사용자"}의 프로필 이미지`}
               onClick={() => setModal(!modal)}
               className="profile-image-small"
               style={{
@@ -300,12 +338,11 @@ const ProjectInformation = () => {
                 borderRadius: "50%",
                 marginRight: "10px",
                 cursor: "pointer",
-                objectFit: "cover",
               }}
             />
-            <h3>{userData?.username || '정보 없음'}</h3>
+            관리자 : <h3>{userData?.username || "정보 없음"}</h3>
             <button onClick={managerModifyHandler}>관리자 변경</button>
-            
+            </div>
             <ReactModal
               isOpen={managerModalOpen}
               onRequestClose={() => setManagerModalOpen(false)}
@@ -374,12 +411,15 @@ const ProjectInformation = () => {
               <button onClick={onSubmitHandler}>변경하기</button>
               <button onClick={() => setManagerModalOpen(false)}>취소</button>
             </ReactModal>
+  
+            {/* ReactModal 코드 생략 */}
           </div>
           <h6>{projectData?.createdAt}</h6>
         </div>
       )}
     </>
   );
+  
 }
   
 

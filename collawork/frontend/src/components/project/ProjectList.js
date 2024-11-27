@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-// import { useNavigation } from '@react-navigation/native';
 import { projectStore } from '../../store';
 import Pagination from '../Pagination'; // 기존에 구현한 Pagination 컴포넌트 사용
 import '../../components/assest/css/ProjectList.css'
 
-const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectList = ({ onProjectSelect }) => {
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const addTitle = projectStore(state => state.PlusProjectName);
-    // const navi = useNavigation();
     const [projects, setProjects] = useState([]); // 전체 프로젝트 데이터
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [pageSize] = useState(5); // 한 페이지당 표시할 프로젝트 수
@@ -52,7 +51,7 @@ const ProjectList = ({ onProjectSelect }) => {
             {
                 baseURL: API_URL,
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             }
@@ -116,7 +115,8 @@ const ProjectList = ({ onProjectSelect }) => {
                                 onClick={() => {
                                     console.log("선택된 프로젝트:", project);
                                     addTitle(project.name);
-                                    navigate('/project', { projectId: project.id });
+                                    // onProjectSelect(project); // 선택한 프로젝트 상위로 전달
+                                    navigate('/project', {projectId:project.id})
                                 }}
                             >
                                 {project.name}

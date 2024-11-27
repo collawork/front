@@ -1,3 +1,10 @@
+/*
+작성자: 서현준
+작성일: 2024.10.31
+마이 페이지 겸 헤더랑 네비가 없는 메인 페이지
+날씨 API 예정
+fullcalendar API
+*/
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NotificationList from "../components/NotificationList/NotificationList";
@@ -5,6 +12,7 @@ import FriendList from "../components/Friend/FriendList";
 import "../components/assest/css/MyPage.css";
 import ProjectList from "../components/project/ProjectList";
 import { Calendar } from "../components/calendar/Calendar";
+import ChatList from '../components/Chat/ChatList';
 import WeatherBackground from "./WeatherBackground";
 import MyProfileIcon from "../pages/MyProfileIcon";
 import Search from "./Search";
@@ -126,6 +134,11 @@ const MyPage = () => {
                 {/* 친구 목록 */}
                 <div className="mypage-section mypage-friend-section">
                     {userId && <FriendList userId={userId} />}
+                </div>
+
+                {/* 채팅방 목록 컴포넌트*/}
+                <div className='chatList'>
+                    {userId && <ChatList userId ={userId}/>}
                 </div>
             </div>
         </>

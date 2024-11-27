@@ -3,6 +3,7 @@ import axios from 'axios';
 import FriendRequest from '../components/Friend/FriendRequest';
 import "../components/assest/css/UserDetail.css";
 import defaultImage from '../components/assest/images/default-profile.png'
+import SendMessage from "../components/Chat/SendMessage";
 
 const UserDetail = ({ type, item, closeModal, currentUser }) => {
   const [data, setData] = useState(null);
@@ -55,6 +56,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
           <p>핸드폰 번호: {data.phone || '정보 없음'}</p>
           <p>팩스 번호: {data.fax || '정보 없음'}</p>
           <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
+          <SendMessage username={data.username}  userId={data.id}/>
           
           <FriendRequest
             currentUser={currentUser}

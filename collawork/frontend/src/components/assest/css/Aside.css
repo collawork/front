@@ -49,31 +49,31 @@
   
   .aside-bottom li {
     margin-bottom: 10px;
-    display: flex; /* Align items in a row */
-    align-items: center; /* Vertically align the text with the circle */
+    display: flex;
+    align-items: center; 
   }
   
   .aside-bottom li::before {
-    content: ''; /* Creates the circle */
+    content: ''; 
     display: inline-block;
-    width: 6px; /* Diameter of the circle */
-    height: 6px; /* Diameter of the circle */
-    margin-right: 10px; /* Space between the circle and text */
-    background-color: rgb(136, 84, 219); /* Circle color */
-    border-radius: 50%; /* Makes it a perfect circle */
+    width: 6px; 
+    height: 6px; 
+    margin-right: 10px; 
+    background-color: rgb(136, 84, 219);
+    border-radius: 50%; 
   }
   
   .clickable-text {
-    cursor: pointer; /* Indicates interactivity */
-    color: inherit; /* Matches the surrounding text color */
-    font-size: 16px; /* Slightly larger text */
-    text-decoration: none; /* Removes underline */
-    font-weight: normal; /* Keeps it looking like plain text */
+    cursor: pointer; 
+    color: inherit; 
+    font-size: 16px; 
+    text-decoration: none;
+    font-weight: normal;
   }
   
   .clickable-text:hover {
-    color: inherit; /* No color change on hover */
-    text-decoration: none; /* Ensures no underline on hover */
+    color: inherit; 
+    text-decoration: none; 
   }
   
   
