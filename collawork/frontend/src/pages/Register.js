@@ -120,13 +120,13 @@ function Register() {
                     {errors.username && <p className="error-text">{errors.username}</p>}
                 </div>
 
-                <div class="input-group email-group">
+                <div className="input-group email-group">
                     <label>이메일</label>
-                    <div class="inputs-container">
+                    <div className="inputs-container">
                         <input type="text" name="email" placeholder="이메일" required />
                         <span>@</span>
                         <input type="text" name="emailDomain" placeholder="도메인" required />
-                        <select onChange="handleChange">
+                        <select onChange={handleChange}>
                             <option value="">직접 입력</option>
                             <option value="gmail.com">gmail.com</option>
                             <option value="naver.com">naver.com</option>

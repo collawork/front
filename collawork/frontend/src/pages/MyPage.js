@@ -137,7 +137,7 @@ const MyPage = () => {
                 </div>
 
                 {/* 채팅방 목록 컴포넌트*/}
-                <div className='chatList'>
+                <div className='mypage-section mypage-chatList'>
                     {userId && <ChatList userId ={userId}/>}
                 </div>
             </div>
