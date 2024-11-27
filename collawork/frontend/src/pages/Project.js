@@ -91,31 +91,31 @@ const Project = ({projectId}) => {
         <div className="project-container">
           <div className="button-group">
             <div
-              className={`menu-item ${selected === "home" ? "active" : ""}`}
+              className={`menu-item ${homeShow === true ? "active" : ""}`}
               onClick={homeClickHandler}
             >
               <span className="menu-label"> <FontAwesomeIcon icon={faHouse} /> 피드</span>
             </div>
             <div
-              className={`menu-item ${selected === "noti" ? "active" : ""}`}
+              className={`menu-item ${notiShow === true ? "active" : ""}`}
               onClick={notiClickHandler}
             >
               <span className="menu-label"><FontAwesomeIcon icon={faBell} /> 공지사항</span>
             </div>
             <div
-              className={`menu-item ${selected === "chat" ? "active" : ""}`}
+              className={`menu-item ${chatShow === true ? "active" : ""}`}
               onClick={chatClickHandler}
             >
               <span className="menu-label"><FontAwesomeIcon icon={faComment} /> 채팅방</span>
             </div>
             <div
-              className={`menu-item ${selected === "calendar" ? "active" : ""}`}
+              className={`menu-item ${calShow === true ? "active" : ""}`}
               onClick={onClickHandler}
             >
               <span className="menu-label"><FontAwesomeIcon icon={faCalendarDays} /> 캘린더</span>
             </div>
             <div
-              className={`menu-item ${selected === "voting" ? "active" : ""}`}
+              className={`menu-item ${voting === true ? "active" : ""}`}
               onClick={AllOnClickHandler}
             >
               <span className="menu-label"><FontAwesomeIcon icon={faCheckToSlot} /> 투표</span>

@@ -88,18 +88,16 @@
 
 .project-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
-  margin-top: 30px;
-  margin-left: 30px;
-  flex-wrap: wrap; 
+  margin-bottom: 30px;
 }
-
 
 .project-icon {
   margin-right: 10px;
   font-size: 2.0rem;
 }
+
 
 
 .project-header h2 {
@@ -182,5 +180,21 @@
 .manager{
   margin-right: 150px;
 }
+
+.project-box {
+  border: 1px solid #ccc; /* 테두리 */
+  border-radius: 10px; /* 둥근 모서리 */
+  padding: 50px; /* 내부 여백 */
+  margin: 20px; /* 외부 여백 */
+  background-color: #f9f9f9; /* 배경색 */
+
+  /* 고정된 크기 설정 */
+  width: 1050px; /* 가로 길이 고정 */
+  height: 700px; /* 세로 길이는 내용에 따라 유동적으로 */
+  overflow-x: hidden; /* 가로 넘침 방지 */
+  overflow-y: auto; /* 세로 스크롤만 허용 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
 
 
