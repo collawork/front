@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Pagination from '../Pagination';
+import '../../components/assest/css/NotificationList.css';
+import CheckMark from '../../components/assest/images/checkmark.png';
+import Accecpt from '../../components/assest/images/accecpt.png';
+import Refusal from '../../components/assest/images/refusal.png';
+import AccecptProject from '../../components/assest/images/accept-file-or-checklist.png';
+import Declined from '../../components/assest/images/declined.png';
+
 
 const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
     const [notifications, setNotifications] = useState([]);

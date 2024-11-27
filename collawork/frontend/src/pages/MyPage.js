@@ -69,9 +69,6 @@ const MyPage = () => {
 
     return (
         <>
-            {/* 날씨 백그라운드 */}
-            <WeatherBackground />
-
             {/* 헤더 */}
             <div className="mypage-header">
                 <div className="mypage-header-content">
@@ -113,25 +110,21 @@ const MyPage = () => {
             <div className="mypage-container">
                 {/* 캘린더 */}
                 <div className="mypage-calendar-section">
-                    <h2>캘린더</h2>
                     <Calendar />
                 </div>
 
                 {/* 프로젝트 */}
                 <div className="mypage-section mypage-project-section">
-                    <h2>내 프로젝트</h2>
                     {userId && <ProjectList userId={userId} />}
                 </div>
 
                 {/* 알림 */}
                 <div className="mypage-section mypage-notification-section">
-                    <h2>새로운 알림</h2>
                     {userId && <NotificationList userId={userId} />}
                 </div>
 
                 {/* 친구 목록 */}
                 <div className="mypage-section mypage-friend-section">
-                    <h2>친구 목록</h2>
                     {userId && <FriendList userId={userId} />}
                 </div>
             </div>
