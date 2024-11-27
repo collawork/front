@@ -11,6 +11,7 @@ import { stateValue } from "../store";
 import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
 import { useNavigate } from "react-router-dom";
 import { projectStore, calendarEvents ,friendsList} from '../store';
+import WeatherBackground from "../pages/WeatherBackground"; 
 
 const Layout = () => {
     const { userId } = useUser();
@@ -150,6 +151,7 @@ const Layout = () => {
 
     return (
         <div className="layout-container">
+            <WeatherBackground />
             <button
                 onClick={moveToMypage}
             >

@@ -1,5 +1,5 @@
 .layout-container {
-  font-family: 'Arial', sans-serif;
+  /* font-family: 'Arial', sans-serif; */
   color: #333;
   display: flex;
   flex-direction: column;
@@ -52,17 +52,6 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
-
-.modal-content {
-  background: #ffffff;
-  border-radius: 15px;
-  width: 500px;
-  max-width: 90%;
-  padding: 20px;
-  position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -126,7 +115,7 @@
   font-size: 1.1em;
 }
 
-.modal-content .shortcut-info {
+.shortcut-info {
   text-align: right;
   font-size: 0.8em;
   color: #999;
