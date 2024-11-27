@@ -85,7 +85,7 @@ const MyPage = () => {
             <div className="mypage-container">
                 {/* 캘린더 */}
                 <div className="mypage-calendar-section">
-                    <h2>캘린더</h2>
+                    {/* <h2>캘린더</h2> */}
                     <Calendar />
                 </div>
 

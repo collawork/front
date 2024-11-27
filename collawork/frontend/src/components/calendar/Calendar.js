@@ -132,6 +132,7 @@ export const Calendar = () => {
 
     // 뷰를 바꾸는 함수
     const changeView = () => {
+        setIsEventAdded(true);
         setCurrentView(currentView === 'dayGridMonth' ? 'timeGridWeek' : 'dayGridMonth');
     };
 
@@ -159,7 +160,7 @@ export const Calendar = () => {
         setStart(info.startStr);
         setEnd(info.endStr);
         setAllDay(allDay); // 바로 위에서 초기화한 allDay
-        setColor("#2196f3")
+        setColor("#9c27b0")
 
         // 모달을 열면 상기에 적어둔 초기값들이 보여진다. 이후 사용자는 title, description, color를 변경할 수 있다.
         setModalIsOpen(true);
