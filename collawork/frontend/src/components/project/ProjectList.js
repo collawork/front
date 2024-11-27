@@ -4,6 +4,7 @@ import { useUser } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { projectStore } from '../../store';
 import Pagination from '../Pagination'; // 기존에 구현한 Pagination 컴포넌트 사용
+import '../../components/assest/css/ProjectList.css'
 
 
 const ProjectList = ({ onProjectSelect }) => {
@@ -95,12 +96,17 @@ const ProjectList = ({ onProjectSelect }) => {
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
     return (
         <div className="project-list">
-            <button onClick={handleMoreClick} className="more-button">
-                + 더보기
-            </button>
+            {/* 헤더 */}
+            <div className="project-list-header">
+                <span>내 프로젝트</span>
+                <button onClick={handleMoreClick} className="more-button">
+                    더보기
+                </button>
+            </div>
+    
+            {/* 프로젝트 리스트 */}
             <ul>
                 {paginatedProjects.length > 0 ? (
                     paginatedProjects.map((project) => (
@@ -109,11 +115,11 @@ const ProjectList = ({ onProjectSelect }) => {
                                 onClick={() => {
                                     console.log("선택된 프로젝트:", project);
                                     addTitle(project.name);
-                                    onProjectSelect(project); // 선택한 프로젝트 상위로 전달
+                                    // onProjectSelect(project); // 선택한 프로젝트 상위로 전달
                                     navigate('/project', {projectId:project.id})
                                 }}
                             >
-                                {project.name} {/* 프로젝트 이름 */}
+                                {project.name}
                             </button>
                         </li>
                     ))
@@ -121,6 +127,8 @@ const ProjectList = ({ onProjectSelect }) => {
                     <li>프로젝트가 없습니다.</li>
                 )}
             </ul>
+    
+            {/* 페이징 */}
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -128,6 +136,7 @@ const ProjectList = ({ onProjectSelect }) => {
             />
         </div>
     );
+    
 };
 
 export default ProjectList;

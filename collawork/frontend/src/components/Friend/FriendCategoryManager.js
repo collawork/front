@@ -268,7 +268,7 @@ const FriendCategoryManager = ({ userId, onClose }) => {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content" ref={modalRef}>
+            <div className="friend-cate-modal-content" ref={modalRef}>
                 <div className="friend-category-manager">
                     <div className="sidebar">
                         <h3>카테고리</h3>

@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
 }
 
 .login-container h2 {
