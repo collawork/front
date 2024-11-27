@@ -11,7 +11,7 @@ import NotificationList from "../components/NotificationList/NotificationList";
 import FriendList from "../components/Friend/FriendList";
 import "../components/assest/css/MyPage.css";
 import ProjectList from "../components/project/ProjectList";
-import { Calendar } from "../components/calendar/Calendar";
+import { MyCalendar } from "../components/calendar/MyCalendar";
 import ChatList from '../components/Chat/ChatList';
 import WeatherBackground from "./WeatherBackground";
 import MyProfileIcon from "../pages/MyProfileIcon";
@@ -19,6 +19,8 @@ import Search from "./Search";
 import Temperature from '../components/assest/images/temperature.png'
 import Weather from '../components/assest/images/weather.png'
 import Wind from '../components/assest/images/wind.png'
+import { projectStore } from '../store';
+
 
 const MyPage = () => {
     const [userId, setUserId] = useState(null);
@@ -26,8 +28,12 @@ const MyPage = () => {
     const [currentDate, setCurrentDate] = useState("");
     const [greeting, setGreeting] = useState("어서오세요.");
     const [weatherData, setWeatherData] = useState(null);
+    const {projectData, PlusProjectData} = projectStore();
 
     useEffect(() => {
+        console.log("마이페이지에서 확인하는 projectData :::::::::: ",projectData.id);
+        PlusProjectData('');
+        console.log("마이페이지에서 확인하는 projectData :::::::::: ",projectData.id);
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
 
@@ -72,6 +78,7 @@ const MyPage = () => {
         const currentHour = date.getHours();
         setGreeting(currentHour < 11 ? "좋은 아침이예요!" : "어서오세요.");
     }, []);
+    console.log("마이페이지에서 확인하는 projectData :::::::::: ",projectData.id);
 
     console.log("weatherData : ",weatherData);
 
@@ -118,7 +125,7 @@ const MyPage = () => {
             <div className="mypage-container">
                 {/* 캘린더 */}
                 <div className="mypage-calendar-section">
-                    <Calendar />
+                    <MyCalendar />
                 </div>
 
                 {/* 프로젝트 */}
