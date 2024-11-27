@@ -1,7 +1,45 @@
-.fullCalendarContainer { /* FullCalendar을 감싸는 div에 클래스명 추가 */
-    width: 800px; /* 원하는 너비로 설정 */
-    
-  }
+:root {
+    /* --fc-button-bg-color: rgb(194 91 215 / 67%);
+    --fc-button-border-color: rgb(194 91 215 / 67%);
+    --fc-button-hover-bg-color: rgb(141 21 165 / 67%);
+    --fc-button-hover-border-color: rgb(141 21 165 / 67%);
+    --fc-button-active-bg-color: rgb(141 21 165 / 67%);
+    --fc-button-active-border-color: rgb(141 21 165 / 67%);
+    --fc-highlight-color: rgb(222 188 241 / 30%);
+    --fc-today-bg-color: rgb(255 40 216 / 15%); */
+    --fc-small-font-size: ;
+    --fc-button-border-color: ;
+    --fc-button-bg-color: ;
+
+    --fc-button-bg-color: ;
+    --fc-button-border-color: ;
+    --fc-button-hover-bg-color: ;
+    --fc-button-hover-border-color: ;
+    --fc-button-active-bg-color: ;
+    --fc-button-active-border-color: ;
+    /* --fc-highlight-color: ;
+    --fc-today-bg-color: ; */
+}
+
+/* .background-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.9;
+    filter: blur(2px);
+} */
+
+.fullCalendarContainer {
+    /* FullCalendar을 감싸는 div에 클래스명 추가 */
+    width: 1000px;
+    /* 원하는 너비로 설정 */
+}
+
+
 
 /* .calendar-modal {
     top: '50%';
@@ -11,7 +49,7 @@
         marginRight: '-50%';
         transform: 'translate(-50%, -50%)';
 } */
-  
+
 /* const customStyles = {
     content: {
         top: '50%',
