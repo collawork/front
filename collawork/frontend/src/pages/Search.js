@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import UserDetail from './UserDetail';
 import "../components/assest/css/Search.css";
+import { useUser } from '../context/UserContext';
 
-const Search = ({ currentUser}) => {
+const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState({ users: [], projects: [], chatRooms: [] });
   const [noResults, setNoResults] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const { userId } = useUser();
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -34,7 +37,7 @@ const Search = ({ currentUser}) => {
         });
 
         console.log("API 응답 데이터:", response.data);
-        console.log("현재 로그인된 사용자:", currentUser);
+        console.log("현재 로그인된 사용자:", userId);
 
         // 응답 데이터 검증 및 기본값 설정
         const users = Array.isArray(response.data.users) ? response.data.users : [];
@@ -44,7 +47,7 @@ const Search = ({ currentUser}) => {
         const filteredResults = {
             users: users.filter(user =>
                 (user.username.includes(searchQuery) || user.email.includes(searchQuery)) &&
-                Number(currentUser.id) !== Number(user.id) // 타입 변환 후 비교
+                Number(userId) !== Number(user.id) // 타입 변환 후 비교
             ),
             projects: projects.filter(project =>
                 project.projectName.includes(searchQuery)
@@ -152,7 +155,7 @@ const Search = ({ currentUser}) => {
         <div className="modal-overlay" onClick={closeDetailModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-button-search" onClick={closeDetailModal}>닫기</button>
-            <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} currentUser={currentUser} />
+            <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} currentUser={userId} />
           </div>
         </div>
       )}
