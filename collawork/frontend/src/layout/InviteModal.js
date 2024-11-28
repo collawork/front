@@ -160,7 +160,7 @@ const InviteModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target.className === "modal-overlay" && onClose()}>
+    <div className="modal-overlay-invite" onClick={(e) => e.target.className === "modal-overlay-invite" && onClose()}>
       <div className="invite-modal-content">
         <h3>{selectedProject?.name || "프로젝트"}에 초대하기</h3>
         <div className="participants-section">

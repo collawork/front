@@ -21,8 +21,8 @@ const ProjectList = ({ onProjectSelect }) => {
     const {setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig} = stateValue();
     const navigate = useNavigate();
 
-    console.log("ProjectList userId:", userId);
-    console.log("localStorage.getItem : ", localStorage.getItem("userId"));
+    // console.log("ProjectList userId:", userId);
+    // console.log("localStorage.getItem : ", localStorage.getItem("userId"));
 
     useEffect(() => {
         console.log("ProjectList useEffect 호출됨");

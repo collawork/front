@@ -12,7 +12,7 @@ import Declined from '../../components/assest/images/declined.png';
 const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
     const [notifications, setNotifications] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [pageSize] = useState(5); // 한 페이지당 표시할 알림 수
+    const [pageSize] = useState(2); // 한 페이지당 표시할 알림 수
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
 
     // 알림 목록 불러오기

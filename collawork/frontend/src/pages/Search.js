@@ -100,7 +100,7 @@ const Search = ({ currentUser}) => {
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={closeModal}>닫기</button>
+            <button className="close-button-search" onClick={closeModal}>닫기</button>
             {noResults && <div className="no-results">검색 결과가 없습니다.</div>}
             <div className="search-results">
               {searchResults.users.length > 0 && (
@@ -151,7 +151,7 @@ const Search = ({ currentUser}) => {
       {isDetailModalOpen && selectedDetail && (
         <div className="modal-overlay" onClick={closeDetailModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button" onClick={closeDetailModal}>닫기</button>
+            <button className="close-button-search" onClick={closeDetailModal}>닫기</button>
             <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} currentUser={currentUser} />
           </div>
         </div>

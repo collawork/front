@@ -13,12 +13,24 @@
 
     --fc-button-bg-color: ;
     --fc-button-border-color: ;
-    --fc-button-hover-bg-color: ;
+    --fc-button-hover-bg-color: #f0f0f0;
     --fc-button-hover-border-color: ;
     --fc-button-active-bg-color: ;
     --fc-button-active-border-color: ;
     /* --fc-highlight-color: ;
     --fc-today-bg-color: ; */
+}
+
+.fc-button-group button{
+    transition: all 0.3s ease;
+}
+
+.fc-today-button {
+    transition: all 0.3s ease;
+}
+
+.fc-view-button {
+    transition: all 0.3s ease;
 }
 
 /* .background-video {

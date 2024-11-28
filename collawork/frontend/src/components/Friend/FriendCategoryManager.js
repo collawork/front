@@ -267,7 +267,7 @@ const FriendCategoryManager = ({ userId, onClose }) => {
     }, [filteredFriends]);
 
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay-friendcate">
             <div className="friend-cate-modal-content" ref={modalRef}>
                 <div className="friend-category-manager">
                     <div className="sidebar">

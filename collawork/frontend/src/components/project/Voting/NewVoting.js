@@ -7,7 +7,7 @@ import { useUser } from "../../../context/UserContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-const Voting = ({ setModalShow, modalShow, handleModalClose, handler,setRere }) => {
+const Voting = ({ setModalShow, modalShow, rere, handler,setRere }) => {
     const [title, setTitle] = useState(""); // 투표 제목
     const [detail, setDetail] = useState(""); // 투표 설명
     const [state, setState] = useState(""); // 투표 마감일 설정
@@ -95,7 +95,12 @@ const Voting = ({ setModalShow, modalShow, handleModalClose, handler,setRere }) 
     const handleSubmit = (e) => {
       e.preventDefault();
       alert("투표가 생성되었습니다 !");
-      setRere(true);
+      if(rere == true){
+        setRere(false);
+      }else{
+        setRere(true);
+      }
+      
   
       for (var i = 0; i < inputItems.length; i++) {
         arr[i] = inputItems[i].voteOption;
