@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import '../../components/assest/css/ProjectBox.css';
+import '../../components/assest/css/projectBox.css';
 
 const App = () => {
   const circle = useRef(null);
@@ -12,6 +12,7 @@ const App = () => {
   useEffect(() => {
     const conWidth = box.current.getBoundingClientRect().width;
     setCon(conWidth);
+    
     const circleWidth = circle.current.getBoundingClientRect().width;
     setCir(circleWidth);
   }, []);
