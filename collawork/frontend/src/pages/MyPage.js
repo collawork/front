@@ -23,14 +23,32 @@ const MyPage = () => {
     { id: "chat", content: <ChatList />, size: "small" },
   ];
 
-  const [sections, setSections] = useState(defaultSections);
-  const [userId, setUserId] = useState(null); // 로그인된 사용자 ID
+  const [sections, setSections] = useState(() => {
+    const savedData = localStorage.getItem("mypagePreferences");
+    if (savedData) {
+      const { sections } = JSON.parse(savedData);
+      return sections.map((savedSection) => ({
+        ...defaultSections.find((section) => section.id === savedSection.id),
+        size: savedSection.size,
+      }));
+    }
+    return defaultSections;
+  });
+
+  const [globalOpacity, setGlobalOpacity] = useState(() => {
+    const savedData = localStorage.getItem("mypagePreferences");
+    return savedData ? JSON.parse(savedData).opacity : 1;
+  });
+
+  const [sectionColor, setSectionColor] = useState(() => {
+    const savedData = localStorage.getItem("mypagePreferences");
+    return savedData ? JSON.parse(savedData).color : "#ffffff";
+  });
+
+  const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({ username: "" });
   const [currentDate, setCurrentDate] = useState("");
   const [weatherData, setWeatherData] = useState(null);
-
-  const [globalOpacity, setGlobalOpacity] = useState(1);
-  const [sectionColor, setSectionColor] = useState("#ffffff");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,12 +67,12 @@ const MyPage = () => {
         });
 
         if (response.data) {
-          setUserId(response.data.id); // 사용자 ID 설정
+          setUserId(response.data.id);
           setUser({ username: response.data.username });
           setSections((prevSections) =>
             prevSections.map((section) => ({
               ...section,
-              content: React.cloneElement(section.content, { userId: response.data.id }), // userId 전달
+              content: React.cloneElement(section.content, { userId: response.data.id }),
             }))
           );
         } else {
@@ -69,21 +87,21 @@ const MyPage = () => {
 
     const date = new Date();
     const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-    setCurrentDate(formattedDate);
+    setCurrentDate(formattedDate); // 문자열로 설정
 
-    loadPreferences(); // 로컬스토리지에서 설정 불러오기
+    loadPreferences();
   }, []);
 
-  const savePreferences = () => {
-    const simplifiedSections = sections.map((section) => ({
+  const savePreferences = (updatedSections = sections, opacity = globalOpacity, color = sectionColor) => {
+    const simplifiedSections = updatedSections.map((section) => ({
       id: section.id,
       size: section.size,
     }));
 
     const preferences = {
       sections: simplifiedSections,
-      opacity: globalOpacity,
-      color: sectionColor,
+      opacity,
+      color,
     };
 
     localStorage.setItem("mypagePreferences", JSON.stringify(preferences));
@@ -125,17 +143,19 @@ const MyPage = () => {
     reorderedSections.splice(destination.index, 0, movedSection);
 
     setSections(reorderedSections);
-    savePreferences(); // 드래그 후 설정 저장
+    savePreferences(reorderedSections);
   };
 
   const handleOpacityChange = (e) => {
-    setGlobalOpacity(parseFloat(e.target.value));
-    savePreferences(); // 투명도 변경 후 설정 저장
+    const newOpacity = parseFloat(e.target.value);
+    setGlobalOpacity(newOpacity);
+    savePreferences(sections, newOpacity, sectionColor);
   };
 
   const handleColorChange = (e) => {
-    setSectionColor(e.target.value);
-    savePreferences(); // 배경색 변경 후 설정 저장
+    const newColor = e.target.value;
+    setSectionColor(newColor);
+    savePreferences(sections, globalOpacity, newColor);
   };
 
   return (
@@ -143,7 +163,8 @@ const MyPage = () => {
       <div className="mypage-header">
         <div className="mypage-header-content">
           <span className="hi-user-name">
-            <MyProfileIcon profileImage={user?.profileImage} user={user} />안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
+            <MyProfileIcon profileImage={user?.profileImage} user={user} />
+            안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
           </span>
           <span className="today">{currentDate}</span>
         </div>
