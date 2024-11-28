@@ -139,11 +139,13 @@ export const Calendar = () => {
     // 모달을 닫는 함수
     const handleModalClose = () => {
         setModalIsOpen(false);
+        setIsHoliday(false);
         //setIsEventAdded(true);
     };
 
     // 빈 날짜를 클릭할 때 발동하는 함수
     const handleDateSelect = async (info) => { // 선택한 날짜의 정보를 받을 수 있다.
+        setIsHoliday(false);
         setIsInserting(true); // 인설트 중인지 수정 중인지를 확인하는 상태 변수. true면 인설트 중.
         // 시분이 붙은 날짜 정보 처리 로직
         let allDay;
