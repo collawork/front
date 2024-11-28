@@ -30,27 +30,24 @@ function Register() {
         if (!formData.email || !formData.emailDomain) {
             setErrors(prev => ({ ...prev, email: '이메일을 입력해주세요' }));
             setValidations(prev => ({ ...prev, email: false }));
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(`${formData.email}@${formData.emailDomain}`)) {
-            setErrors(prev => ({ ...prev, email: '유효한 이메일 형식이 아닙니다' }));
-            setValidations(prev => ({ ...prev, email: false }));
         } else {
+            const emailToCheck = `${formData.email}@${formData.emailDomain}`;
             try {
-                await authService.checkDuplicates(null, `${formData.email}@${formData.emailDomain}`, null);
+                await authService.checkDuplicates(null, emailToCheck, null);
                 setErrors(prev => ({ ...prev, email: '' }));
                 setValidations(prev => ({ ...prev, email: true }));
             } catch (error) {
-                setErrors(prev => ({ ...prev, email: '이메일이 이미 존재합니다' }));
+                console.error("이메일 중복 확인 에러:", error);
+                setErrors(prev => ({ ...prev, email: '이 이메일은 이미 사용 중입니다.' }));
                 setValidations(prev => ({ ...prev, email: false }));
             }
         }
     }, [formData.email, formData.emailDomain]);
+    
 
     const validatePhone = useCallback(async () => {
         if (!formData.phone) {
             setErrors(prev => ({ ...prev, phone: '핸드폰 번호를 입력해주세요' }));
-            setValidations(prev => ({ ...prev, phone: false }));
-        } else if (formData.phone.length !== 11) {
-            setErrors(prev => ({ ...prev, phone: '핸드폰 번호는 11자리여야 합니다.' }));
             setValidations(prev => ({ ...prev, phone: false }));
         } else {
             try {
@@ -58,11 +55,13 @@ function Register() {
                 setErrors(prev => ({ ...prev, phone: '' }));
                 setValidations(prev => ({ ...prev, phone: true }));
             } catch (error) {
-                setErrors(prev => ({ ...prev, phone: '핸드폰 번호가 이미 존재합니다' }));
+                console.error("핸드폰 번호 중복 확인 에러:", error);
+                setErrors(prev => ({ ...prev, phone: '이 핸드폰 번호는 이미 사용 중입니다.' }));
                 setValidations(prev => ({ ...prev, phone: false }));
             }
         }
     }, [formData.phone]);
+    
 
     useEffect(() => {
         if (formData.username) validateUsername();

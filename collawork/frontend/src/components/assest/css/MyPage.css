@@ -1,10 +1,8 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden; /* 스크롤 제거 */
     width: 100%;
     height: 100%;
-    font-family: Arial, sans-serif;
 }
 
 @font-face {
@@ -14,60 +12,33 @@ html, body {
     font-style: normal;
 }
 
-/* 전체 컨테이너 */
-.mypage-container {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
-    grid-template-rows: 0.7fr 0.7fr;
-    gap: 15px;
-    width: 90%;
-    margin: 0 auto;
-    padding: 10px;
-    position: relative;
-    z-index: 1;
-}
-
-/* 채팅 목록 섹션 */
-.mypage-section {
-
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-
-/* 헤더 */
+/* 헤더 스타일 */
 .mypage-header {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* 헤더의 요소를 양쪽 끝에 배치 */
+    justify-content: space-between;
     width: 90%;
-    margin: 15px auto; /* 상단 간격 감소 */
+    margin: 15px auto;
     font-size: 1rem;
     font-weight: 500;
 }
 
 .mypage-header-content {
     display: flex;
-    flex-direction: column; /* 세로로 정렬 */
-    align-items: flex-start; /* 왼쪽 정렬 */
+    flex-direction: column;
+    align-items: flex-start;
     gap: 5px;
 }
 
 .hi-user-name {
-    font-size: 1.3rem; /* 크기 줄임 */
+    font-size: 1.3rem;
     font-weight: bold;
     color: #333;
     font-family: 'MinSans-Regular';
 }
 
 .today {
-    font-size: 0.9rem; /* 텍스트 크기 축소 */
+    font-size: 0.9rem;
     color: #555;
 }
 
@@ -82,18 +53,17 @@ html, body {
     background: transparent;
 }
 
-/* 프로필 아이콘과 날씨 정보 컨테이너 */
+/* 날씨 아이콘 */
 .profile-weather-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* 프로필 아이콘과 날씨 정보 간격 */
+    gap: 10px;
     margin-top: 10px;
     margin-right: 100px;
 }
 
-/* 날씨 정보 */
 .weather-summary {
-    font-size: 0.9rem; /* 텍스트 크기 줄임 */
+    font-size: 0.9rem;
     gap: 8px;
 }
 
@@ -109,58 +79,67 @@ html, body {
     object-fit: cover;
 }
 
+/* 전체 컨테이너 */
+.mypage-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3등분 */
+    grid-template-rows: repeat(2, 1fr);   /* 2줄 */
+    gap: 15px;
+    width: 90%;
+    margin: 0 auto;
+    height: calc(100vh - 100px);
+}
+
+/* 섹션 스타일 */
+.mypage-section {
+    position: relative;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    transition: transform 0.2s ease-in-out;
+}
+
 /* 캘린더 섹션 */
 .mypage-calendar-section {
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 2;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px; /* 내부 여백 감소 */
+    grid-column: span 3; /* 캘린더는 전체 폭 차지 */
+    grid-row: span 2;    /* 2줄 모두 차지 */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
-/* 프로젝트 섹션 */
-.mypage-project-section {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 1;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.mypage-calendar-section .fc {
+    width: 100%;
+    height: 100%;
 }
 
-/* 알림 섹션 */
-.mypage-notification-section {
-    grid-column: 3 / span 1;
-    grid-row: 1 / span 1;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.dragging {
+    transform: scale(1.02);
+    z-index: 10;
 }
 
-/* 친구 목록 섹션 */
-.mypage-friend-section {
-    grid-column: 2 / span 1;
-    grid-row: 2 / span 1;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* 드래그 핸들 (우측 상단 고정) */
+.section-header {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.drag-handle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: grab;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.drag-handle:hover {
+    color: #000;
 }
