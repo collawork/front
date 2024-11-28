@@ -1,7 +1,7 @@
 .profile-icon-container {
     display: inline-block;
     position: relative;
-    margin-left: 50%;
+    margin-right: 5px;
     cursor: pointer;
     vertical-align: middle;
 }
@@ -10,7 +10,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    border: 2px solid #e0f1e933;
+    border: 2px solid #ddd;
     object-fit: cover;
 }
 

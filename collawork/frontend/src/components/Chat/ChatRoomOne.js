@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
 
 
-const ChatRoomOne = () => {
-    const { chatRoomId } = useParams();
+
+const ChatRoomOne = ({chatRoomId}) => {
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [fileInput, setFileInput] = useState(null);
+
     const [webSocket, setWebSocket] = useState(null);
     const [senderId, setSenderId] = useState('');
     const [username, setUsername] = useState('');
@@ -20,8 +21,13 @@ const ChatRoomOne = () => {
     const navigate = useNavigate();
     const chatWindowRef = useRef(null);
 
-   
-  
+    const [isModalOpen, setIsModalOpen] = useState(true);
+
+    const handleClose = () => {
+        setIsModalOpen(false);
+        console.log("Modal 닫기 or 메인으로 돌아가기");
+      };
+
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
@@ -318,7 +324,7 @@ const ChatRoomOne = () => {
                 <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
                 <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
                 {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
-                <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
+                <button className="back-to-main-button" onClick={handleClose}>메인으로 돌아가기</button>
             </div>
         </div>
     );

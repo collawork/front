@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { projectStore } from "../../store";
-import axios from "axios";
-import { useUser } from '../../context/UserContext';
+import React, { useState, useEffect, useRef } from "react";
+import '../../components/assest/css/projectBox.css';
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -14,10 +13,12 @@ const ProgressBar = () => {
 
   // Fetch initial percentage value when projectData.id changes
   useEffect(() => {
-    if (projectData.id) {
-      findPercentage(); // Fetch percentage whenever projectData.id changes
-    }
-  }, [projectData.id]); // Dependency on projectData.id
+    const conWidth = box.current.getBoundingClientRect().width;
+    setCon(conWidth);
+    
+    const circleWidth = circle.current.getBoundingClientRect().width;
+    setCir(circleWidth);
+  }, []);
 
   // 프로젝트 진행률 조회
   function findPercentage() {

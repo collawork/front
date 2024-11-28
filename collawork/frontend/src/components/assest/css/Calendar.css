@@ -13,12 +13,24 @@
 
     --fc-button-bg-color: ;
     --fc-button-border-color: ;
-    --fc-button-hover-bg-color: ;
+    --fc-button-hover-bg-color: #f0f0f0;
     --fc-button-hover-border-color: ;
     --fc-button-active-bg-color: ;
     --fc-button-active-border-color: ;
     /* --fc-highlight-color: ;
     --fc-today-bg-color: ; */
+}
+
+.fc-button-group button{
+    transition: all 0.3s ease;
+}
+
+.fc-today-button {
+    transition: all 0.3s ease;
+}
+
+.fc-view-button {
+    transition: all 0.3s ease;
 }
 
 /* .background-video {
@@ -35,7 +47,7 @@
 
 .fullCalendarContainer {
     /* FullCalendar을 감싸는 div에 클래스명 추가 */
-    width: 1000px;
+    width: 1022px;
     /* 원하는 너비로 설정 */
 }
 
