@@ -17,14 +17,14 @@ import Wind from "../components/assest/images/wind.png";
 const MyPage = () => {
   const defaultSections = [
     { id: "calendar", content: <MyCalendar />, size: "large" },
-    { id: "project", content: <ProjectList userId={1} />, size: "small" },
-    { id: "notifications", content: <NotificationList userId={1} />, size: "small" },
-    { id: "friends", content: <FriendList userId={1} />, size: "small" },
-    { id: "chat", content: <ChatList userId={1} />, size: "small" },
+    { id: "project", content: <ProjectList />, size: "small" },
+    { id: "notifications", content: <NotificationList />, size: "small" },
+    { id: "friends", content: <FriendList />, size: "small" },
+    { id: "chat", content: <ChatList />, size: "small" },
   ];
 
   const [sections, setSections] = useState(defaultSections);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(null); // 로그인된 사용자 ID
   const [user, setUser] = useState({ username: "" });
   const [currentDate, setCurrentDate] = useState("");
   const [weatherData, setWeatherData] = useState(null);
@@ -33,17 +33,11 @@ const MyPage = () => {
   const [sectionColor, setSectionColor] = useState("#ffffff");
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      localStorage.setItem("token", token);
-    }
-
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
+
       if (!token) {
-        console.error("토큰이 존재하지 않습니다. 로그인 후 다시 시도하세요.");
+        console.error("토큰이 없습니다. 로그인 후 다시 시도해주세요.");
         return;
       }
 
@@ -53,9 +47,16 @@ const MyPage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
         if (response.data) {
-          setUserId(response.data.id);
+          setUserId(response.data.id); // 사용자 ID 설정
           setUser({ username: response.data.username });
+          setSections((prevSections) =>
+            prevSections.map((section) => ({
+              ...section,
+              content: React.cloneElement(section.content, { userId: response.data.id }), // userId 전달
+            }))
+          );
         } else {
           console.error("서버로부터 사용자 정보를 가져오지 못했습니다.");
         }
@@ -142,7 +143,7 @@ const MyPage = () => {
       <div className="mypage-header">
         <div className="mypage-header-content">
           <span className="hi-user-name">
-          <MyProfileIcon profileImage={user?.profileImage} user={user} />안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
+            <MyProfileIcon profileImage={user?.profileImage} user={user} />안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
           </span>
           <span className="today">{currentDate}</span>
         </div>
@@ -188,7 +189,6 @@ const MyPage = () => {
               </div>
             </div>
           )}
-          
         </div>
       </div>
 
