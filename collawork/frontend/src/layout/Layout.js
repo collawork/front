@@ -152,9 +152,7 @@ const Layout = () => {
     return (
         <div className="layout-container">
             <WeatherBackground />
-            <button
-                onClick={moveToMypage}
-            >
+            <button onClick={moveToMypage}>
                 메인화면으로 이동
             </button>
             <Search currentUser={{ id: userId }} />
