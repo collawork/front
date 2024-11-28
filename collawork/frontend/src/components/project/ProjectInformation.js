@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faThumbtack,faCalendar,faFolder,faGear,faBell} from "@fortawesome/free-solid-svg-icons";
 import ProjectModify from "./ProjectModify";
 import '../../components/assest/css/ProjectInformation.css';
-import ProjectBox from './ProjectBox';
+// import ProjectBox from './ProjectBox';
 import { Color } from "three";
 
 const API_URL = process.env.REACT_APP_API_URL;

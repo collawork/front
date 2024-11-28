@@ -140,9 +140,9 @@ const FriendList = ({ userId }) => {
             />
 
             {isDetailModalOpen && selectedFriend && (
-                <div className="modal-overlay" onClick={closeDetailModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-button" onClick={closeDetailModal}>닫기</button>
+                <div className="modal-overlay-friendlist" onClick={closeDetailModal}>
+                    <div className="friend-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-button-friendCate" onClick={closeDetailModal}>닫기</button>
                         <UserDetail
                             type="user"
                             item={selectedFriend}

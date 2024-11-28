@@ -28,7 +28,7 @@
     cursor: pointer;
 }
 
-.modal-overlay {
+.modal-overlay-invite {
     position: fixed;
     top: 0;
     left: 0;
