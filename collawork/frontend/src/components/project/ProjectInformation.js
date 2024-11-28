@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useUser } from '../../context/UserContext';
 import axios from 'axios';
 import ReactModal from "react-modal";
@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faThumbtack,faCalendar,faFolder,faGear,faBell} from "@fortawesome/free-solid-svg-icons";
 import ProjectModify from "./ProjectModify";
 import '../../components/assest/css/ProjectInformation.css';
-// import ProjectBox from './ProjectBox';
+import ProjectBox from './ProjectBox';
 import { Color } from "three";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -241,76 +241,74 @@ const ProjectInformation = () => {
                 <FontAwesomeIcon icon={faGear} />
               </button>
             </div>
+            <div className="projectBar">
+              <ProjectBox userId={userId} createdBy={projectData.createdBy} />
+            </div>
   
             {/* 기존의 일정 및 공지사항 섹션 */}
-            {calendarList.length > 0 ? (
-              <ul className="list">
-                {calendarList.map((calendarItem, index) => (
-                  <li key={index} className="list-item">
+            <div className="list-container">
+              {calendarList.length > 0 ? (
+                <ul className="list">
+                  {calendarList.map((calendarItem, index) => (
+                    <li key={index} className="list-item">
+                      <div className="icon-container">
+                        <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                        <FontAwesomeIcon icon={faCalendar} className="icon" />
+                      </div>
+                      <div className="list-content" onClick={calendatHandler}>
+                        <h3>{calendarItem.title}</h3>
+                        <p>
+                          {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
+                          {new Date(calendarItem.end_time).toLocaleString()}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <ul className="list">
+                  <li className="list-item">
                     <div className="icon-container">
                       <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
                       <FontAwesomeIcon icon={faCalendar} className="icon" />
                     </div>
                     <div className="list-content" onClick={calendatHandler}>
-                      <h3>{calendarItem.title}</h3>
-                      <p>
-                        {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
-                        {new Date(calendarItem.end_time).toLocaleString()}
-                      </p>
+                      <h3>다가오는 일정이 없습니다.</h3>
                     </div>
                   </li>
-                ))}
-              </ul>
-            ) : (
-              <ul className="list">
-                <li className="list-item">
-                  <div className="icon-container">
-                    <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
-                    <FontAwesomeIcon icon={faCalendar} className="icon" />
-                  </div>
-                  <div className="list-content" onClick={calendatHandler}>
-                    <h3>다가오는 일정이 없습니다.</h3>
-                  </div>
-                </li>
-              </ul>
-            )}
+                </ul>
+              )}
   
-            {noticesList.length > 0 ? (
-              <ul className="list">
-                {noticesList.map((list, index) => (
-                  <li key={index} className="list-item">
+              {noticesList.length > 0 ? (
+                <ul className="list">
+                  {noticesList.map((list, index) => (
+                    <li key={index} className="list-item">
+                      <div className="icon-container">
+                        <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+                        <FontAwesomeIcon icon={faBell} className="icon" />
+                      </div>
+                      <div className="list-content" onClick={noticesHandler}>
+                        <h3>{list.title}</h3>
+                        <p>{new Date(list.createdAt).toLocaleString()}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <ul className="list">
+                  <li className="list-item">
                     <div className="icon-container">
                       <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
                       <FontAwesomeIcon icon={faBell} className="icon" />
                     </div>
                     <div className="list-content" onClick={noticesHandler}>
-                      <h3>{list.title}</h3>
-                      <p>{new Date(list.createdAt).toLocaleString()}</p>
+                      <h3>주요 공지사항이 없습니다.</h3>
                     </div>
                   </li>
-                ))}
-              </ul>
-            ) : (
-              <ul className="list">
-                <li className="list-item">
-                  <div className="icon-container">
-                    <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
-                    <FontAwesomeIcon icon={faBell} className="icon" />
-                  </div>
-                  <div className="list-content" onClick={noticesHandler}>
-                    <h3>주요 공지사항이 없습니다.</h3>
-                  </div>
-                </li>
-              </ul>
-            )}
-  
-  
-            {/* 새로운 슬라이더 기능 추가 */}
-            {/* <div className="slider-section">
-              <h3>프로젝트 진행률</h3>
-              <ProjectBox />
+                </ul>
+              )}
             </div>
-   */}
+  
             {modify && (
               <ProjectModify
                 setModify={(value) => {
@@ -318,107 +316,32 @@ const ProjectInformation = () => {
                 }}
               />
             )}
-             <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                    position: "relative",
-                  }}
-                >
-            
-              <img
-              src={userData?.profileImageUrl || defaultImage}
-              alt={`${userData?.username || "사용자"}의 프로필 이미지`}
-              onClick={() => setModal(!modal)}
-              className="profile-image-small"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                marginRight: "10px",
-                cursor: "pointer",
-              }}
-            />
-            관리자 : <h3>{userData?.username || "정보 없음"}</h3>
-            <button onClick={managerModifyHandler}>관리자 변경</button>
-            </div>
-            <ReactModal
-              isOpen={managerModalOpen}
-              onRequestClose={() => setManagerModalOpen(false)}
-              contentLabel="managerModify"
-              appElement={document.getElementById("root")}
-              style={{
-                content: {
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "300px",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  border: "1px solid #ccc",
-                },
-                overlay: {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-               <p>이름: {userData?.username || '정보 없음'}</p>
-            <p>이메일: {userData?.email || '정보 없음'}</p>
-            <p>회사명: {userData?.company || '정보 없음'}</p>
-            <p>직급: {userData?.position || '정보 없음'}</p>
-            <p>핸드폰 번호: {userData?.phone || '정보 없음'}</p>
-            <p>fax: {userData?.fax || '정보 없음'}</p>
-
-            </ReactModal>
-            <ReactModal
-              isOpen={managerModalOpen}
-              onRequestClose={() => setManagerModalOpen(false)}
-              contentLabel="managerModify"
-              appElement={document.getElementById("root")}
-              style={{
-                content: {
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "300px",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  border: "1px solid #ccc",
-                },
-                overlay: {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <ul>
-                <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
-                {participant.map((part) => (
-                  <li key={part.email}>
-                    <input
-                      type="radio"
-                      id={`participant-${part.email}`}
-                      name="adminParticipant"
-                      value={part.email}
-                      onChange={(e) => changeHandler(e)}
-                    />
-                    <label htmlFor={`participant-${part.email}`}>
-                      {part.id} {part.name} - {part.email}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-              <button onClick={onSubmitHandler}>변경하기</button>
-              <button onClick={() => setManagerModalOpen(false)}>취소</button>
-            </ReactModal>
   
-            {/* ReactModal 코드 생략 */}
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", position: "relative" }}>
+              <img
+                src={userData?.profileImageUrl || defaultImage}
+                alt={`${userData?.username || "사용자"}의 프로필 이미지`}
+                onClick={() => setModal(!modal)}
+                className="profile-image-small"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+              />
+              관리자 : <h3>{userData?.username || "정보 없음"}</h3>
+              <button onClick={managerModifyHandler}>관리자 변경</button>
+            </div>
           </div>
-          <h6>{projectData?.createdAt}</h6>
+          <h5 className="created-at">{projectData?.createdAt}</h5>
         </div>
       )}
     </>
   );
+  
+
   
 }
   

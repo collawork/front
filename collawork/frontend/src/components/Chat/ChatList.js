@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import ModalPage from './ModalPage'; 
+import ChatRoomOne from './ChatRoomOne'; 
 
 const ChatList = ({ userId }) => {
   const [chatList, setChatList] = useState([]);
   const [errorMessage, setErrorMessage] = useState(""); 
-  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [currentChatRoomId, setCurrentChatRoomId] = useState(null); 
 
-  
+
   const fetchChat = async () => {
     if (!userId) {
       console.warn("fetchChat 실행 중단 - userId가 유효하지 않습니다.");
@@ -31,7 +33,6 @@ const ChatList = ({ userId }) => {
       );
 
       if (response.status === 204 || response.data.length === 0) {
-       
         setErrorMessage("참여 중인 채팅방이 없습니다.");
         setChatList([]);
       } else {
@@ -45,6 +46,16 @@ const ChatList = ({ userId }) => {
     }
   };
 
+  const openModal = (chatRoomId) => {
+    setCurrentChatRoomId(chatRoomId); 
+    setIsModalOpen(true); 
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); 
+    setCurrentChatRoomId(null);
+  };
+
   useEffect(() => {
     fetchChat();
   }, [userId]);
@@ -56,16 +67,24 @@ const ChatList = ({ userId }) => {
         <p>{errorMessage}</p>
       ) : (
         <div>
-          {chatList.length > 0 ? ( 
+          {chatList.length > 0 ? (
             chatList.map((chatRoom) => (
-              <p key={chatRoom.id}onClick={() => navigate(`/chattingServer/${chatRoom.id}`)}>
+              <p
+                key={chatRoom.id}
+                onClick={() => openModal(chatRoom.id)} // 채팅방 클릭 시 모달 열기
+              >
                 {chatRoom.roomName}
               </p>
             ))
           ) : (
-            <p>참여 중인 채팅방이 없습니다.</p> 
+            <p>참여 중인 채팅방이 없습니다.</p>
           )}
         </div>
+      )}
+      {isModalOpen && (
+        <ModalPage onClose={closeModal}>
+          <ChatRoomOne chatRoomId={currentChatRoomId} />
+        </ModalPage>
       )}
     </div>
   );
