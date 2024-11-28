@@ -1,6 +1,6 @@
 /* 모달 배경 (ReactModal 기본 클래스 스타일링) */
 .ReactModal__Overlay {
-    background-color: rgba(0, 0, 0, 0.7); /* 배경 어둡게 */
+    background: var(--background);
     display: flex; /* flex를 사용하여 중앙 정렬 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
@@ -20,7 +20,7 @@
     background: #ffffff; /* 모달 배경 */
     border-radius: 10px; /* 둥근 모서리 */
     padding: 20px; /* 내부 여백 */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     outline: none; /* 포커스 시 외곽선 제거 */
     position: relative; /* 부모 요소 기준 위치 */
 }
@@ -123,5 +123,5 @@ form button:last-child:hover {
     cursor: pointer;
     object-fit: cover;
     border: 2px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }

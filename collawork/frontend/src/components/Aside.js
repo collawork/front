@@ -374,7 +374,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                         padding: '20px',
                     },
                     overlay: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
                     }
                 }}
             >
