@@ -270,6 +270,7 @@ export const MyCalendar = () => {
                 plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, googleCalendarPlugin]}
                 key={currentView}
                 initialView={currentView} // 현재 뷰
+                contentHeight= {400}
                 weekends={true} // 토일 표시
                 editable={true} // 스케쥴 수정 가능 여부
                 selectable={true} // 달력 조작 가능 여부

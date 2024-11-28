@@ -7,7 +7,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 /* 채팅창 제목 */
@@ -118,7 +118,7 @@
     border: 1px solid #ddd;
     list-style: none;
     padding: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     color: #2f3136;
 }

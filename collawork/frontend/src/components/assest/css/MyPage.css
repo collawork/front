@@ -31,7 +31,7 @@ html, body {
 .mypage-section {
 
     background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px;
     display: flex;
@@ -114,7 +114,7 @@ html, body {
     grid-column: 1 / span 1;
     grid-row: 1 / span 2;
     background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px; /* 내부 여백 감소 */
     display: flex;
@@ -128,7 +128,7 @@ html, body {
     grid-column: 2 / span 1;
     grid-row: 1 / span 1;
     background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px;
     display: flex;
@@ -142,7 +142,7 @@ html, body {
     grid-column: 3 / span 1;
     grid-row: 1 / span 1;
     background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px;
     display: flex;
@@ -156,7 +156,7 @@ html, body {
     grid-column: 2 / span 1;
     grid-row: 2 / span 1;
     background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px;
     display: flex;
