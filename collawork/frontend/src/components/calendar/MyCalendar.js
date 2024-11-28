@@ -274,6 +274,7 @@ export const MyCalendar = () => {
                 weekends={true} // 토일 표시
                 editable={true} // 스케쥴 수정 가능 여부
                 selectable={true} // 달력 조작 가능 여부
+                contentHeight = {425}
                 droppable={true}
                 select={handleDateSelect} // 빈 날짜 클릭 시
                 eventClick={handleEventClick} // 스케쥴 클릭 시
