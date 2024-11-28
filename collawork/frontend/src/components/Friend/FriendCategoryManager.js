@@ -227,12 +227,7 @@ const FriendCategoryManager = ({ userId, onClose }) => {
             alert("카테고리 삭제 중 문제가 발생했습니다. 다시 시도해주세요.");
         }
     };
-    
-    const paginate = (items, page) => {
-        const startIndex = (page - 1) * pageSize;
-        return items.slice(startIndex, startIndex + pageSize);
-    };
-    
+        
     const handleFriendSelection = (friendId) => {
         setSelectedFriends((prev) =>
             prev.includes(friendId)

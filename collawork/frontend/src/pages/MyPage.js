@@ -15,10 +15,39 @@ import Weather from "../components/assest/images/weather.png";
 import Wind from "../components/assest/images/wind.png";
 
 const MyPage = () => {
+
+    const fetchProjectList = () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("토큰이 없습니다. API 호출을 중단합니다.");
+            return;
+        }
+    
+        axios.post(
+            `/api/user/projects/selectAll`,
+            { userId },
+            {
+                baseURL: process.env.REACT_APP_API_URL,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        )
+        .then((response) => {
+            if (Array.isArray(response.data)) {
+                setProjects(response.data);
+            }
+        })
+        .catch((error) => {
+            console.error("프로젝트 목록 조회 중 오류 발생:", error);
+        });
+    };
+
   const defaultSections = [
     { id: "calendar", content: <MyCalendar />, size: "large" },
-    { id: "project", content: <ProjectList />, size: "small" },
-    { id: "notifications", content: <NotificationList />, size: "small" },
+    { id: "project", content: <ProjectList fetchProjects={fetchProjectList}/>, size: "small" },
+    { id: "notifications", content: <NotificationList fetchProjectList={fetchProjectList} />, size: "small" },
     { id: "friends", content: <FriendList />, size: "small" },
     { id: "chat", content: <ChatList />, size: "small" },
   ];
@@ -49,6 +78,8 @@ const MyPage = () => {
   const [user, setUser] = useState({ username: "" });
   const [currentDate, setCurrentDate] = useState("");
   const [weatherData, setWeatherData] = useState(null);
+  const [greetingMessage, setGreetingMessage] = useState("안녕하세요!");
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -87,10 +118,30 @@ const MyPage = () => {
 
     const date = new Date();
     const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-    setCurrentDate(formattedDate); // 문자열로 설정
+    setCurrentDate(formattedDate);
 
-    loadPreferences();
+    setGreetingMessage(getGreetingMessage());
+
   }, []);
+
+  const getGreetingMessage = () => {
+    const now = new Date();
+    const hours = now.getHours();
+
+    if (hours >= 6 && hours < 12) {
+      return "좋은 아침이에요! 👋";
+    } else if (hours >= 12 && hours < 14) {
+      return "점심식사 맛있게 하세요! 🍙";
+    } else if (hours >= 14 && hours < 18) {
+      return "오후에도 힘내보아요! 💪";
+    } else if (hours >= 18 && hours < 20) {
+      return "저녁식사 맛있게 하세요! 🍖";
+    } else if (hours >= 20 && hours < 24) {
+      return "오늘도 고생하셨어요! 🥂";
+    } else {
+      return "새벽 공기가 쌀쌀하네요! 🌙";
+    }
+  };
 
   const savePreferences = (updatedSections = sections, opacity = globalOpacity, color = sectionColor) => {
     const simplifiedSections = updatedSections.map((section) => ({
@@ -105,32 +156,6 @@ const MyPage = () => {
     };
 
     localStorage.setItem("mypagePreferences", JSON.stringify(preferences));
-  };
-
-  const loadPreferences = () => {
-    try {
-      const savedData = JSON.parse(localStorage.getItem("mypagePreferences"));
-      if (savedData) {
-        const restoredSections = savedData.sections.map((savedSection) => {
-          const originalSection = defaultSections.find(
-            (section) => section.id === savedSection.id
-          );
-          return {
-            ...originalSection,
-            size: savedSection.size,
-          };
-        });
-
-        setSections(restoredSections);
-        setGlobalOpacity(savedData.opacity || 1);
-        setSectionColor(savedData.color || "#ffffff");
-      } else {
-        setSections(defaultSections);
-      }
-    } catch (error) {
-      console.error("설정을 로드하는 중 오류 발생:", error);
-      setSections(defaultSections);
-    }
   };
 
   const onDragEnd = (result) => {
@@ -164,7 +189,7 @@ const MyPage = () => {
         <div className="mypage-header-content">
           <span className="hi-user-name">
             <MyProfileIcon profileImage={user?.profileImage} user={user} />
-            안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
+            안녕하세요 {user.username || "사용자"}님, {greetingMessage}
           </span>
           <span className="today">{currentDate}</span>
         </div>
