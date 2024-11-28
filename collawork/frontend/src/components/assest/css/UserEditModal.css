@@ -1,3 +1,8 @@
+/* :root {
+    --box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    --background: rgba(0, 0, 0, 0);
+} */
+
 /* 모달 배경 (ReactModal 기본 클래스 스타일링) */
 .ReactModal__Overlay {
     background: var(--background);
@@ -20,7 +25,7 @@
     background: #ffffff; /* 모달 배경 */
     border-radius: 10px; /* 둥근 모서리 */
     padding: 20px; /* 내부 여백 */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--background);
     outline: none; /* 포커스 시 외곽선 제거 */
     position: relative; /* 부모 요소 기준 위치 */
 }
