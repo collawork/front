@@ -66,7 +66,7 @@ export const Calendar = () => {
                     let start = krH[i].start.date;
                     let color = "#ffffff00";
                     let textColor = "red";
-                    
+
 
                     setKrHoliday((prev) => [...prev, { title: title, extendedProps: { description: description }, start: start, color: color, textColor: textColor }]);
                 };
@@ -300,6 +300,7 @@ export const Calendar = () => {
                 //style={customStyles}
                 contentLabel="insertOrUpdateModal"
                 className="calendar-modal"
+                overlayClassName="calendar-modal-overlay"
             >
                 <form onSubmit={isInserting ? insertEvent : updateSelectedEvent}>
                     제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' required disabled={isHoliday} />

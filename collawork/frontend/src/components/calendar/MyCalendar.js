@@ -66,7 +66,7 @@ export const MyCalendar = () => {
                     let start = krH[i].start.date;
                     let color = "#ffffff00";
                     let textColor = "red";
-                    
+
 
                     setKrHoliday((prev) => [...prev, { title: title, extendedProps: { description: description }, start: start, color: color, textColor: textColor }]);
                 };
@@ -148,7 +148,7 @@ export const MyCalendar = () => {
     const handleDateSelect = async (info) => { // 선택한 날짜의 정보를 받을 수 있다.
         setIsHoliday(false);
         setIsInserting(true); // 인설트 중인지 수정 중인지를 확인하는 상태 변수. true면 인설트 중.
-        
+
         // 시분이 붙은 날짜 정보 처리 로직
         let allDay;
         if (info.startStr.length < 11) {
@@ -273,7 +273,7 @@ export const MyCalendar = () => {
                 weekends={true} // 토일 표시
                 editable={true} // 스케쥴 수정 가능 여부
                 selectable={true} // 달력 조작 가능 여부
-                contentHeight = {425}
+                contentHeight={425}
                 droppable={true}
                 select={handleDateSelect} // 빈 날짜 클릭 시
                 eventClick={handleEventClick} // 스케쥴 클릭 시
@@ -303,6 +303,7 @@ export const MyCalendar = () => {
                 //style={customStyles}
                 contentLabel="insertOrUpdateModal"
                 className="calendar-modal"
+                overlayClassName="calendar-modal-overlay"
             >
                 <form onSubmit={isInserting ? insertEvent : updateSelectedEvent}>
                     제목 : <input type='text' name='title' onChange={(e) => setTitle(e.target.value)} value={title} placeholder='일정의 제목을 입력해 주세요.' required disabled={isHoliday} />
