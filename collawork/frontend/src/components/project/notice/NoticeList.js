@@ -5,8 +5,9 @@ import NoticeCreateModal from "./CreateNotice";
 import { useUser } from "../../../context/UserContext";
 import "../../../components/assest/css/NoticeList.css";
 import Pagination from "../../Pagination";
+import { projectStore } from "../../../store";
 
-const NoticeList = ({ projectId }) => {
+const NoticeList = () => {
     const [notices, setNotices] = useState([]);
     const [userRole, setUserRole] = useState("");
     const [selectedNotice, setSelectedNotice] = useState(null);
@@ -16,13 +17,14 @@ const NoticeList = ({ projectId }) => {
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [pageSize] = useState(7); // 한 페이지당 항목 수
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
+    const { projectData } = projectStore();
 
     const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         fetchNotices();
         fetchUserRole();
-    }, [projectId]);
+    }, [projectData.id]);
 
     const fetchNotices = async () => {
         const token = localStorage.getItem("token");
@@ -32,7 +34,7 @@ const NoticeList = ({ projectId }) => {
         }
 
         try {
-            const response = await axios.get(`${API_URL}/api/projects/${projectId}/notices`, {
+            const response = await axios.get(`${API_URL}/api/projects/${projectData.id}/notices`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -54,7 +56,7 @@ const NoticeList = ({ projectId }) => {
     );
 
     const fetchUserRole = async () => {
-        if (!projectId) return;
+        if (!projectData.id) return;
 
         const token = localStorage.getItem("token");
         if (!token) {
@@ -63,7 +65,7 @@ const NoticeList = ({ projectId }) => {
         }
 
         try {
-            const response = await axios.get(`${API_URL}/api/user/projects/${projectId}/role`, {
+            const response = await axios.get(`${API_URL}/api/user/projects/${projectData.id}/role`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { userId },
             });
@@ -147,7 +149,7 @@ const NoticeList = ({ projectId }) => {
                 <NoticeDetailModal
                     isOpen={isDetailModalOpen}
                     onClose={closeDetailModal}
-                    projectId={projectId}
+                    projectId={projectData.id}
                     noticeId={selectedNotice}
                     onNoticeUpdated={handleNoticeUpdated}
                 />
@@ -156,7 +158,7 @@ const NoticeList = ({ projectId }) => {
                 <NoticeCreateModal
                     isOpen={isCreateModalOpen}
                     onClose={closeCreateModal}
-                    projectId={projectId}
+                    projectId={projectData.id}
                     onNoticeCreated={handleNoticeCreated}
                 />
             )}
