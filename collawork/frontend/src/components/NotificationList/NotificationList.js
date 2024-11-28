@@ -9,7 +9,7 @@ import AccecptProject from '../../components/assest/images/accept-file-or-checkl
 import Declined from '../../components/assest/images/declined.png';
 
 
-const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
+const NotificationList = ({ userId, fetchFriends, onInvitationChange, fetchProjects  }) => {
     const [notifications, setNotifications] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [pageSize] = useState(2); // 한 페이지당 표시할 알림 수
@@ -193,6 +193,10 @@ const NotificationList = ({ userId, fetchFriends, onInvitationChange }) => {
             // 초대 목록 새로고침
             if (onInvitationChange) {
                 onInvitationChange();
+            }
+
+            if (fetchProjects && action === "accept") {
+                fetchProjects();
             }
         } catch (error) {
             console.error("프로젝트 초대 응답 처리 중 오류 발생:", error);
