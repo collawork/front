@@ -15,17 +15,22 @@ import Weather from "../components/assest/images/weather.png";
 import Wind from "../components/assest/images/wind.png";
 
 const MyPage = () => {
-  const [sections, setSections] = useState([
+  const defaultSections = [
     { id: "calendar", content: <MyCalendar />, size: "large" },
     { id: "project", content: <ProjectList userId={1} />, size: "small" },
     { id: "notifications", content: <NotificationList userId={1} />, size: "small" },
     { id: "friends", content: <FriendList userId={1} />, size: "small" },
     { id: "chat", content: <ChatList userId={1} />, size: "small" },
-  ]);
+  ];
+
+  const [sections, setSections] = useState(defaultSections);
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({ username: "" });
   const [currentDate, setCurrentDate] = useState("");
   const [weatherData, setWeatherData] = useState(null);
+
+  const [globalOpacity, setGlobalOpacity] = useState(1);
+  const [sectionColor, setSectionColor] = useState("#ffffff");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -64,7 +69,50 @@ const MyPage = () => {
     const date = new Date();
     const formattedDate = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
     setCurrentDate(formattedDate);
+
+    loadPreferences(); // 로컬스토리지에서 설정 불러오기
   }, []);
+
+  const savePreferences = () => {
+    const simplifiedSections = sections.map((section) => ({
+      id: section.id,
+      size: section.size,
+    }));
+
+    const preferences = {
+      sections: simplifiedSections,
+      opacity: globalOpacity,
+      color: sectionColor,
+    };
+
+    localStorage.setItem("mypagePreferences", JSON.stringify(preferences));
+  };
+
+  const loadPreferences = () => {
+    try {
+      const savedData = JSON.parse(localStorage.getItem("mypagePreferences"));
+      if (savedData) {
+        const restoredSections = savedData.sections.map((savedSection) => {
+          const originalSection = defaultSections.find(
+            (section) => section.id === savedSection.id
+          );
+          return {
+            ...originalSection,
+            size: savedSection.size,
+          };
+        });
+
+        setSections(restoredSections);
+        setGlobalOpacity(savedData.opacity || 1);
+        setSectionColor(savedData.color || "#ffffff");
+      } else {
+        setSections(defaultSections);
+      }
+    } catch (error) {
+      console.error("설정을 로드하는 중 오류 발생:", error);
+      setSections(defaultSections);
+    }
+  };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -76,6 +124,17 @@ const MyPage = () => {
     reorderedSections.splice(destination.index, 0, movedSection);
 
     setSections(reorderedSections);
+    savePreferences(); // 드래그 후 설정 저장
+  };
+
+  const handleOpacityChange = (e) => {
+    setGlobalOpacity(parseFloat(e.target.value));
+    savePreferences(); // 투명도 변경 후 설정 저장
+  };
+
+  const handleColorChange = (e) => {
+    setSectionColor(e.target.value);
+    savePreferences(); // 배경색 변경 후 설정 저장
   };
 
   return (
@@ -83,7 +142,7 @@ const MyPage = () => {
       <div className="mypage-header">
         <div className="mypage-header-content">
           <span className="hi-user-name">
-            안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
+          <MyProfileIcon profileImage={user?.profileImage} user={user} />안녕하세요 {user.username || "사용자"}님, 좋은 아침이에요!
           </span>
           <span className="today">{currentDate}</span>
         </div>
@@ -91,6 +150,27 @@ const MyPage = () => {
           <Search />
         </div>
         <div className="profile-weather-container">
+          <div className="opacity-control">
+            <label htmlFor="opacity-slider">투명도</label>
+            <input
+              type="range"
+              id="opacity-slider"
+              min="0.1"
+              max="1"
+              step="0.1"
+              value={globalOpacity}
+              onChange={handleOpacityChange}
+            />
+          </div>
+          <div className="color-control">
+            <label htmlFor="color-picker">색상</label>
+            <input
+              type="color"
+              id="color-picker"
+              value={sectionColor}
+              onChange={handleColorChange}
+            />
+          </div>
           <WeatherBackground setWeatherData={setWeatherData} />
           {weatherData && (
             <div className="weather-summary">
@@ -108,7 +188,7 @@ const MyPage = () => {
               </div>
             </div>
           )}
-          <MyProfileIcon profileImage={user?.profileImage} user={user} />
+          
         </div>
       </div>
 
@@ -124,16 +204,27 @@ const MyPage = () => {
                 <Draggable key={section.id} draggableId={section.id} index={index}>
                   {(provided) => (
                     <div
-                      className={`mypage-section ${
-                        section.size === "large" ? "large-section" : "small-section"
-                      }`}
                       ref={provided.innerRef}
                       {...provided.draggableProps}
+                      className="mypage-section-wrapper"
                     >
-                      <div className="drag-handle" {...provided.dragHandleProps}>
-                        ≡
+                      <div
+                        className="mypage-section-background"
+                        style={{
+                          backgroundColor: sectionColor,
+                          opacity: globalOpacity,
+                        }}
+                      ></div>
+                      <div
+                        className={`mypage-section ${
+                          section.size === "large" ? "large-section" : "small-section"
+                        }`}
+                      >
+                        <div className="drag-handle" {...provided.dragHandleProps}>
+                          ≡
+                        </div>
+                        {section.content}
                       </div>
-                      {section.content}
                     </div>
                   )}
                 </Draggable>
