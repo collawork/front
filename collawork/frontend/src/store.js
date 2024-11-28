@@ -13,6 +13,7 @@ export const projectStore = create((set, get)=> ({
     voteList:[], // 입력받은 투표 항목 배열
     listState:'',
     projectInformationState:'',
+    votingData:'',
 
     PlusProjectName: (value) => {
         set({projectName: value})
@@ -48,6 +49,10 @@ export const projectStore = create((set, get)=> ({
 
     PlusprojectInformationState: (value) => {
         set({projectInformationState:value})
+    },
+
+    PlusVotingData: (value) => {
+        set({votingData:value})
     }
 
 }))
