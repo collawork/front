@@ -214,24 +214,6 @@ useEffect(() => {
         }
       };
 
-
-
-    // // 투표하기! 를 누른 후 handlerSubmit
-    // const handleSubmit = (e, voteId) => {
-    //     e.preventDefault();
-
-    //      // 투표를 한 사용자가 다시 투표하기 버튼을 누른다면
-       
-    //     console.log('투표한 vote.id:', voteId); // 투표하기를 누른 voteId
-    //     console.log("선택 option:", state); // 투표할 항목인 contentsId
-    //     userVote(voteId); // 투표 항목 저장
-
-    //     localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: state }));
-
-    //     handler(voteId); 
-    //     // optionSend(voteId); // 다른 유저들의 투표정보들 까지도 불러옴
-    //     alert("투표가 완료되었습니다!");
-    // };
     
     const modalHandler = () => {
         console.log("새 투표 버튼 누름");
