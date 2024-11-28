@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { projectStore } from "../../store";
 import axios from "axios";
-import { useUser } from '../../context/UserContext';
-
+import { useUser } from "../../context/UserContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProgressBar = () => {
-  const [percentage, setPercentage] = useState(0); // Default percentage
-  const [isEditing, setIsEditing] = useState(false); // Track editing state
+  const [percentage, setPercentage] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
   const { projectData } = projectStore();
   const { userId } = useUser();
-  const [percent, setPercent] = useState(0); // Initialize percent state with 0
 
-  // Fetch initial percentage value when projectData.id changes
   useEffect(() => {
     if (projectData.id) {
-      findPercentage(); // Fetch percentage whenever projectData.id changes
+      findPercentage();
     }
-  }, [projectData.id]); // Dependency on projectData.id
+  }, [projectData.id]);
 
-  // 프로젝트 진행률 조회
+
   function findPercentage() {
-    console.log("진행률 조회:: " + projectData.id);
     const token = localStorage.getItem("token");
     axios({
       url: `${API_URL}/api/user/projects/findPercentage`,
@@ -32,15 +30,12 @@ const ProgressBar = () => {
       baseURL: "http://localhost:8080",
     })
       .then((response) => {
-        const newPercent = response.data.percent || 0; // Fallback to 0 if percent is null
-        setPercent(newPercent); // Set percent state
-        setPercentage(newPercent); // Update percentage state
-        console.log("Percentage from DB: ", newPercent);
+        const newPercent = response.data.percent || 0;
+        setPercentage(newPercent);
       })
-      .catch((err) => console.error("프로젝트 진행률 조회 중 오류:", err));
+      .catch((err) => console.error("투표 진행률 조회 중 error:", err));
   }
 
-  // Save progress changes to the database
   function saveChanges() {
     const token = localStorage.getItem("token");
     axios({
@@ -51,121 +46,167 @@ const ProgressBar = () => {
       baseURL: "http://localhost:8080",
     })
       .then(() => {
-        setIsEditing(false); // Exit editing mode
-        findPercentage(); // Refresh percentage from the database
-        alert("프로젝트 진행률이 저장되었습니다.!");
+        alert("프로젝트 진행률이 저장되었습니다 !");
+        setIsEditing(false);
       })
-      .catch((err) => console.error("프로젝트 진행률 업데이트 중 오류:", err));
+      .catch((err) => console.error("투표 진행률 저장 중 error:", err));
   }
 
-  const handleClick = (event) => {
-    if (!isEditing) return; // Ignore clicks if not in editing mode
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    const clickX = event.clientX - rect.left; // Get click position
-    const newPercentage = Math.round((clickX / rect.width) * 100); // Calculate percentage
-    setPercentage(newPercentage); // Temporarily update percentage locally
+ 
+  const handleMouseDown = () => {
+    if (isEditing) setIsDragging(true);
   };
 
-  const milestones = [0, 25, 50, 75, 100];
+  const handleMouseUp = () => {
+    if (isEditing) setIsDragging(false);
+  };
+
+  const handleMouseMove = (event) => {
+    if (!isDragging || !isEditing) return;
+
+    const bar = document.getElementById("progress-bar");
+    const rect = bar.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left; 
+    const newPercentage = Math.max(0, Math.min(100, (mouseX / rect.width) * 100)); 
+    setPercentage(Math.round(newPercentage));
+  };
 
   return (
-    <div style={{ textAlign: "center", margin: "20px", display: "inline-block" }}>
-      <h4>프로젝트 진행률 :</h4>
-      <div style={{ fontSize: "24px", marginBottom: "10px" }}>{percentage}%</div>
+    <div
+      style={{
+        margin: "20px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <div
         style={{
-          width: "300%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
           maxWidth: "500px",
-          height: "27px",
-          backgroundColor: "#black",
-          borderRadius: "10px",
-          position: "relative",
-          cursor: isEditing ? "pointer" : "not-allowed", // Allow editing only if isEditing is true
-          margin: "0 auto",
+          marginBottom: "10px",
         }}
-        onClick={isEditing ? handleClick : null} // Only allow clicks in editing mode
       >
-        <div
-          style={{
-            width: `${percentage}%`,
-            height: "100%",
-            backgroundColor: "black",
-            borderRadius: "10px",
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        ></div>
-        {milestones.map((milestone) => (
-          <div
-            key={milestone}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: `${milestone}%`,
-              transform: "translate(-50%, -50%)",
-              width: "14px",
-              height: "14px",
-              borderRadius: "50%",
-              backgroundColor: percentage >= milestone ? "#black" : "#ccc",
-              border: "2px solid #gray",
-            }}
-          ></div>
-        ))}
+        <h4 style={{ margin: 0 ,  marginLeft:"200px" }}>진행률:</h4>
+        <div style={{ fontSize: "24px", margin: "0 10px",marginRight:"160px" }}>{percentage}%</div>
       </div>
       <div
         style={{
           display: "flex",
+          alignItems: "center",
           justifyContent: "space-between",
-          maxWidth: "500px",
-          margin: "10px auto",
-          fontSize: "20px",
-          color: "white",
+          width: "521px",
+          maxWidth: "540px",
+          marginLeft:"250px",
         }}
       >
-        <span>0%</span>
-        <span>25%</span>
-        <span>50%</span>
-        <span>75%</span>
-        <span>100%</span>
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        {!isEditing ? (
-          <button
-            onClick={() => {
-              if (String(userId) !== String(projectData.createdBy)) {
-                alert("프로젝트 진행률은 관리자만 수정할 수 있습니다.");
-                return;
-              }
-              setIsEditing(true);
-            }}
+        <div
+          id="progress-bar"
+          style={{
+            flex: 1,
+            height: "10px",
+            backgroundColor: "#ccc",
+            borderRadius: "5px",
+            position: "relative",
+            marginRight: "10px",
+            cursor: isEditing ? "pointer" : "not-allowed",
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseUp}
+          onMouseUp={handleMouseUp}
+          onClick={(e) => {
+            if (!isEditing) {
+              alert("Click the Change button to edit the progress bar.");
+            }
+          }}
+        >
+          <div
             style={{
-              padding: "10px 20px",
-              backgroundColor: "blue",
-              color: "white",
-              border: "none",
+              width: `${percentage}%`,
+              height: "100%",
+              backgroundColor: isEditing ? "black" : "#888",
               borderRadius: "5px",
-              cursor: "pointer",
+              position: "absolute",
+              top: 0,
+              left: 0,
             }}
-          >
-            변경하기
-          </button>
-        ) : (
-          <button
-            onClick={saveChanges} 
+          ></div>
+          <div
+            onMouseDown={handleMouseDown}
             style={{
-              padding: "10px 20px",
-              backgroundColor: "green",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
+              position: "absolute",
+              top: "50%",
+              left: `${percentage}%`,
+              transform: "translate(-50%, -50%)",
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              backgroundColor: isEditing ? "white" : "black",
+              border: "2px solid black",
+              cursor: isEditing ? "red" : "not-allowed",
             }}
-          >
-            저장
-          </button>
-        )}
+          ></div>
+        </div>
+        <div style={{ marginLeft: "10px" }}>
+  {!isEditing ? (
+    <button
+      onClick={() => {
+        if (String(userId) !== String(projectData.createdBy)) {
+          alert("Only the administrator can edit the progress.");
+          return;
+        }
+        setIsEditing(true);
+      }}
+      disabled={String(userId) !== String(projectData.createdBy)} // Disable button if not creator
+      style={{
+        padding: "10px 20px",
+        backgroundColor: String(userId) !== String(projectData.createdBy) ? "gray" : "blue", // Change color when disabled
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        cursor: String(userId) !== String(projectData.createdBy) ? "not-allowed" : "pointer",
+      }}
+    >
+      수정
+    </button>
+  ) : (
+    <>
+      <button
+        onClick={saveChanges}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "green",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginRight: "10px",
+        }}
+      >
+        저장
+      </button>
+      <button
+        onClick={() => {
+          setIsEditing(false);
+          findPercentage();
+        }}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "red",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        취소
+      </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
