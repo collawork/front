@@ -94,7 +94,7 @@ const Search = () => {
           type="text"
           value={searchQuery}
           onChange={handleSearchChange}
-          placeholder="사용자, 프로젝트, 채팅방 검색..."
+          placeholder="사용자, 프로젝트 검색..."
         />
         <button onClick={handleSearch}>검색</button>
       </div>

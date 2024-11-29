@@ -14,8 +14,29 @@
 }
 
 .sidebar button {
-    display: block;
-    margin-bottom: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.sidebar-button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    margin-left: 30%;
+}
+
+.sidebar-button:hover {
+    background-color: #f0f0f0;
+}
+.sidebar button:hover {
+    background-color: #f0f0f0;
 }
 
 .sidebar ul {
@@ -31,11 +52,13 @@
 .sidebar li.active {
     background-color: #f0f0f0;
     font-weight: bold;
+    border-radius: 5px;
 }
 
 .content {
     flex: 1;
     padding: 10px;
+    margin-left: 10px;
 }
 
 .content h3 {
@@ -43,9 +66,7 @@
 }
 
 .content input {
-    display: block;
     margin-bottom: 10px;
-    width: 100%;
     padding: 5px;
 }
 
@@ -69,13 +90,9 @@
     max-width: 800px;
     width: 100%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    z-index: 10000;
+    z-index: 9999;
     position: relative;
-}
-
-.mypage-container {
-    position: relative;
-    z-index: 1; /* 모달보다 낮은 z-index 설정 */
+    margin-bottom: 100px;
 }
 
 .close-button-friendCate {
@@ -93,3 +110,43 @@
     background-color: white;
     border-radius: 10px;
 }
+
+.add-friends-to-category{
+    border-right: 1px solid #ddd;
+    width: 30%;
+    margin-left: 15px;
+    padding: 10px;
+}
+
+.input-category-name{
+    border: 1px solid #ddd;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.input-category-name:hover{
+    background-color: #ddd;
+}
+
+.input-category-name:not(:placeholder-shown){
+    background-color: #ddd;
+}
+
+.user-detail-modal-right {
+    position: fixed; /* 화면에서 고정된 위치 */
+    top: 45%; /* 화면 중앙에서 살짝 위로 올림 */
+    right: 20px; /* 오른쪽에서 20px 떨어진 위치 */
+    transform: translateY(-50%); /* 세로 중앙 정렬 */
+    width: 300px; /* 원하는 너비 설정 */
+    height: 476px; /* 기존 높이보다 살짝 증가 */
+    max-height: 90%; /* 화면의 90% 높이를 넘지 않게 */
+    overflow-y: auto; /* 스크롤 가능 */
+    background: white; /* 배경색 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 */
+    border-radius: 8px; /* 둥근 모서리 */
+    z-index: 1000; /* 모달이 다른 요소 위에 뜨도록 설정 */
+    padding: 15px; /* 내부 여백 */
+    margin-right: 140px; /* 부모 모달과의 간격 */
+}
+
+

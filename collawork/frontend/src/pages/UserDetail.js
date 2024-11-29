@@ -58,7 +58,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
             <p>핸드폰 번호: {data.phone || '정보 없음'}</p>
             <p>팩스 번호: {data.fax || '정보 없음'}</p>
             <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
-            <SendMessage username={data.username} userId={data.id} />
+            <SendMessage username={data.username} userId={data.id}/>
             <FriendRequest
               currentUser={currentUser}
               selectedUserId={data.id}

@@ -55,6 +55,12 @@
     font-size: 0.9rem;
 }
 
+.friend-list li:hover {
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
 /* 친구가 없을 때의 메시지 스타일 */
 .friend-list p {
     text-align: center;
