@@ -36,3 +36,16 @@
   color: #7a7a7a;
   font-weight: bold;
 }
+
+.modal-overlay-search {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
