@@ -1,6 +1,6 @@
 /* 모달 배경 (ReactModal 기본 클래스 스타일링) */
 .ReactModal__Overlay {
-    background: var(--background);
+    background: var(--background) !important;
     display: flex; /* flex를 사용하여 중앙 정렬 */
     justify-content: center; /* 가로 중앙 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
@@ -15,12 +15,12 @@
 
 /* 모달 컨테이너 */
 .ReactModal__Content {
-    width: 400px; /* 모달 너비 */
+    /* width: 400px; 모달 너비 */
     max-width: 90%; /* 작은 화면 대응 */
     background: #ffffff; /* 모달 배경 */
     border-radius: 10px; /* 둥근 모서리 */
-    padding: 20px; /* 내부 여백 */
-    box-shadow: var(--background);
+    /* padding: 20px; 내부 여백 */
+    box-shadow: var(--box-shadow) ;
     outline: none; /* 포커스 시 외곽선 제거 */
     position: relative; /* 부모 요소 기준 위치 */
 }

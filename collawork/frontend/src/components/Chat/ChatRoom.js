@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../components/assest/css/ChatRoom.css';
 import {projectStore} from '../../store';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faPaperclip} from "@fortawesome/free-solid-svg-icons"
+import {faTrash} from "@fortawesome/free-solid-svg-icons"
 
 
 const ChatRoom = () => {
@@ -61,8 +64,8 @@ const ChatRoom = () => {
 
         ws.onopen = () => {
             console.log("WebSocket 연결 성공");
-            fetchMessages();
             ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
+            fetchMessages();
         };
 
         ws.onmessage = (event) => {
@@ -274,7 +277,7 @@ const ChatRoom = () => {
 
     return (
         <div className="chat-container">
-            <h2>{roomName}</h2>
+            <h3 className='title'>{roomName}</h3>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg) => (
                     <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
@@ -308,6 +311,7 @@ const ChatRoom = () => {
                     </ul>
                 )}
             </div>
+            <input type="file" onChange={handleFileChange} />
             <div className="input-container">
                 <input
                     type="text"
@@ -317,11 +321,14 @@ const ChatRoom = () => {
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={handleKeyPress}
                 />
-                <input type="file" onChange={handleFileChange} />
-                <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
-                {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
-                <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button>
+            
+       
+                {isDeleteMode && <button onClick={deleteSelectedMessages}> <FontAwesomeIcon icon={faTrash} />선택 삭제</button>}
+                {/* <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button> */}
+            </div>
+            <div className="button-container">
+            <button className="sendBtn" onClick={() => sendMessage('file')}>  <FontAwesomeIcon icon={faPaperclip}  />  파일 전송</button>
+            <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
             </div>
         </div>
     );

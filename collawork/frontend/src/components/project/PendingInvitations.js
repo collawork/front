@@ -63,7 +63,7 @@ const PendingInvitations = ({ projectId, onInvitationChange }) => {
                 <ul>
                     {invitations.map((invitation, index) => (
                         <li key={index}>
-                            {invitation.name} ({invitation.email}){" "}
+                            {invitation.name} - {invitation.email}{" "}
                             {/* <button onClick={() => handleAccept(invitation)}>승인</button>
                             <button onClick={() => handleReject(invitation)}>거절</button>                  초대 목록에 승인 거절 있어야 되나 ?*/}
                         </li>
