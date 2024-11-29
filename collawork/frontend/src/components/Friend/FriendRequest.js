@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useUser } from '../../context/UserContext';
 
-const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
+const FriendRequest = ({ selectedUserId, fetchFriends }) => {
     const [friendshipStatus, setFriendshipStatus] = useState(null);
     const [isRequester, setIsRequester] = useState(false);
     const [loading, setLoading] = useState(true);
     const [friendshipId, setFriendshipId] = useState(null);
+    const { userId } = useUser();
 
     useEffect(() => {
         const fetchFriendStatus = async () => {
-            if (!currentUser?.id || !selectedUserId) {
+            if (!userId|| !selectedUserId) {
                 setLoading(false);
                 return;
             }
@@ -21,7 +23,7 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     params: {
-                        userId: currentUser.id,
+                        userId: userId,
                         selectedUserId: selectedUserId
                     }
                 });
@@ -38,14 +40,14 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
         };
 
         fetchFriendStatus();
-    }, [currentUser, selectedUserId]);
+    }, [userId, selectedUserId]);
 
     // 친구 요청 기능
     const handleFriendRequest = async () => {
         try {
             const response = await axios.post(
                 `http://localhost:8080/api/friends/request`,
-                { requesterId: currentUser.id, responderId: selectedUserId },
+                { requesterId: userId, responderId: selectedUserId },
                 { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
             );
             
@@ -68,7 +70,7 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
                 null,
                 {
                     headers: { 'Authorization': `Bearer ${token}` },
-                    params: { requestId: friendshipId, responderId: currentUser.id }
+                    params: { requestId: friendshipId, responderId: userId }
                 }
             );
 
@@ -86,7 +88,7 @@ const FriendRequest = ({ currentUser, selectedUserId, fetchFriends }) => {
         try {
             await axios.post(`http://localhost:8080/api/friends/reject`, null, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                params: { requesterId: currentUser.id, responderId: selectedUserId }
+                params: { requesterId: userId, responderId: selectedUserId }
             });
 
             setFriendshipStatus('NONE');

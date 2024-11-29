@@ -87,7 +87,18 @@ const SendMessage = ({ username, userId }) => {
 
     return (
         <>
-            <button onClick={send}>메세지 보내기</button>
+            <button onClick={send}
+                style={{
+                        padding: "5px 10px",
+                      border: "1px solid #ddd",
+                      background: "none",
+                      cursor: "pointer",
+                      fontsize: "0.9rem",
+                      borderRadius: "5px",
+                     
+                  }}>
+                메세지 보내기
+            </button>
 
             {isModalOpen && (
                 <ModalPage onClose={closeModal}>

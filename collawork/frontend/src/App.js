@@ -9,15 +9,12 @@ import SocialLoginCallback from './components/Auth/SocialLoginCallback';
 import KakaoUserInfo from './components/Auth/KakaoUserInfo';
 import MyPage from './pages/MyPage';
 import UserProfile from './pages/Test';
-import Dashboard from './pages/Dashboard';
-import ChatRoom from './components/Chat/ChatRoom';
 import { UserProvider } from './context/UserContext';
-import { Calendar } from './components/calendar/Calendar';
-import { MyCalendar } from './components/calendar/Calendar';
 import NoticeList from './components/project/notice/NoticeList';
 import CreateNotice from './components/project/notice/CreateNotice';
 import ChatRoomOne from './components/Chat/ChatRoomOne';
 import ErrorPage from './pages/ErrorPage';
+import ProjectInformation from './components/project/ProjectInformation';
 
 function App() {
     return (

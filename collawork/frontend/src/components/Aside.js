@@ -460,22 +460,22 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 </form>
             </ReactModal>
 
-            <div className="aside">
-                <div className="aside-top">
-                    <div>collawork</div>
-                    <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button>
-                </div>
+                    
+                        <div className="aside-top">
+                            <div>collawork</div>
+                            <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button>
+                        </div>
 
-                <div className="aside-bottom">
-                {projectName.map((project) => (
-                <section key={project.id}>
-                <li>
-                    <span className="clickable-text" onClick={() => moveProjectHome(project)}>
-                    {project.name}
-                </span>
-                </li>
-         </section>
-             ))}
+                        <div className="aside-bottom">
+                        {projectName.map((project) => (
+                        <section key={project.id}>
+                        <li>
+                            <span className="clickable-text" onClick={() => moveProjectHome(project)}>
+                            {project.name}
+                        </span>
+                        </li>
+                </section>
+                    ))}
                     </div>
 
                 <Pagination
@@ -483,7 +483,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                 />
-            </div>
+            
         </>
     );
 };

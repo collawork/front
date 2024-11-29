@@ -193,7 +193,9 @@ const MyPage = () => {
           </span>
           <span className="today">{currentDate}</span>
         </div>
+
           <Search />
+
         <div className="profile-weather-container">
           <div className="opacity-control">
             <label htmlFor="opacity-slider">투명도</label>

@@ -265,6 +265,7 @@ const FriendCategoryManager = ({ userId, onClose }) => {
         <div className="modal-overlay-friendcate">
             <div className="friend-cate-modal-content" ref={modalRef}>
                 <div className="friend-category-manager">
+                    {/* 좌측 카테고리 목록 */}
                     <div className="sidebar">
                         <h3>카테고리</h3>
                         <button onClick={handleCreateCategory}>+ 카테고리 생성</button>
@@ -281,91 +282,81 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                             value={newCategoryName}
                             onChange={(e) => setNewCategoryName(e.target.value)}
                             placeholder="카테고리 이름"
+                            className="input-category-name"
                         />
                         <ul>
-                            {categories.map((category) => (
-                                <li
-                                    key={category.id}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={selectedCategory?.id === category.id ? "active" : ""}
-                                >
-                                    {category.name}
-                                </li>
-                            ))}
+                            {categories
+                                .slice((currentCategoryPage - 1) * pageSize, currentCategoryPage * pageSize)
+                                .map((category) => (
+                                    <li
+                                        key={category.id}
+                                        onClick={() => setSelectedCategory(category)}
+                                        className={selectedCategory?.id === category.id ? "active" : ""}
+                                    >
+                                        {category.name}
+                                    </li>
+                                ))}
                         </ul>
                         <div className="pagination">
-                        <button
-                            disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
-                            onClick={() => setCurrentPage((prev) => prev - 1)}
-                        >
-                            이전
-                        </button>
-                        <span>{currentPage}</span>
-                        <button
-                            disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
-                            onClick={() => setCurrentPage((prev) => prev + 1)}
-                        >
-                            다음
-                        </button>
+                            <button
+                                disabled={currentCategoryPage === 1}
+                                onClick={() => setCurrentCategoryPage((prev) => prev - 1)}
+                            >
+                                이전
+                            </button>
+                            <span>{currentCategoryPage}</span>
+                            <button
+                                disabled={currentCategoryPage === Math.ceil(categories.length / pageSize)}
+                                onClick={() => setCurrentCategoryPage((prev) => prev + 1)}
+                            >
+                                다음
+                            </button>
+                        </div>
                     </div>
-                    </div>
-                    <div className="content">
-                        {selectedCategory && (
-                            <>
-                                <h3>{selectedCategory.name}</h3>
-                                <div>
-                                    <input
-                                        type="checkbox"
-                                        checked={addToCategory.length === selectedCategoryFriends.length}
-                                        onChange={() =>
-                                            setAddToCategory(
-                                                addToCategory.length === selectedCategoryFriends.length
-                                                    ? []
-                                                    : selectedCategoryFriends.map((friend) => friend.id)
-                                            )
-                                        }
-                                    />
-                                    전체 선택
-                                </div>
-                                <ul>
-                                    {selectedCategoryFriends.map((friend) => (
-                                        <li key={friend.id}>
-                                            <input
-                                                type="checkbox"
-                                                checked={addToCategory.includes(friend.id)}
-                                                onChange={() => handleCategoryFriendSelection(friend.id)}
-                                            />
-                                            <span onClick={() => handleFriendClick(friend)}>
-                                                {friend.username} ({friend.email})
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="pagination">
-                                <button
-                                    disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
-                                    onClick={() => setCurrentPage((prev) => prev - 1)}
-                                >
-                                    이전
-                                </button>
-                                <span>{currentPage}</span>
-                                <button
-                                    disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
-                                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                                >
-                                    다음
-                                </button>
+    
+                    {/* 중간 추가하기 영역 */}
+                    {selectedCategory && (
+                        <div className="add-friends-to-category">
+                            <h3>{selectedCategory.name} 에 추가하기</h3>
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    checked={addToCategory.length === selectedCategoryFriends.length}
+                                    onChange={() =>
+                                        setAddToCategory(
+                                            addToCategory.length === selectedCategoryFriends.length
+                                                ? []
+                                                : selectedCategoryFriends.map((friend) => friend.id)
+                                        )
+                                    }
+                                />
+                                <label>전체 선택</label>
+                                <button onClick={handleRemoveFromCategory} className="sidebar-button">제외하기</button>
                             </div>
-
-                                <button onClick={handleRemoveFromCategory}>제외하기</button>
-                            </>
-                        )}
+                            <ul>
+                                {selectedCategoryFriends.map((friend) => (
+                                    <li key={friend.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={addToCategory.includes(friend.id)}
+                                            onChange={() => handleCategoryFriendSelection(friend.id)}
+                                        />
+                                        <span>{friend.username} ({friend.email})</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+    
+                    {/* 우측 친구 목록 */}
+                    <div className="content">
                         <h3>친구 목록</h3>
                         <input
                             type="text"
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
                             placeholder="친구 검색"
+                            className="input-category-name"
                         />
                         <div>
                             <input
@@ -373,39 +364,40 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                                 checked={selectedFriends.length === filteredFriends.length}
                                 onChange={handleSelectAllFriends}
                             />
-                            전체 선택
+                            <label>전체 선택</label>
+                            <button onClick={handleAddFriendsToCategory} className="sidebar-button">추가하기</button>
                         </div>
                         <ul>
-                            {filteredFriends.map((friend) => (
-                                <li key={friend.id}>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedFriends.includes(friend.id)}
-                                        onChange={() => handleFriendSelection(friend.id)}
-                                    />
-                                    <span onClick={() => handleFriendClick(friend)}>
-                                        {friend.username} ({friend.email})
-                                    </span>
-                                </li>
-                            ))}
+                            {filteredFriends
+                                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                                .map((friend) => (
+                                    <li key={friend.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedFriends.includes(friend.id)}
+                                            onChange={() => handleFriendSelection(friend.id)}
+                                        />
+                                        <span onClick={() => handleFriendClick(friend)}>
+                                            {friend.username} ({friend.email})
+                                        </span>
+                                    </li>
+                                ))}
                         </ul>
                         <div className="pagination">
                             <button
-                                disabled={currentPage === 1} // 첫 페이지에서는 이전 버튼 비활성화
+                                disabled={currentPage === 1}
                                 onClick={() => setCurrentPage((prev) => prev - 1)}
                             >
                                 이전
                             </button>
                             <span>{currentPage}</span>
                             <button
-                                disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)} // 마지막 페이지 비활성화
+                                disabled={currentPage === Math.ceil(filteredFriends.length / pageSize)}
                                 onClick={() => setCurrentPage((prev) => prev + 1)}
                             >
                                 다음
                             </button>
                         </div>
-
-                        <button onClick={handleAddFriendsToCategory}>추가하기</button>
                     </div>
                 </div>
             </div>
@@ -424,7 +416,8 @@ const FriendCategoryManager = ({ userId, onClose }) => {
                 </div>
             )}
         </div>
-    );   
+    );
+    
 };
 
 export default FriendCategoryManager;
