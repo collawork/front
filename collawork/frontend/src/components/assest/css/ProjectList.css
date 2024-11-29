@@ -42,6 +42,12 @@
     align-items: center;
 }
 
+.project-list li:hover {
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
 .project-list li:last-child {
     border-bottom: none; /* 마지막 항목은 구분선 제거 */
 }
