@@ -1,31 +1,29 @@
-// import {useNavigate, Link} from "react-router-dom";
-// import ErorrStyle from "./Error.css";
+import {useNavigate} from "react-router-dom";
+import "../components/assest/css/ErrorPage.css";
 
 
-// const ErrorPage = () => {
+const ErrorPage = () => {
 
-//     const navigator = useNavigate();
+    const navigator = useNavigate();
 
-//     const onclickBackToHome =()=>{
-//         navigator("/");
-//     }
+    const onClickBackToHome =()=>{
+        navigator("/");
+    }
 
-//     return(
-//         <div className="container">
-//             <h1 className="title">ERROR 404</h1>
-//             <video className="scared-video" autoPlay loop muted>
-//                 <source src="../video/iDontKnowIamScared.mp4" type="video/mp4"></source>
-//             </video>
-//             <span className="scared-text">어..? 이거 뭐야 무서워..</span>
+    return(
+        <div className="container">
+            <div className="text-container">
+                {/* <h1 className="title">유효하지 않은 URL 주소<br />404 ERROR<br /></h1> */}
+                <h1 className="title">404 ERROR<br />유효하지 않은 URL 주소<br /></h1>
+                <p className="subtitle">페이지를 찾을 수 없습니다</p>
+                <button className="button" onClick={onClickBackToHome}>돌아가기</button>
+            </div>
+            <div className="image-container">
+               
+            </div>
+        </div>
+    
+    )
+}
 
-//             <p className="dot1">.</p>
-//             <p className="scared-text">.</p>
-//             <p className="scared-text">.</p>
-
-//             <Link to="/" className="come-back-home"><span className="scared-text-underline">그럼.. 다시 돌아갈래..? (¬_¬ )</span></Link>
-//         </div>
-        
-//     )
-// }
-
-// export default Error;
+export default ErrorPage;

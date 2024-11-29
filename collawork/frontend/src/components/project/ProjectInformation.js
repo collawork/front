@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useUser } from '../../context/UserContext';
 import axios from 'axios';
 import ReactModal from "react-modal";
-import { projectStore, stateValue} from '../../store';
+import { projectStore, stateValue } from '../../store';
 import defaultImage from '../../components/assest/images/default-profile.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faThumbtack,faCheckToSlot,faCalendar,faMinus,faGear,faBell,faFolderOpen,faD} from "@fortawesome/free-solid-svg-icons";
+import { faThumbtack, faCheckToSlot, faCalendar, faMinus, faGear, faBell, faFolderOpen, faD } from "@fortawesome/free-solid-svg-icons";
 import ProjectModify from "./ProjectModify";
 import '../../components/assest/css/ProjectInformation.css';
 import ProjectBox from './ProjectBox';
@@ -20,12 +20,12 @@ const ProjectInformation = () => {
   const modalRef = useRef();
   const [modal, setModal] = useState(false);
   const [show, setShow] = useState(false);
-  const [managerModalOpen, setManagerModalOpen] = useState(false); 
+  const [managerModalOpen, setManagerModalOpen] = useState(false);
   const [noticesList, setNoticesList] = useState([]); // 초기값 빈 배열
   const [modify, setModify] = useState(false);
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
-  const {setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig} = stateValue();
-  const { projectName, projectData, userData, PlusProjectData, PlusUserData ,projectInformationState} = projectStore();
+  const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+  const { projectName, projectData, userData, PlusProjectData, PlusUserData, projectInformationState } = projectStore();
   const { userId } = useUser();
 
   const fetchAcceptedParticipants = async () => {
@@ -51,11 +51,11 @@ const ProjectInformation = () => {
   };
 
 
-  
+
   useEffect(() => {
     if (managerModalOpen) {
       fetchAcceptedParticipants();
-      
+
     }
   }, [managerModalOpen]);
 
@@ -66,15 +66,15 @@ const ProjectInformation = () => {
       VotoingSend();
       setShow(true);
     }
-  }, [projectName,projectInformationState]); 
+  }, [projectName, projectInformationState]);
 
   useEffect(() => {
-    if (projectData && projectData.id) {  
+    if (projectData && projectData.id) {
       calendarSend(); // 다가오는 캘린더 일정(7일 이내)
       noticesSend(); // 등록된 중요 공지사항
       manager();
     }
-  }, [projectData]); 
+  }, [projectData]);
 
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectName },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
       PlusProjectData(response.data[0]);
       if (!response.data || response.data.length === 0) {
@@ -125,7 +125,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectId: projectData?.id, userId: userIdValue },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       if (response.data) {
         setCalendarList(response.data);
       } else {
@@ -143,7 +143,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectId: projectData?.id },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       if (response?.data) {
         setNoticesList(response.data);
       } else {
@@ -163,7 +163,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { id: projectData?.createdBy },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       PlusUserData(response.data);
     }).catch(err => console.error("유저 정보 조회 오류:", err));
   }
@@ -177,7 +177,7 @@ const ProjectInformation = () => {
       url: `${API_URL}/api/user/projects/managerModify`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { email:id, projectId: projectData.id },
+      params: { email: id, projectId: projectData.id },
     }).then(response => {
       console.log(response.data);
       setManagerModalOpen(false);
@@ -197,11 +197,11 @@ const ProjectInformation = () => {
   };
 
   const onSubmitHandler = () => {
-    
+
     if (id) {
-      if(id !== String(userData.email)){
+      if (id !== String(userData.email)) {
         managerModify();
-      }else{
+      } else {
         alert("현재 관리자 입니다.");
         return;
       }
@@ -226,19 +226,19 @@ const ProjectInformation = () => {
     setVotig(false);
   }
 
-   // 1. 프로젝트에 귀속된 투표 list 조회 요청
-   function VotoingSend() {
+  // 1. 프로젝트에 귀속된 투표 list 조회 요청
+  function VotoingSend() {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("Token is missing");
       return;
     }
-  
+
     if (!projectData || !projectData.id) {
       console.error("Invalid or missing project ID:", projectData);
       return;
     }
-  
+
     axios({
       url: `${API_URL}/api/user/projects/findVoting`,
       headers: { Authorization: `Bearer ${token}` },
@@ -254,19 +254,19 @@ const ProjectInformation = () => {
       })
       .catch(function (error) {
         if (error.response) {
-          
+
           console.error("Response error:", error.response.status, error.response.data);
         } else if (error.request) {
-         
+
           console.error("No response received:", error.request);
         } else {
-         
+
           console.error("Axios error:", error.message);
         }
       });
   }
-  
-  
+
+
 
 
   return (
@@ -275,56 +275,61 @@ const ProjectInformation = () => {
         <div className="project-box">
           <div className="project-container">
             <div className="project-header">
-            <FontAwesomeIcon icon={faFolderOpen}  className="project-icon"/>
+              <FontAwesomeIcon icon={faFolderOpen} className="project-icon" />
               {/* <FontAwesomeIcon icon={faFolder} className="project-icon" /> */}
               <h2>{projectData.projectName}</h2>
               <span className="project-code">{projectData.projectCode}</span>
               <button className="icon-button" onClick={() => setModify(true)}>
                 <FontAwesomeIcon icon={faGear} />
+                {modify && (
+                  <ProjectModify
+                    setModify={(value) => {
+                      setModify(value);
+                    }}
+                  />
+                )}
               </button>
-
             </div>
 
-            
             <div className="projectBar">
               <ProjectBox userId={userId} createdBy={projectData.createdBy} />
             </div>
-            
-  
+
+
             {/* 기존의 일정 및 공지사항 섹션 */}
             <div className="list-container">
-  {calendarList.length > 0 ? (
-    <ul className="list">
-      {calendarList.map((calendarItem, index) => {
-        // Calculate the days remaining until the start time
-        const today = new Date();
-        const startTime = new Date(calendarItem.start_time);
-        const daysRemaining = Math.ceil((startTime - today) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+              {calendarList.length > 0 ? (
+                <ul className="list">
+                  {calendarList.map((calendarItem, index) => {
+                    // Calculate the days remaining until the start time
+                    const today = new Date();
+                    const startTime = new Date(calendarItem.start_time);
+                    const daysRemaining = Math.ceil((startTime - today) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
 
-        return (
-          <li key={index} className="list-item">
-            <div className="icon-container">
-              
-              <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
-              <FontAwesomeIcon icon={faCalendar} className="icon" />
-              {daysRemaining > 0 && (
-                <span style={{ color: "red", marginRight: "5px", fontWeight: "bold" }}>
-                         {/* <FontAwesomeIcon icon={faD} />  */}
-                         D - {daysRemaining}
-                </span>
-              )}
-            </div>
-            <div className="list-content" onClick={calendatHandler}>
-              <h3>{calendarItem.title}</h3>
-              <p>
-                {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
-                {new Date(calendarItem.end_time).toLocaleString()}
-              </p>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+                    return (
+                      <li key={index} className="list-item">
+                        <div className="icon-container">
+
+                          <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                          <FontAwesomeIcon icon={faCalendar} className="icon" />
+                          {daysRemaining > 0 && (
+                            <span style={{ color: "red", marginRight: "5px", fontWeight: "bold" }}>
+                              {/* <FontAwesomeIcon icon={faD} />  */}
+                              D - {daysRemaining}
+                            </span>
+                          )}
+                        </div>
+                        <div className="list-content" onClick={calendatHandler}>
+                          <h3>{calendarItem.title}</h3>
+                          <p>
+                            {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
+                            {new Date(calendarItem.end_time).toLocaleString()}
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               ) : (
                 <ul className="list">
                   <li className="list-item">
@@ -338,7 +343,7 @@ const ProjectInformation = () => {
                   </li>
                 </ul>
               )}
-  
+
               {noticesList.length > 0 ? (
                 <ul className="list">
                   {noticesList.map((list, index) => (
@@ -368,15 +373,15 @@ const ProjectInformation = () => {
                 </ul>
               )}
             </div>
-  
-            {modify && (
+
+            {/* {modify && (
               <ProjectModify
                 setModify={(value) => {
                   setModify(value);
                 }}
               />
-            )}
-             <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", position: "relative" }}>
+            )} */}
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", position: "relative" }}>
               <img
                 src={userData?.profileImageUrl || defaultImage}
                 alt={`${userData?.username || "사용자"}의 프로필 이미지`}
@@ -392,70 +397,75 @@ const ProjectInformation = () => {
               />
               관리자 : <h3>{userData?.username || "정보 없음"}</h3>
               <button onClick={managerModifyHandler}>관리자 변경</button>
-  
-           
+
+
             </div>
           </div>
           {/* 마지막 줄 날짜 찍어주기 부분 */}
-          <h5 className="created-at">{projectData?.createdAt}</h5> 
+          <h5 className="created-at">{projectData?.createdAt}</h5>
 
           {/* 투표 찍어주기 */}
-          <h4 style={{color:"red"}}>진행중 <FontAwesomeIcon icon={faCheckToSlot} style={{color:"black"}}/></h4>
-          {votingData.length? 
-          votingData.map((vote)=>(
-            <section key={vote.id} className="voting-card">
-              <ul>
-                <li>{vote.votingName}</li>
-              </ul>
-            </section>
-          ))
-          :
-          <h5>진행중인 투표가 없습니다.</h5>
-          
-        }
+          <h4 style={{ color: "red" }}>진행중 <FontAwesomeIcon icon={faCheckToSlot} style={{ color: "black" }} /></h4>
+          {votingData.length ?
+            votingData.map((vote) => (
+              <section key={vote.id} className="voting-card">
+                <ul>
+                  <li>{vote.votingName}</li>
+                </ul>
+              </section>
+            ))
+            :
+            <h5>진행중인 투표가 없습니다.</h5>
 
-          
+          }
+
+
           {/*  여긴 모달 */}
           <ReactModal
-              isOpen={managerModalOpen}
-              onRequestClose={() => setManagerModalOpen(false)}
-              contentLabel="managerModify"
-              appElement={document.getElementById("root")}
-              style={{
-                content: {
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "300px",
-                  padding: "10px",
-                  borderRadius: "10px",
-                  border: "1px solid #ccc",
-                },
-                overlay: {
-                  backgroundColor: "transparent",
-                },
-              }}
-            >
-              <ul>
-                <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
-                {participant.map((part) => (
-                  <li key={part.email}>
-                    <input
-                      type="radio"
-                      id={`participant-${part.email}`}
-                      name="adminParticipant"
-                      value={part.email}
-                      onChange={(e) => changeHandler(e)}
-                    />
-                    <label htmlFor={`participant-${part.email}`}>
-                      {part.id} {part.name} - {part.email}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-              <button onClick={onSubmitHandler}>변경하기</button>
-              <button onClick={() => setManagerModalOpen(false)}>취소</button>
-            </ReactModal>
+            isOpen={managerModalOpen}
+            onRequestClose={() => setManagerModalOpen(false)}
+            contentLabel="managerModify"
+            className="change-admin-modal"
+            style={{
+              overlay: { backgroundColor: "transparent", }
+            }}
+          // appElement={document.getElementById("root")}
+          // style={{
+          //   content: {
+          //     top: "50%",
+          //     left: "50%",
+          //     transform: "translate(-50%, -50%)",
+          //     width: "300px",
+          //     padding: "10px",
+          //     borderRadius: "10px",
+          //     border: "1px solid #ccc",
+          //   },
+          //   overlay: {
+          //     backgroundColor: "transparent",
+          //   },
+          // }}
+          >
+            {/* <ul className= "change-admin-modal"> */}
+            <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
+            {participant.map((part) => (
+              <li key={part.email}>
+                <input
+                  type="radio"
+                  id={`participant-${part.email}`}
+                  name="adminParticipant"
+                  value={part.email}
+                  onChange={(e) => changeHandler(e)}
+                />
+                <label htmlFor={`participant-${part.email}`}>
+                  {part.id} {part.name} - {part.email}
+                </label>
+              </li>
+            ))}
+
+            <button className="confirm-btn" onClick={onSubmitHandler}>변경하기</button>
+            <button className="cancel-btn" onClick={() => setManagerModalOpen(false)}>취소</button>
+            {/* </ul> */}
+          </ReactModal>
 
         </div>
       )}
@@ -463,6 +473,6 @@ const ProjectInformation = () => {
   );
 }
 
-  
+
 
 export default ProjectInformation;

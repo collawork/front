@@ -16,37 +16,37 @@ import Wind from "../components/assest/images/wind.png";
 
 const MyPage = () => {
 
-    const fetchProjectList = () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("토큰이 없습니다. API 호출을 중단합니다.");
-            return;
+  const fetchProjectList = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("토큰이 없습니다. API 호출을 중단합니다.");
+      return;
+    }
+
+    axios.post(
+      `/api/user/projects/selectAll`,
+      { userId },
+      {
+        baseURL: process.env.REACT_APP_API_URL,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (Array.isArray(response.data)) {
+          setProjects(response.data);
         }
-    
-        axios.post(
-            `/api/user/projects/selectAll`,
-            { userId },
-            {
-                baseURL: process.env.REACT_APP_API_URL,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        )
-        .then((response) => {
-            if (Array.isArray(response.data)) {
-                setProjects(response.data);
-            }
-        })
-        .catch((error) => {
-            console.error("프로젝트 목록 조회 중 오류 발생:", error);
-        });
-    };
+      })
+      .catch((error) => {
+        console.error("프로젝트 목록 조회 중 오류 발생:", error);
+      });
+  };
 
   const defaultSections = [
     { id: "calendar", content: <MyCalendar />, size: "large" },
-    { id: "project", content: <ProjectList fetchProjects={fetchProjectList}/>, size: "small" },
+    { id: "project", content: <ProjectList fetchProjects={fetchProjectList} />, size: "small" },
     { id: "notifications", content: <NotificationList fetchProjectList={fetchProjectList} />, size: "small" },
     { id: "friends", content: <FriendList />, size: "small" },
     { id: "chat", content: <ChatList />, size: "small" },
@@ -193,9 +193,7 @@ const MyPage = () => {
           </span>
           <span className="today">{currentDate}</span>
         </div>
-        <div className="search-wrapper">
           <Search />
-        </div>
         <div className="profile-weather-container">
           <div className="opacity-control">
             <label htmlFor="opacity-slider">투명도</label>
@@ -262,9 +260,8 @@ const MyPage = () => {
                         }}
                       ></div>
                       <div
-                        className={`mypage-section ${
-                          section.size === "large" ? "large-section" : "small-section"
-                        }`}
+                        className={`mypage-section ${section.size === "large" ? "large-section" : "small-section"
+                          }`}
                       >
                         <div className="drag-handle" {...provided.dragHandleProps}>
                           ≡
