@@ -81,15 +81,11 @@
 
 .project-header {
   position: sticky;
-  top: 0;
-  background-color: #fff;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
   margin-top:60px;
-  margin-left:-59px;
 }
 
 .project-icon {
@@ -207,28 +203,41 @@
   }
 }
 
-.projectBar{
-  margin-left:-362px;
-  margin-top: 34px;
+.projectBox {
+  width: 100%; /* 가로 길이를 공통화 */
 }
 
 .created-at{
   margin-right:-500px;
 }
 
-.list {
+/* .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: 15px;
-}
-.list-container {
+} */
+/* .list-container {
   margin-top: 30px;
   padding-left: 20px; 
   padding-right: 20px; 
   box-sizing: border-box; 
+} */
+
+.list-item {
+  width: 100%; /* 리스트 아이템 개별 크기 조정 */
+}
+
+.list {
+  width: 100%; /* 내부 리스트도 동일한 가로 길이 */
+}
+
+.list-container {
+  width: 100%; /* ProjectBox와 동일한 가로 길이 */
+  margin-top: 78px;
+  margin-left: -51px;
 }
 
 .profile-image-small {
@@ -246,7 +255,7 @@ created-at {
 }
 
 .adminBox{
-  margin-left:290px;
+  margin-left:300px;
 }
 
 .header-box{
@@ -257,6 +266,31 @@ created-at {
   color:gray;
   margin-left:30px;
   
+}
+
+.admin{
+    
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'MinSans-Regular';
+  margin-left:20px;
+}
+.admin:hover {
+/* 버튼 호버 효과 */
+opacity: 0.8;
+background-color: #f0f0f0;
+}
+
+.project-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px; /* 원하는 가로 크기로 고정 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
 

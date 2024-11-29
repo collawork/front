@@ -213,7 +213,7 @@
   }
   
   .vote-button[disabled] {
-    background-color: gray;
+    /* background-color: gray; */
     cursor: not-allowed;
   }
 
@@ -222,3 +222,40 @@
     margin-bottom:50px;
     font-size: 20px;
   }
+
+  .endButton{
+    border: 1px solid black;
+    font-weight: bold;
+    cursor: default;
+  }
+
+  .votingButton{
+    
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'MinSans-Regular';
+}
+.votingButton:hover {
+  /* 버튼 호버 효과 */
+  opacity: 0.8;
+  background-color: #f0f0f0;
+}
+
+.votingButton2{
+    
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'MinSans-Regular';
+  margin-left:380px;
+}
+.votingButton2:hover {
+/* 버튼 호버 효과 */
+opacity: 0.8;
+background-color: #f0f0f0;
+}

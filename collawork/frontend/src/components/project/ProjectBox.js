@@ -74,10 +74,11 @@ const ProgressBar = () => {
   return (
     <div
       style={{
-        margin: "20px",
+        margin: "22px",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        marginLeft:"-223px",
+        marginTop:"79px",
       }}
     >
       <div
@@ -160,10 +161,10 @@ const ProgressBar = () => {
         }
         setIsEditing(true);
       }}
-      disabled={String(userId) !== String(projectData.createdBy)} // Disable button if not creator
+      disabled={String(userId) !== String(projectData.createdBy)} 
       style={{
         padding: "10px 20px",
-        backgroundColor: String(userId) !== String(projectData.createdBy) ? "gray" : "blue", // Change color when disabled
+        backgroundColor: String(userId) !== String(projectData.createdBy) ? "gray" : "blue",
         color: "white",
         border: "none",
         borderRadius: "5px",
@@ -193,14 +194,7 @@ const ProgressBar = () => {
           setIsEditing(false);
           findPercentage();
         }}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "red",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
+        className="canclebutton"
       >
         취소
       </button>

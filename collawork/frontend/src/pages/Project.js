@@ -52,7 +52,7 @@ const Project = ({ projectId }) => {
       setVotig(false);
       setSelected("chat")
     }else{
-      setPlusIcon(true);
+      setPlusIcon(false);
     }
   };
 
@@ -65,7 +65,7 @@ const Project = ({ projectId }) => {
       setVotig(false);
       setSelected("calendar")
     }else{
-      setPlusIcon(true);
+      setPlusIcon(false);
     }
   };
 
@@ -78,7 +78,7 @@ const Project = ({ projectId }) => {
       setVotig(false);
       setSelected("noti")
     }else{
-      setPlusIcon(true);
+      setPlusIcon(false);
     }
 
   }
@@ -92,7 +92,7 @@ const Project = ({ projectId }) => {
       setVotig(true);
       setSelected("voting")
     }else{
-      setPlusIcon(true);
+      setPlusIcon(false);
     }
   }
 

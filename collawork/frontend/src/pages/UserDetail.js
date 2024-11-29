@@ -12,12 +12,18 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
+        // console.log("요청 이메일:", item?.email);
+        if (!item?.email) {
+          console.error("이메일이 존재하지 않습니다:", item);
+          return;
+        }
+
         const response = await axios.get(`http://localhost:8080/api/user/detail`, {
           headers: {
             'Authorization': `Bearer ${token}`
           },
           params: {
-            email: item?.email,
+            email: item.email.toLowerCase(),
           }
         });
         setData(response.data);
@@ -26,19 +32,17 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
       }
     };
 
-    fetchData();
+    if (item?.email) fetchData();
   }, [type, item, currentUser]);
-
-  if (!data) return <p>로딩 중...</p>;
 
   return (
     <div 
       className="modal-overlay-user-detail" 
-      onClick={closeModal} // 모달 외부 클릭 시 닫힘
+      onClick={closeModal}
     >
       <div 
         className="user-detail-modal" 
-        onClick={(e) => e.stopPropagation()} // 내부 클릭 시 이벤트 전파 방지
+        onClick={(e) => e.stopPropagation()}
       >
         <button className="close-button-user-detail" onClick={closeModal}>
           닫기
@@ -58,7 +62,7 @@ const UserDetail = ({ type, item, closeModal, currentUser }) => {
             <p>핸드폰 번호: {data.phone || '정보 없음'}</p>
             <p>팩스 번호: {data.fax || '정보 없음'}</p>
             <p>계정 생성일: {data.createdAt || '정보 없음'}</p>
-            <SendMessage username={data.username} userId={data.id} />
+            <SendMessage username={data.username} userId={data.id}/>
             <FriendRequest
               currentUser={currentUser}
               selectedUserId={data.id}

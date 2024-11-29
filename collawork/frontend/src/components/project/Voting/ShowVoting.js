@@ -4,6 +4,7 @@ import NewVoting from '../Voting/NewVoting';
 import { projectStore } from '../../../store';
 import defaultImage from '../../../components/assest/images/default-profile.png';
 import '../../assest/css/UserInfoModal.css';
+import '../../assest/css/Pagination.css';
 import axios from 'axios';
 import { useUser } from '../../../context/UserContext';
 import '../../../components/assest/css/ShowVoting.css';
@@ -290,7 +291,7 @@ useEffect(() => {
   return (
     <>
       <h3><FontAwesomeIcon icon={faCheckToSlot} /></h3>
-      <button onClick={modalHandler}>+ 새 투표</button>
+      <button className="votingButton" onClick={modalHandler}>+ 새 투표</button>
       {modalShow && (
         <NewVoting
           setModalShow={setModalShow}
@@ -319,7 +320,7 @@ useEffect(() => {
                 <h3 style={{ color: "gray" }}>투표 종료</h3>
               )}
               {!isEnded && userId === vote.createdUser && (
-                <button onClick={() => endHandler(vote.id)}>진행종료</button>
+                <button  className="votingButton2" onClick={() => endHandler(vote.id)}>종료</button>
               )}
               <div className="vote-name-container">
                   {isEnded && daysRemaining == 0 ? 
@@ -422,7 +423,7 @@ useEffect(() => {
                           type="submit"
                           id={`vote-button-${vote.id}`}
                           disabled={true}
-                          className="vote-button"
+                          className="arrow-button"
                         > 투표하기 </button>
                               )}
                             </form>
@@ -435,9 +436,7 @@ useEffect(() => {
                   })}
               </div>
             </>
-          );
-  
-    
-}
+          ); 
+          }
 
     export default ShowVoting;
