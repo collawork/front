@@ -121,7 +121,7 @@ const FriendList = ({ userId }) => {
                 {paginatedFriends.map(friend => (
                     <li key={friend.id}>
                         <span onClick={() => handleFriendClick(friend)}>
-                            {friend.username} ({friend.email})
+                            {friend.username} - {friend.email}
                         </span>
                         
                         <button onClick={() => handleRemoveFriend(friend.id)} className="friend-delete-btn">
