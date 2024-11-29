@@ -1,4 +1,12 @@
 
+@font-face {
+  font-family: 'MinSans-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 .list-item {
   display: flex;
   justify-content: space-between;
@@ -291,6 +299,60 @@ background-color: #f0f0f0;
   width: 100%;
   max-width: 800px; /* 원하는 가로 크기로 고정 */
   margin: 0 auto; /* 가운데 정렬 */
+}
+
+.change-admin-modal {
+  /* 모달 전체 스타일 */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--box-shadow);
+  list-style: none;
+}
+.change-admin-modal h4 {
+  /* 모달 헤더 스타일 */
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.change-admin-modal li {
+  /* 리스트 항목 스타일 */
+  margin-bottom: 10px;
+  display: flex;
+}
+.change-admin-modal label {
+  /* 라벨 스타일 */
+  /* display: flex; */
+  align-items: center;
+  cursor: pointer;
+}
+.change-admin-modal input[type="radio"] {
+  margin-right: 5px;
+}
+.change-admin-modal button {
+  /* 버튼 스타일 */
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: 'MinSans-Regular';
+}
+.change-admin-modal button:first-child {
+  /* 첫 번째 버튼 (변경하기) 스타일 */
+  background-color: #4CAF50; /* 녹색 */
+  color: #fff;
+}
+.change-admin-modal button:last-child {
+  /* 두 번째 버튼 (취소) 스타일 */
+  background-color: #ccc;
+  color: #333;
+}
+
+.change-admin-modal button:hover {
+  /* 버튼 호버 효과 */
+  opacity: 0.8;
 }
 
 

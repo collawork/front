@@ -281,6 +281,11 @@ const ProjectInformation = () => {
               <span className="project-code">{projectData.projectCode}</span>
               <button className="icon-button" onClick={() => setModify(true)}>
                 <FontAwesomeIcon icon={faGear} />
+                {modify && (
+                  <ProjectModify
+                    setModify={setModify}
+                  />
+                )}
               </button>
           
 
@@ -323,6 +328,7 @@ const ProjectInformation = () => {
   <div className="projectBox">
     <ProjectBox userId={userId} createdBy={projectData.createdBy} />
   </div>
+  
   <div className="list-container">
     {/* 일정 섹션 */}
     {calendarList.length > 0 ? (
@@ -427,11 +433,6 @@ const ProjectInformation = () => {
   </div>
 </div>
   
-                {modify && (
-                  <ProjectModify
-                    setModify={setModify}
-                  />
-                )}
               </div>
          
 
@@ -461,20 +462,9 @@ const ProjectInformation = () => {
                     isOpen={managerModalOpen}
                     onRequestClose={() => setManagerModalOpen(false)}
                     contentLabel="managerModify"
-                    appElement={document.getElementById("root")}
+                    className="change-admin-modal"
                     style={{
-                      content: {
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "300px",
-                        padding: "10px",
-                        borderRadius: "10px",
-                        border: "1px solid #ccc",
-                      },
-                      overlay: {
-                        backgroundColor: "transparent",
-                      },
+                      overlay: { backgroundColor: "transparent", }
                     }}
                   >
                       <ul>
