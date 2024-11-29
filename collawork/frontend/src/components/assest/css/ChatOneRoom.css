@@ -1,32 +1,43 @@
-.chat-container {
-    width: 600px; /* 채팅창 너비 확장 */
-    height: 700px; /* 채팅창 높이 확장 */
-    background-color: #36393f; /* 디스코드의 어두운 배경 */
+.chat-container2 {
+    width: 400px; /* 채팅창 너비 확장 */
+    height: 600px; /* 채팅창 높이 확장 */
+    background-color: #36393f; 
     color: #fff;
     border-radius: 8px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    position: fixed; 
+    top: 50%; 
+    right: 20px;
+    transform: translateY(-50%);
+
+    
+   
+}
+
+.message-input2{
+    width: 70%; /* 너비를 조금 줄임 */
+    height: 35px; /* 높이를 조정 */
+    font-size: 14px; /* 폰트 크기 조정 */
+    padding: 5px; /* 여백 설정 */
+    border-radius: 5px; /* 경계선 라운드 처리 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    margin-right: 10px; /* 전송 버튼과 간격을 두기 위한 여백 */
 }
 
 /* 채팅창 제목 */
-.chat-container h3 {
+.chat-container2 h2 {
     text-align: center;
     font-size: 24px;
     margin-bottom: 20px;
     font-weight: bold;
     color: #fff;
 }
-.title{
-    position: center;
-    max-width: 80%;       /* 너비를 80%로 제한 */
-    margin: 0 auto;       /* 중앙 정렬 */
-    text-align: center;   /* 텍스트 중앙 정렬 */
-}
 
 /* 메시지가 표시될 창 */
-.chat-window {
+.chat-window2 {
     flex-grow: 1;
     color: #dcdcdc; 
     padding: 11px;
@@ -38,10 +49,11 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-size: 100% 100%;
+
 }
 
 /* 보낸 메시지 스타일 */
-.message.sent {
+.message2.sent {
     background-color: rgb(238, 238, 43); /* 보낸 메시지 배경 */
     color: black;
     text-align: right;
@@ -54,20 +66,27 @@
 }
 
 /* 받은 메시지 스타일 */
-.message.received { /* typo 수정: "recieved" -> "received" */
+.message2.received { /* typo 수정: "recieved" -> "received" */
     background-color: white; /* 보낸 메시지 배경과 동일 */
     color: black;
     text-align: left;
-    margin-right: auto; 
-    width: 100%; 
-    max-width: 60%; 
+    margin-right: auto; /* 받는 메시지 왼쪽 정렬 */
+    width: 100%; /* 화면 크기에 맞게 유동적으로 조절 */
+    max-width: 60%; /* 최대 너비 70%로 제한 */
     margin-bottom: 10px;
     padding: 8px 12px;
     word-wrap: break-word;
 }
 
+.title2{
+    position: center;
+    max-width: 80%;       /* 너비를 80%로 제한 */
+    margin: 0 auto;       /* 중앙 정렬 */
+    text-align: center;   /* 텍스트 중앙 정렬 */
+}
+
 /* 메시지 정보 (시간 표시) */
-.message span {
+.message2 span {
     font-size: 10px;
     color: #b9bbbe;
     display: block;
@@ -75,11 +94,12 @@
 }
 
 /* 입력창 및 버튼 컨테이너 */
-.input-container {
+.input-container2 {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
+  
 }
 
 /* 텍스트 입력창 */
@@ -94,26 +114,49 @@
 }
 
 /* 전송 버튼 */
-.sendBtn {
+.sendBtn2 {
     padding: 10px;
-    background-color: #8788df; /* 디스코드의 전송 버튼 색상 */
+    background-color: #8788df; 
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: fit-content;
     font-size: 14px;
 }
 
+
+.sendBtn3 {
+    padding: 10px;
+    background-color: #8788df; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: fit-content;
+    font-size: 14px;
+}
+
+.button-container2{
+    display: flex;         
+    justify-content: flex-end; 
+    gap: 10px;                
+    align-items: center;  
+}
+
 /* 전송 버튼 호버 효과 */
-.sendBtn:hover {
-    background-color: #a9a9ff; /* 호버시 배경색을 조금 더 밝게 */
+.sendBtn2:hover {
+    background-color: #a9a9ff; 
+}
+
+.sendBtn3:hover {
+    background-color: #a9a9ff; 
 }
 
 /* 메인으로 돌아가기 버튼 */
-.back-to-main-button  {
-
+.back-to-main-button2  {
     padding: 10px;
-    background-color: #f7f7f7; /* 디스코드의 취소 버튼 색상 */
+    background-color: #f7f7f7; 
     color: rgb(136, 84, 219);
     border: none;
     border-radius: 5px;
@@ -121,32 +164,31 @@
     font-size: 14px;
 }
 
-.dropdown-menu {
-    position: absolute;
+
+
+.dropdown-menu2 {
+   
     background-color: white;
     border: 1px solid #ddd;
     list-style: none;
     padding: 5px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
     color: #2f3136;
+    z-index: 100000; 
 }
 
-.dropdown-menu li {
+.dropdown-menu2 li {
     padding: 5px 10px;
     cursor: pointer;
 }
 
-.dropdown-menu li:hover {
-    background-color: #f0f0f0;
-}
-
-
-.button-container{
-    display: flex;            /* flex로 설정하여 가로로 배치 */
-    justify-content: flex-end; /* 오른쪽 정렬 */
-    gap: 10px;                /* 버튼들 간의 간격 */
+.dropdown-menu2 li:hover {
+    display: flex;          
+    justify-content: flex-end; 
+    gap: 10px;                
     align-items: center;  
 }
+
+
 
 

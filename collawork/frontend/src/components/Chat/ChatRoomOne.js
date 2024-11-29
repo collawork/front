@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../../components/assest/css/ChatRoom.css';
+import '../../components/assest/css/ChatOneRoom.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faPaperclip} from "@fortawesome/free-solid-svg-icons"
+import {faTrash} from "@fortawesome/free-solid-svg-icons"
+
 
 
 
@@ -64,8 +68,9 @@ const ChatRoomOne = ({chatRoomId}) => {
 
         ws.onopen = () => {
             console.log("WebSocket 연결 성공");
-            fetchMessages();
+        
             ws.send(JSON.stringify({ type: 'join', senderId, chatRoomId }));
+            fetchMessages();
         };
 
         ws.onmessage = (event) => {
@@ -142,7 +147,7 @@ const ChatRoomOne = ({chatRoomId}) => {
     // 체크 풀기
     useEffect(() => {
         const handleOutsideClick = (event) => {
-            if (!event.target.closest('.message') && !event.target.closest('.dropdown-menu')) {
+            if (!event.target.closest('.message2') && !event.target.closest('.dropdown-menu2')) {
                 handleCancelDelete();
             }
         };
@@ -276,11 +281,11 @@ const ChatRoomOne = ({chatRoomId}) => {
     };
 
     return (
-        <div className="chat-container">
-            <h2>{roomName}</h2>
-            <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
+        <div className="chat-container2">
+            <h3 className='title2'>{roomName}</h3>
+            <div id="chatWindow" className="chat-window2" ref={chatWindowRef}>
                 {messages.map((msg) => (
-                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
+                    <div key={msg.messageId} className={`message2 ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
                          {isDeleteMode && (
                             <input
                                 type="checkbox"
@@ -291,7 +296,7 @@ const ChatRoomOne = ({chatRoomId}) => {
                         <strong>{msg.username}</strong>: 
                         {msg.type === 'file' || msg.type === 'FILE' ? (
                             msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img|jfif)$/i) ? (
-                                <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                                <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '180px', maxHeight: '180px' }} />
                             ) : (
                                 <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
                             )
@@ -304,14 +309,17 @@ const ChatRoomOne = ({chatRoomId}) => {
                 ))}
                        {dropdownVisible && (
                     <ul
-                        className="dropdown-menu"
+                        className="dropdown-menu2"
                         style={{ top: dropdownPosition.y, left: dropdownPosition.x }}
                     >
-                        <li onClick={() => handleDropdownSelect('delete')}>삭제</li>
+                        
+                        <li  onClick={() => handleDropdownSelect('delete')}>삭제</li>
                     </ul>
                 )}
             </div>
-            <div className="input-container">
+            <div className="input-container2">        
+                <input type="file" onChange={handleFileChange} />   
+                {isDeleteMode && <button onClick={deleteSelectedMessages}> <FontAwesomeIcon icon={faTrash}  /> 선택 삭제</button>}
                 <input
                     type="text"
                     id="chatMessage"
@@ -319,12 +327,12 @@ const ChatRoomOne = ({chatRoomId}) => {
                     value={messageInput}
                     onChange={e => setMessageInput(e.target.value)}
                     onKeyDown={handleKeyPress}
+                    className='message-input2'
                 />
-                <input type="file" onChange={handleFileChange} />
-                <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
-                <button className="sendBtn" onClick={() => sendMessage('file')}>파일 전송</button>
-                {isDeleteMode && <button onClick={deleteSelectedMessages}>선택 삭제</button>}
-                <button className="back-to-main-button" onClick={handleClose}>메인으로 돌아가기</button>
+                <div className="button-container2">
+                    <button className="sendBtn2" onClick={() => sendMessage('file')}>  <FontAwesomeIcon icon={faPaperclip}  />  파일 전송</button>
+                    <button className="sendBtn3" onClick={() => sendMessage('text')}>전송</button>
+                    </div>
             </div>
         </div>
     );
