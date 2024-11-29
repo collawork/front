@@ -4,21 +4,15 @@ import { projectStore, stateValue } from '../../store';
 import { useUser } from '../../context/UserContext';
 import axios from "axios";
 import '../../components/assest/css/ProjectModify.css';
-// import { stateValue } from "../../store";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectModify = ({ setModify }) => {
   const modalRef = useRef();
-  const [modalShow, setModalShow] = useState(true);
-  // const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-  const [nameModalOpen, setNameModalOpen] = useState(false);
-  // const [managerModalOpen, setManagerModalOpen] = useState(false); 
-  const [exitModalOpen, setExitModalOpen] = useState(false);
-  const [participant, setParticipant] = useState([]);
-  // const [id, setId] = useState(null);
+  const [modalShow, setModalShow] = useState(true); 
+  const [nameModalOpen, setNameModalOpen] = useState(false); 
+  const [exitModalOpen, setExitModalOpen] = useState(false); 
   const [modalOpen, setModalOpen] = useState(false);
-  // const [modalContent, setModalContent] = useState("");
-  const { projectData, userData, PlusListState } = projectStore();
+  const { projectData, userData ,PlusListState} = projectStore();
   const { userId } = useUser();
   const [title, setTitle] = useState("");
   const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig, PlusProjectInformationState } = stateValue();
@@ -46,7 +40,6 @@ const ProjectModify = ({ setModify }) => {
   const projectNameModifyHandler = () => {
     if (String(userId) === String(userData.id)) {
       setNameModalOpen(true);
-      // setModify(false);
     } else {
       alert("관리자 권한이 없습니다.");
     }
@@ -153,70 +146,66 @@ const ProjectModify = ({ setModify }) => {
 
   return (
     <>
-      <ReactModal
-        isOpen={modalShow}
-        closeModal={closeModal}
-        onRequestClose={() => setModalShow(false)}
-        contentLabel="projectModify"
-        className="project-modify-modal"
-        // appElement={document.getElementById("root")}
-        // style={{
-        //   content: {
-        //     top: "50%",
-        //     left: "50%",
-        //     transform: "translate(-50%, -50%)",
-        //     width: "300px",
-        //     padding: "10px",
-        //     borderRadius: "10px",
-        //     border: "1px solid #ccc",
-        //   },
-        //   overlay: {
-        //     backgroundColor: "rgba(0, 0, 0, 0.75)",
-        //   },
-        // }}
-      >
-        {/* <button onClick={managerModifyHandler}>관리자 변경</button> */}
-        <button onClick={projectNameModifyHandler}>프로젝트 이름 변경</button>
-        <button onClick={ExitModalOpen}>이 프로젝트 나가기</button>
-        <button onClick={projectDeleteHandler}>프로젝트 삭제</button>
+     <ReactModal
+  isOpen={modalShow}
+  closeModal={closeModal}
+  onRequestClose={() => setModalShow(false)}
+  contentLabel="projectModify"
+  appElement={document.getElementById("root")}
+  style={{
+    content: {
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "300px", 
+      padding: "10px", 
+      borderRadius: "10px",
+      border: "1px solid #ccc", 
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
+  }}
+>
+  
+  <button onClick={projectNameModifyHandler}>프로젝트 이름 변경</button>
+  <button onClick={ExitModalOpen}>이 프로젝트 나가기</button>
+  <button onClick={projectDeleteHandler}>프로젝트 삭제</button>
+</ReactModal>
 
-        <button onClick={closeModal}>닫기</button>
-      </ReactModal>
-
-      <ReactModal
-        isOpen={nameModalOpen}
-        onRequestClose={() => setNameModalOpen(false)}
-        contentLabel="nameModify"
-        className="project-name-modify-modal"
-        // appElement={document.getElementById("root")}
-        // style={{
-        //   content: {
-        //     top: "50%",
-        //     left: "50%",
-        //     transform: "translate(-50%, -50%)",
-        //     width: "300px",
-        //     padding: "10px",
-        //     borderRadius: "10px",
-        //     border: "1px solid #ccc",
-        //   },
-        //   overlay: {
-        //     backgroundColor: "transparent",
-        //   },
-        // }}
-      >
-        <input
-          type="text"
-          placeholder="변경할 이름을 입력해주세요."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <button onClick={nameModify}>변경하기</button>
-        <button onClick={() => setNameModalOpen(false)}>취소</button>
-      </ReactModal>
+<ReactModal
+  isOpen={nameModalOpen}
+  onRequestClose={() => setNameModalOpen(false)}
+  contentLabel="nameModify"
+  appElement={document.getElementById("root")}
+  style={{
+    content: {
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "300px", 
+      padding: "10px",
+      borderRadius: "10px",
+      border: "1px solid #ccc",
+    },
+    overlay: {
+      backgroundColor: "transparent",
+    },
+  }}
+>
+  <input
+    type="text"
+    placeholder="변경할 이름을 입력해주세요."
+    value={title}
+    onChange={(e) => setTitle(e.target.value)}
+  />
+  <button className="modifybutton" onClick={nameModify}>변경하기</button>
+  <button onClick={() => setNameModalOpen(false)}>취소</button>
+</ReactModal>
 
 
 
-    </>
+  </>
   )
 }
 

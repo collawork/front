@@ -50,8 +50,6 @@ const ProjectInformation = () => {
     }
   };
 
-
-
   useEffect(() => {
     if (managerModalOpen) {
       fetchAcceptedParticipants();
@@ -90,6 +88,7 @@ const ProjectInformation = () => {
     };
   }, []);
 
+
   function Send() {
     const token = localStorage.getItem('token');
 
@@ -115,7 +114,9 @@ const ProjectInformation = () => {
     console.log(id);
   }
 
-  function calendarSend() { // 다가오는 (7일) 캘린더 조회
+
+  // 다가오는 (7일) 캘린더 조회
+  function calendarSend() {
     const token = localStorage.getItem('token');
     const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
 
@@ -133,6 +134,7 @@ const ProjectInformation = () => {
       }
     }).catch(err => console.error("캘린더 조회 오류:", err));
   }
+
 
   function noticesSend() { // 중요 공지사항 요청
     const token = localStorage.getItem('token');
@@ -171,7 +173,6 @@ const ProjectInformation = () => {
 
   // 담당자 변경
   const managerModify = () => {
-    // const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
     const token = localStorage.getItem('token');
     axios({
       url: `${API_URL}/api/user/projects/managerModify`,
@@ -183,14 +184,12 @@ const ProjectInformation = () => {
       setManagerModalOpen(false);
       setModify(false);
       alert("담당자가 변경되었습니다!");
-      // PlusProjectInformationState(false);
     });
   };
 
   const managerModifyHandler = () => {
     if (String(userId) === String(userData.id)) {
       setManagerModalOpen(true);
-      // setModify(false);
     } else {
       alert("관리자 권한이 없습니다.");
     }
@@ -247,6 +246,7 @@ const ProjectInformation = () => {
     })
       .then(function (response) {
         if (response.data) {
+          
           setVotingData(response.data);
         } else {
           setVotingData(null);
@@ -275,8 +275,7 @@ const ProjectInformation = () => {
         <div className="project-box">
           <div className="project-container">
             <div className="project-header">
-              <FontAwesomeIcon icon={faFolderOpen} className="project-icon" />
-              {/* <FontAwesomeIcon icon={faFolder} className="project-icon" /> */}
+           <FontAwesomeIcon icon={faFolderOpen}  className="project-icon"/>
               <h2>{projectData.projectName}</h2>
               <span className="project-code">{projectData.projectCode}</span>
               <button className="icon-button" onClick={() => setModify(true)}>
@@ -289,6 +288,19 @@ const ProjectInformation = () => {
                   />
                 )}
               </button>
+              <div className="adminBox">
+              <div
+                style={{
+              // position: "absolute", // 절대 위치 지정
+              top: "10px",          // 상단 10px
+              right: "5px",        // 우측 10px
+              display: "flex",
+              alignItems: "center",
+              zIndex: 1000,         // 다른 요소 위로 올리기
+                }}
+              >
+                관리자 :
+
             </div>
 
             <div className="projectBar">
@@ -393,14 +405,207 @@ const ProjectInformation = () => {
                   borderRadius: "50%",
                   marginRight: "10px",
                   cursor: "pointer",
+                  marginLeft:"10px"
                 }}
               />
+               <h3>{userData?.username || "정보 없음"}</h3>
+              <button className="admin" onClick={managerModifyHandler}>관리자 변경</button>
+            </div>
+            </div>
               관리자 : <h3>{userData?.username || "정보 없음"}</h3>
               <button onClick={managerModifyHandler}>관리자 변경</button>
 
 
             </div>
+
+            
+
+            <div className="project-wrapper">
+  <div className="projectBox">
+    <ProjectBox userId={userId} createdBy={projectData.createdBy} />
+  </div>
+  <div className="list-container">
+    {/* 일정 섹션 */}
+    {calendarList.length > 0 ? (
+      <ul className="list">
+        {calendarList.map((calendarItem, index) => {
+          const today = new Date();
+          const startTime = new Date(calendarItem.start_time);
+          const daysRemaining = Math.ceil((startTime - today) / (1000 * 60 * 60 * 24));
+          return (
+            <li key={index} className="list-item">
+              <div className="icon-container" onClick={calendatHandler}>
+                <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                <FontAwesomeIcon icon={faCalendar} className="icon" />
+                {daysRemaining === 0 ? (
+                  <span style={{ color: "red", marginRight: "5px", fontWeight: "bold" }}>D - Day</span>
+                ) : (
+                  <span style={{ color: "red", marginRight: "5px", fontWeight: "bold" }}>D - {daysRemaining}</span>
+                )}
+              </div>
+              <div className="list-content" onClick={calendatHandler}>
+                <h3>{calendarItem.title}</h3>
+                <p>
+                  {new Date(calendarItem.start_time).toLocaleString()} ~{" "}
+                  {new Date(calendarItem.end_time).toLocaleString()}
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+                    <ul className="list-contentist">
+                    <li className="list-item">
+                    <div className="icon-container" onClick={calendatHandler}>
+                      <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+                      <FontAwesomeIcon icon={faCalendar} className="icon" />
+                    </div>
+                    <div className="list-content" >
+                    <h3>다가오는 일정이 없습니다.</h3>
+                    </div>
+                    </li>
+                  </ul> )}
+        
+                          {noticesList.length > 0 ? (
+                            <ul className="list">
+                              {/* <h4 style={{color:"gray"}}>주요 공지사항</h4> */}
+                              {noticesList.map((list, index) => (
+                                <li key={index} className="list-item">
+                                  <div className="icon-container" onClick={calendatHandler}>
+                                    <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+                                    <FontAwesomeIcon icon={faBell} className="icon" />
+                                  </div>
+                                  <div className="list-content">
+                                    <h3>{list.title}</h3>
+                                    <p>{new Date(list.createdAt).toLocaleString()}</p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+      <ul className="list">
+        <li className="list-item">
+          <div className="icon-container" onClick={calendatHandler}>
+            <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
+            <FontAwesomeIcon icon={faCalendar} className="icon" />
           </div>
+          <div className="list-content">
+            <h3>다가오는 일정이 없습니다.</h3>
+          </div>
+        </li>
+      </ul>
+    )}
+    {/* 공지사항 섹션 */}
+    {noticesList.length > 0 ? (
+      <ul className="list">
+        {noticesList.map((list, index) => (
+          <li key={index} className="list-item">
+            <div className="icon-container" onClick={calendatHandler}>
+              <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+              <FontAwesomeIcon icon={faBell} className="icon" />
+            </div>
+            <div className="list-content">
+              <h3>{list.title}</h3>
+              <p>{new Date(list.createdAt).toLocaleString()}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <ul className="list">
+        <li className="list-item">
+          <div className="icon-container" onClick={calendatHandler}>
+            <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
+            <FontAwesomeIcon icon={faBell} className="icon" />
+          </div>
+          <div className="list-content">
+            <h3>주요 공지사항이 없습니다.</h3>
+          </div>
+        </li>
+      </ul>
+    )}
+  </div>
+</div>
+  
+                {modify && (
+                  <ProjectModify
+                    setModify={setModify}
+                  />
+                )}
+              </div>
+         
+
+              {/* 투표 찍어주기 */}
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+          
+                <h4 style={{color:"red"}}>진행중 <FontAwesomeIcon icon={faCheckToSlot} style={{color:"black"}}/></h4>
+                {votingData.length ? (
+                // 투표 중인 항목만 필터링
+                votingData
+                  .filter((vote) => vote.vote === true) 
+                  .map((vote) => (
+                    <section key={vote.id} className="voting-card">
+                      <ul>
+                        <li>{vote.votingName}</li>
+                      </ul>
+                    </section>
+                  ))
+                  ) : (
+                    <h5>진행중인 투표가 없습니다.</h5>
+                  )}
+
+                <ReactModal
+                    isOpen={managerModalOpen}
+                    onRequestClose={() => setManagerModalOpen(false)}
+                    contentLabel="managerModify"
+                    appElement={document.getElementById("root")}
+                    style={{
+                      content: {
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "300px",
+                        padding: "10px",
+                        borderRadius: "10px",
+                        border: "1px solid #ccc",
+                      },
+                      overlay: {
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                  >
+                      <ul>
+                        <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
+                        {participant.map((part) => (
+                          <li key={part.email}>
+                            <input
+                              type="radio"
+                              id={`participant-${part.email}`}
+                              name="adminParticipant"
+                              value={part.email}
+                              onChange={(e) => changeHandler(e)}
+                            />
+                            <label htmlFor={`participant-${part.email}`}>
+                              {part.id} {part.name} - {part.email}
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                      <button onClick={onSubmitHandler}>변경하기</button>
+                      <button onClick={() => setManagerModalOpen(false)}>취소</button>
+                    </ReactModal>
+
+                  <h5 className="created-at">{ projectData.createdAt? projectData.createdAt.split('T')[0] : '정보없음' }</h5> 
+
+                </div>
+              )}
+            </>
+          );
+        }
           {/* 마지막 줄 날짜 찍어주기 부분 */}
           <h5 className="created-at">{projectData?.createdAt}</h5>
 

@@ -8,22 +8,20 @@ import { useUser } from '../context/UserContext';
 import { stateValue } from '../store';
 import Voting from '../components/project/Voting/ShowVoting';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faCheckToSlot, faComment, faBell, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faCheckToSlot, faComment, faBell, faCalendarDays,faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Calendar } from '../components/calendar/Calendar';
 import { projectStore } from '../store';
 import NoticeList from '../components/project/notice/NoticeList';
 
 
 
-
-
-
 const Project = ({ projectId }) => {
 
   const { projectData } = projectStore();
-  const [selected, setSelected] = useState("home"); // Default selected item
+  const [selected, setSelected] = useState("home"); 
   const token = localStorage.getItem("token");
   console.log("현재 로그인한 사용자의 token : " + token);
+  const [plusIcon, setPlusIcon] = useState(true);
 
   const { userId } = useUser();
   console.log("Project 페이지의 userId: ", userId);
@@ -40,6 +38,8 @@ const Project = ({ projectId }) => {
       setNotiShow(false);
       setVotig(false);
       setSelected("home")
+    }else{
+      setPlusIcon(true);
     }
   };
 
@@ -51,7 +51,8 @@ const Project = ({ projectId }) => {
       setNotiShow(false);
       setVotig(false);
       setSelected("chat")
-
+    }else{
+      setPlusIcon(false);
     }
   };
 
@@ -63,6 +64,8 @@ const Project = ({ projectId }) => {
       setNotiShow(false);
       setVotig(false);
       setSelected("calendar")
+    }else{
+      setPlusIcon(false);
     }
   };
 
@@ -74,6 +77,8 @@ const Project = ({ projectId }) => {
       setCalShow(false);
       setVotig(false);
       setSelected("noti")
+    }else{
+      setPlusIcon(false);
     }
 
   }
@@ -86,6 +91,8 @@ const Project = ({ projectId }) => {
       setCalShow(false);
       setVotig(true);
       setSelected("voting")
+    }else{
+      setPlusIcon(false);
     }
   }
 
@@ -131,6 +138,7 @@ const Project = ({ projectId }) => {
         {calShow && <Calendar />}
         {voting && <Voting />}
       </div>
+      {plusIcon && <FontAwesomeIcon icon={faPlus} className='plusIcon' />}
     </div>
   );
 }
