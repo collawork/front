@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ModalPage from './ModalPage'; 
 import ChatRoomOne from './ChatRoomOne'; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faComment} from "@fortawesome/free-solid-svg-icons"
+import {faPlay} from "@fortawesome/free-solid-svg-icons"
+
 
 const ChatList = ({ userId }) => {
   const [chatList, setChatList] = useState([]);
@@ -62,18 +66,20 @@ const ChatList = ({ userId }) => {
 
   return (
     <div className="chat-list">
-      <h3>채팅방 리스트</h3>
+      <h3>내 채팅방 <FontAwesomeIcon icon={faComment}/> </h3>
       {errorMessage ? (
         <p>{errorMessage}</p>
       ) : (
         <div>
           {chatList.length > 0 ? (
             chatList.map((chatRoom) => (
+              
               <p
                 key={chatRoom.id}
                 onClick={() => openModal(chatRoom.id)} // 채팅방 클릭 시 모달 열기
               >
-                {chatRoom.roomName}
+                 <FontAwesomeIcon icon={faPlay}/>
+                   {chatRoom.roomName}
               </p>
             ))
           ) : (
