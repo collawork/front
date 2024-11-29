@@ -3,6 +3,8 @@ import axios from 'axios';
 import UserDetail from './UserDetail';
 import "../components/assest/css/Search.css";
 import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { projectStore } from "../store";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,6 +14,8 @@ const Search = () => {
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const { userId } = useUser();
+  const { projectData } = projectStore();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -33,11 +37,11 @@ const Search = () => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            params: { query: searchQuery },
+            params: { query: searchQuery , userId : userId},
         });
 
-        console.log("API 응답 데이터:", response.data);
-        console.log("현재 로그인된 사용자:", userId);
+        // console.log("API 응답 데이터:", response.data);
+        // console.log("현재 로그인된 사용자:", userId);
 
         // 응답 데이터 검증 및 기본값 설정
         const users = Array.isArray(response.data.users) ? response.data.users : [];
@@ -77,6 +81,13 @@ const Search = () => {
     setIsDetailModalOpen(true);
   };
 
+  const handleResultClickProject = (type, item) => {
+    setSelectedDetail({ type, item });
+    setIsDetailModalOpen(true);
+    console.log("projectId : ", projectData.id);
+    navigate('/project', {projectId:projectData.id});
+  }
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedDetail(null);
@@ -86,6 +97,7 @@ const Search = () => {
     setIsDetailModalOpen(false);
     setSelectedDetail(null);
   };
+
 
   return (
     <div>
@@ -101,9 +113,8 @@ const Search = () => {
 
       {/* 검색 결과 모달 */}
       {isModalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
+        <div className="modal-overlay-search" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button-search" onClick={closeModal}>닫기</button>
             {noResults && <div className="no-results">검색 결과가 없습니다.</div>}
             <div className="search-results">
               {searchResults.users.length > 0 && (
@@ -124,22 +135,9 @@ const Search = () => {
                   <h3>프로젝트 검색 결과</h3>
                   <ul>
                     {searchResults.projects.map((project) => (
-                      <li key={project.id} onClick={() => handleResultClick('project', project)}>
+                      <li key={project.id} onClick={() => handleResultClickProject('project', project)}>
                         {project.projectName}
                         <span className="result-type">프로젝트</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {searchResults.chatRooms.length > 0 && (
-                <div className="search-section">
-                  <h3>채팅방 검색 결과</h3>
-                  <ul>
-                    {searchResults.chatRooms.map((chatRoom) => (
-                      <li key={chatRoom.id} onClick={() => handleResultClick('chatRoom', chatRoom)}>
-                        {chatRoom.roomName}
-                        <span className="result-type">채팅방</span>
                       </li>
                     ))}
                   </ul>
@@ -153,11 +151,8 @@ const Search = () => {
       {/* 상세 정보 모달 */}
       {isDetailModalOpen && selectedDetail && (
         <div className="modal-overlay" onClick={closeDetailModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-button-search" onClick={closeDetailModal}>닫기</button>
             <UserDetail type={selectedDetail.type} item={selectedDetail.item} closeModal={closeDetailModal} currentUser={userId} />
           </div>
-        </div>
       )}
     </div>
   );
