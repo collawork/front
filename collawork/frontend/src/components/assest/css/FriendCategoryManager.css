@@ -69,7 +69,13 @@
     max-width: 800px;
     width: 100%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
     position: relative;
+}
+
+.mypage-container {
+    position: relative;
+    z-index: 1; /* 모달보다 낮은 z-index 설정 */
 }
 
 .close-button-friendCate {

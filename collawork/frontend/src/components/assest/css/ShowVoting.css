@@ -94,24 +94,24 @@
     border: 1px solid #ccc;
     padding: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    width: 250px; /* Adjust width as needed */
+    width: 250px;
     max-width: 300px;
-    display: none; /* Hidden by default */
+    display: none;
   }
   .voting-card:hover .user-info-dropdown {
-    display: block; /* Or use the `activeProfile` state for manual control */
+    display: block; 
   }
   
   .vote-item {
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    align-items: flex-start; /* Align to the left */
-    margin-bottom: 15px; /* Add spacing between vote items */
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-bottom: 15px;
   }
   .vote-option {
     display: flex;
-    align-items: center; /* Keep checkbox and label aligned */
-    margin-bottom: 5px; /* Add spacing before the progress bar */
+    align-items: center; 
+    margin-bottom: 5px; 
   }
   
   .custom-checkbox {
@@ -185,7 +185,7 @@
   }
 
   .progress-bar {
-    width: 90%; /* Adjust width as needed */
+    width: 90%; 
     height: 8px;
     background-color: #e0e0e0;
     border-radius: 4px;
@@ -201,10 +201,16 @@
 }
   .custom-checkbox:disabled {
     cursor: not-allowed;
-    opacity: 0.6; /* Make disabled checkboxes look grayed out */
+    opacity: 0.6;
   }
   
   .vote-button[disabled] {
     background-color: gray;
     cursor: not-allowed;
+  }
+
+  .check{
+    margin-left:230px;
+    margin-bottom:50px;
+    font-size: 20px;
   }

@@ -3,12 +3,12 @@ import axios from 'axios';
 import { useUser } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { projectStore, stateValue } from '../../store';
-import Pagination from '../Pagination'; // 기존에 구현한 Pagination 컴포넌트 사용
+import Pagination from '../Pagination';
 import '../../components/assest/css/ProjectList.css'
 
 
 
-const ProjectList = ({ onProjectSelect }) => {
+const ProjectList = ({ onProjectSelect, fetchProjectList }) => {
 
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -30,7 +30,7 @@ const ProjectList = ({ onProjectSelect }) => {
     }, []);
 
     const fetchProjects = () => {
-        const token = localStorage.getItem('token'); // 토큰 가져오기
+        const token = localStorage.getItem('token');
         if (!token) {
             console.error("토큰이 없습니다. API 호출을 중단합니다.");
             return;
