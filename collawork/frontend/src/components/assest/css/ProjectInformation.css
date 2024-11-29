@@ -7,9 +7,9 @@
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 13px;
 }
 
-/* Optional hover effect */
 .list-item:hover {
   background-color: #f3f4f6;
 }
@@ -89,7 +89,7 @@
   justify-content: space-between;
   padding: 10px 20px;
   margin-top:60px;
-  margin-left:-300px;
+  margin-left:-59px;
 }
 
 .project-icon {
@@ -226,9 +226,9 @@
 }
 .list-container {
   margin-top: 30px;
-  padding-left: 20px; /* Apply matching padding to list container */
-  padding-right: 20px; /* Apply matching padding to list container */
-  box-sizing: border-box; /* Include padding in width calculation */
+  padding-left: 20px; 
+  padding-right: 20px; 
+  box-sizing: border-box; 
 }
 
 .profile-image-small {
@@ -243,6 +243,20 @@ created-at {
   color: #888;
   text-align: center;
   margin-top: 20px;
+}
+
+.adminBox{
+  margin-left:290px;
+}
+
+.header-box{
+  position: fixed;
+}
+
+.list-header{
+  color:gray;
+  margin-left:30px;
+  
 }
 
 

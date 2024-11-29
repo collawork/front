@@ -21,13 +21,14 @@ const ShowVoting = () => {
     const [votingData, setVotingData] = useState([]);
     const [contentsData, setContentsData] = useState({});
     const [modalShow, setModalShow] = useState(false);
-    const { projectData,PlusVotingData} = projectStore();
-    const [rere, setRere] = useState();
+    const { projectData} = projectStore();
+    const [rere, setRere] = useState(false);
     const [state, setState] = useState();
     const { userId } = useUser();
     const [userVotes, setUserVotes] = useState({}); // 각 투표별로 상태를 관리하기 위한 상태 객체 추가
     const [voteResults, setVoteResults] = useState([{}]);
     const [votingByUser, setVotingByUser] = useState([]);
+    const [updataList, setUpdateList] = useState();
     const toggleProfileModal = (id) => {
       setActiveProfile((prev) => (prev === id ? null : id)); 
     };
@@ -54,7 +55,16 @@ useEffect(() => {
         handler(); 
           };
 
-         
+          // useEffect(() => {
+          //   Send();
+          //   contentsSend();
+            
+          //   }, [updataList]);
+    
+            const updateVotingList = async () => {
+              await  Send(); // 투표 목록 다시 불러오기
+              await contentsSend();
+            };
 
     // 1. 프로젝트에 귀속된 투표 list 조회 요청
     const Send = async () => {
@@ -68,7 +78,7 @@ useEffect(() => {
           });
           setVotingData(response.data);
           VotingBySend(response.data);
-           PlusVotingData(response.data);
+          //  PlusVotingData(response.data);
            console.log(response.data);
           return response.data;
         } catch (error) {
@@ -244,16 +254,17 @@ useEffect(() => {
       }else{
         return;
       }
-      
+
     }
+
     function handleCheckboxChange(e, voteId, contentId) {
       
       setState(contentId);
-  
-     
       const voteButton = document.querySelector(`#vote-button-${voteId}`);
       voteButton.disabled = !e.target.checked;  
   }
+
+
     function handleSubmittt(e, voteId) {
       e.preventDefault();
 
@@ -264,171 +275,168 @@ useEffect(() => {
           alert("항목을 선택해주세요!");  
           return;
       }
-  
-      console.log(`Voted for content ID: ${selected.value}`);
-  
-  
       checkboxes.forEach((box) => (box.disabled = true));
-  
-      
+    
       const voteButton = document.querySelector(`#vote-button-${voteId}`);
       voteButton.disabled = true;
-  
- 
-      userVote(voteId);
-  
-     
-      localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: selected.value }));
-  
 
+      userVote(voteId);
+      localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: selected.value }));
       handler(voteId); 
-  
-    
       optionSend(voteId);
-  
-    
       alert("투표가 완료되었습니다!");
   }
   
-    return (
-      <>
-        <h3><FontAwesomeIcon icon={faCheckToSlot} /></h3>
-        <button onClick={modalHandler}>+ 새 투표</button>
-        {modalShow && (
-          <NewVoting
-            setModalShow={setModalShow}
-            modalShow={modalShow}
-            handler={handler}
-            handleModalClose={handleModalClose}
-            setRere={setRere}
-            rere={rere}
-          />
-        )}
-        <div className="voting-container">
-        {Array.isArray(votingData) &&
-  votingData.map((vote) => (
-    <section key={vote.id} className="voting-card">
-      <div className="voting-header">
-        <img
-          src={votingByUser[vote.id]?.profileImageUrl || defaultImage}
-          alt={`${votingByUser[vote.id]?.username || "사용자"}의 프로필 이미지`}
-          onClick={() => toggleProfileModal(vote.id)}
-          className="profile-img"
+  return (
+    <>
+      <h3><FontAwesomeIcon icon={faCheckToSlot} /></h3>
+      <button onClick={modalHandler}>+ 새 투표</button>
+      {modalShow && (
+        <NewVoting
+          setModalShow={setModalShow}
+          modalShow={modalShow}
+          handler={handler}
+          updateVotingList={updateVotingList}
+          setRere={setRere}
+          rere={rere}
         />
-        <h5>
-          <div className="votingByUser">
-            {votingByUser[vote.id]?.username || "정보 없음"}
-          </div>
-        </h5>
-        <p className="date">
-          {new Date(vote.createdAt).toLocaleDateString()}{" "}
-          <FontAwesomeIcon icon={faUsers} />
-        </p>
-
-        {userVotes[vote.id] ? (
-          <FontAwesomeIcon icon={faCheck} style={{ color: "blue" }} className="check"/>
-        ) : (
-          <FontAwesomeIcon icon={faCheck} style={{ color: "red" }} className="check"/>
-        )}
-      </div>
-      {vote.vote === true ? (
-        <div className="vote-status">
-          <h3 style={{ color: "red" }}>진행중</h3>
-          {userId === vote.createdUser && (
-            <button onClick={() => endHandler(vote.id)}>진행종료</button>
-          )}
-          <div className="vote-name-container">
-            <h3 className="vote-name">{vote.votingName}</h3>
-          </div>
-        </div>
-      ) : (
-        <h3 style={{ color: "gray" }}>투표 종료</h3>
       )}
-      {activeProfile === vote.id && votingByUser[vote.id] && (
-        <div
-          className="user-info-dropdown"
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "0",
-            transform: "translateX(100%)",
-            zIndex: 1000,
-          }}
-        >
-          <p>이름: {votingByUser[vote.id]?.username || "정보 없음"}</p>
-          <p>이메일: {votingByUser[vote.id]?.email || "정보 없음"}</p>
-          <p>회사명: {votingByUser[vote.id]?.company || "정보 없음"}</p>
-          <p>직급: {votingByUser[vote.id]?.position || "정보 없음"}</p>
-          <p>핸드폰 번호: {votingByUser[vote.id]?.phone || "정보 없음"}</p>
-          <p>fax: {votingByUser[vote.id]?.fax || "정보 없음"}</p>
-        </div>
-      )}
-      <span className="vote-detail">{vote.votingDetail}</span>
-      <div className="separator"></div>
-
-      <ul>
-        {Array.isArray(contentsData[vote.id]) &&
-        contentsData[vote.id].length > 0 ? (
-          <form onSubmit={(e) => handleSubmittt(e, vote.id)}>
-            {contentsData[vote.id].map((content, idx) => {
-              const isVoted = userVotes[vote.id]?.contentsId === content.id;
-              const voteCount = voteResults[vote.id]?.[content.id] || 0;
-              return (
-                <div key={idx} className="vote-item">
-                  <label
-                    className="vote-option"
-                    style={{ color: isVoted ? "red" : "black" }}
-                  >
-                    <input
-                      type="checkbox"
-                      name={`vote-${vote.id}`}
-                      value={content.id}
-                      disabled={!!userVotes[vote.id]}
-                      onChange={(e) =>
-                        handleCheckboxChange(e, vote.id, content.id)
-                      }
-                      className="custom-checkbox"
-                    />
-                    <span className="checkbox-label">
-                      {content.votingContents}
-                    </span>
-                    {voteCount > 0 && (
-                      <span className="vote-count">({voteCount} 명 투표)</span>
-                    )}
-                  </label>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{
-                        width: `${
-                          (voteCount / (totalVotes[vote.id] || 1)) * 100
-                        }%`,
-                        backgroundColor: isVoted ? "red" : "gray",
-                      }}
-                    ></div>
-                  </div>
+      <div className="voting-container">
+        {Array.isArray(votingData) &&
+          votingData.map((vote) => {
+            const isEnded = !!vote.votingEnd; // 종료 여부 확인
+            const today = new Date();
+            const endTime = new Date(vote.votingEnd);
+            const daysRemaining = Math.ceil((endTime - today) / (1000 * 60 * 60 * 24)); 
+            return (
+              <section key={vote.id} className="voting-card">
+                <div className="vote-status">
+              
+              {vote.vote ? (
+                <h3 style={{ color: "red" }}>진행중</h3>
+                
+              ) : (
+                <h3 style={{ color: "gray" }}>투표 종료</h3>
+              )}
+              {!isEnded && userId === vote.createdUser && (
+                <button onClick={() => endHandler(vote.id)}>진행종료</button>
+              )}
+              <div className="vote-name-container">
+                  {isEnded && daysRemaining == 0 ? 
+                  <p style={{color:"red"}}><strong>오늘 마감되는 투표입니다 !</strong></p>
+                  :
+                  (
+                    isEnded && <p className="end-time" style={{color:"red"}}>
+                      마감일  :  {new Date(vote.votingEnd).toLocaleString()}
+                    </p>
+                  )}
+            </div>
+            
                 </div>
-              );
-            })}
-            <button
-              type="submit"
-              id={`vote-button-${vote.id}`}
-              disabled={true}
-              className="vote-button"
-            >
-              투표하기
-            </button>
-          </form>
-        ) : (
-          <p>내용이 없습니다.</p>
-        )}
-      </ul>
-    </section>
-  ))}
+                <div className="voting-header">
+                 
+                  <img
+                src={votingByUser[vote.id]?.profileImageUrl || defaultImage}
+                alt={`${votingByUser[vote.id]?.username || "사용자"}의 프로필 이미지`}
+                onClick={() => toggleProfileModal(vote.id)}
+                className="profile-img"
+                style={{ position: "relative" }} /* 추가: 상대 위치 지정 */ />
+                  {activeProfile === vote.id && votingByUser[vote.id] && (
+              <div className="user-info-dropdown">
+              <p>이름: {votingByUser[vote.id]?.username || "정보 없음"}</p>
+              <p>이메일: {votingByUser[vote.id]?.email || "정보 없음"}</p>
+              <p>회사명: {votingByUser[vote.id]?.company || "정보 없음"}</p>
+              <p>직급: {votingByUser[vote.id]?.position || "정보 없음"}</p>
+              <p>핸드폰 번호: {votingByUser[vote.id]?.phone || "정보 없음"}</p>
+              <p>fax: {votingByUser[vote.id]?.fax || "정보 없음"}</p>
+            </div>
+          )}
 
-        </div>
-      </>
-    );
+                  <h5>
+                    <div className="votingByUser">
+                      {votingByUser[vote.id]?.username || "정보 없음"}
+                    </div>
+                  </h5>
+                  <p className="date">
+                    {new Date(vote.createdAt).toLocaleDateString()}{" "}
+                    <FontAwesomeIcon icon={faUsers} />
+                  </p>
+                  {userVotes[vote.id] ? (
+                    <FontAwesomeIcon icon={faCheck} style={{ color: "blue" }} className="check" />
+                  ) : (
+                    <FontAwesomeIcon icon={faCheck} style={{ color: "red" }} className="check" />
+                  )}
+                </div>
+                <h3 className="vote-name">{vote.votingName}</h3>
+
+
+                
+                <span className="vote-detail">{vote.votingDetail}</span>
+                <div className="separator"></div>
+                <ul>
+                  {Array.isArray(contentsData[vote.id]) &&
+                  contentsData[vote.id].length > 0 ? (
+                    <form onSubmit={(e) => handleSubmittt(e, vote.id)}>
+                      {contentsData[vote.id].map((content, idx) => {
+                        const isVoted = userVotes[vote.id]?.contentsId === content.id;
+                        const voteCount = voteResults[vote.id]?.[content.id] || 0;
+                        return (
+                          <div key={idx} className="vote-item">
+                            <label
+                              className="vote-option"
+                              style={{ color: isVoted ? "red" : "black" }}
+                            >
+                              <input
+                                type="checkbox"
+                                name={`vote-${vote.id}`}
+                                value={content.id}
+                                disabled={!!userVotes[vote.id] || isEnded} // 종료 시 체크박스 비활성화
+                                onChange={(e) =>
+                                  handleCheckboxChange(e, vote.id, content.id)
+                                }
+                                className="custom-checkbox"
+                              />
+                              <span className="checkbox-label">
+                                {content.votingContents}
+                              </span>
+                              {voteCount > 0 && (
+                                <span className="vote-count">({voteCount} 명 투표)</span>
+                              )}
+                            </label>
+                            <div className="progress-bar">
+                              <div
+                                className="progress-fill"
+                                style={{
+                                  width: `${
+                                    (voteCount / (totalVotes[vote.id] || 1)) * 100
+                                  }%`,
+                                  backgroundColor: isVoted ? "red" : "gray",
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {!isEnded && (
+                        <button
+                          type="submit"
+                          id={`vote-button-${vote.id}`}
+                          disabled={true}
+                          className="vote-button"
+                        > 투표하기 </button>
+                              )}
+                            </form>
+                          ) : (
+                            <p>내용이 없습니다.</p>
+                          )}
+                        </ul>
+                      </section>
+                    );
+                  })}
+              </div>
+            </>
+          );
+  
     
 }
 
