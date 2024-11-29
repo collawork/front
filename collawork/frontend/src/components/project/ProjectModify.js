@@ -152,16 +152,17 @@ const ProjectModify = ({ setModify }) => {
   onRequestClose={() => setModalShow(false)}
   contentLabel="projectModify"
   appElement={document.getElementById("root")}
+  className='project-modify-modal'
   style={{
-    content: {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "300px", 
-      padding: "10px", 
-      borderRadius: "10px",
-      border: "1px solid #ccc", 
-    },
+    // content: {
+    //   top: "50%",
+    //   left: "50%",
+    //   transform: "translate(-50%, -50%)",
+    //   width: "300px", 
+    //   padding: "10px", 
+    //   borderRadius: "10px",
+    //   border: "1px solid #ccc", 
+    // },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.75)",
     },
@@ -178,16 +179,17 @@ const ProjectModify = ({ setModify }) => {
   onRequestClose={() => setNameModalOpen(false)}
   contentLabel="nameModify"
   appElement={document.getElementById("root")}
+  className='project-name-modify-modal'
   style={{
-    content: {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "300px", 
-      padding: "10px",
-      borderRadius: "10px",
-      border: "1px solid #ccc",
-    },
+    // content: {
+    //   top: "50%",
+    //   left: "50%",
+    //   transform: "translate(-50%, -50%)",
+    //   width: "300px", 
+    //   padding: "10px",
+    //   borderRadius: "10px",
+    //   border: "1px solid #ccc",
+    // },
     overlay: {
       backgroundColor: "transparent",
     },
