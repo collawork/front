@@ -120,7 +120,7 @@ const ProgressBar = () => {
           onMouseUp={handleMouseUp}
           onClick={(e) => {
             if (!isEditing) {
-              alert("Click the Change button to edit the progress bar.");
+              alert("수정버튼을 눌러서 변경하세요. ");
             }
           }}
         >
@@ -156,19 +156,22 @@ const ProgressBar = () => {
     <button
       onClick={() => {
         if (String(userId) !== String(projectData.createdBy)) {
-          alert("Only the administrator can edit the progress.");
+          alert("관리자만 수정가능합니다 .");
           return;
         }
         setIsEditing(true);
       }}
       disabled={String(userId) !== String(projectData.createdBy)} 
+      className="buttonstyle"
       style={{
-        padding: "10px 20px",
-        backgroundColor: String(userId) !== String(projectData.createdBy) ? "gray" : "blue",
-        color: "white",
+        padding: "8px 15px",
         border: "none",
         borderRadius: "5px",
-        cursor: String(userId) !== String(projectData.createdBy) ? "not-allowed" : "pointer",
+        cursor: "pointer",
+        marginTop: "10px",
+        fontFamily: 'MinSans-Regular',
+        marginLeft:"20px",
+        
       }}
     >
       수정
@@ -178,13 +181,13 @@ const ProgressBar = () => {
       <button
         onClick={saveChanges}
         style={{
-          padding: "10px 20px",
-          backgroundColor: "green",
-          color: "white",
+          padding: "8px 15px",
           border: "none",
           borderRadius: "5px",
           cursor: "pointer",
-          marginRight: "10px",
+          marginTop: "10px",
+          fontFamily: 'MinSans-Regular',
+          marginLeft:"20px",
         }}
       >
         저장
@@ -194,7 +197,15 @@ const ProgressBar = () => {
           setIsEditing(false);
           findPercentage();
         }}
-        className="canclebutton"
+        style={{
+          padding: "8px 15px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginTop: "10px",
+          fontFamily: 'MinSans-Regular',
+          marginLeft:"20px",
+        }}
       >
         취소
       </button>

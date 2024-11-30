@@ -9,16 +9,15 @@ import axios from 'axios';
 import { useUser } from '../../../context/UserContext';
 import '../../../components/assest/css/ShowVoting.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faUsers,faCheckToSlot,faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faUsers,faCheckToSlot,faCheck,faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ShowVoting = () => {
-    // const modalRef = useRef();
+
     const [idVoteState, setIdVoteState] = useState(false);
     const [activeProfile, setActiveProfile] = useState(null);
-    // const [profileModal, setProfileModal] = useState({ visible: false, position: {}, user: null });
     const [votingData, setVotingData] = useState([]);
     const [contentsData, setContentsData] = useState({});
     const [modalShow, setModalShow] = useState(false);
@@ -56,11 +55,6 @@ useEffect(() => {
         handler(); 
           };
 
-          // useEffect(() => {
-          //   Send();
-          //   contentsSend();
-            
-          //   }, [updataList]);
     
             const updateVotingList = async () => {
               await  Send(); // 투표 목록 다시 불러오기
@@ -79,7 +73,6 @@ useEffect(() => {
           });
           setVotingData(response.data);
           VotingBySend(response.data);
-          //  PlusVotingData(response.data);
            console.log(response.data);
           return response.data;
         } catch (error) {
@@ -191,6 +184,7 @@ useEffect(() => {
     // (투표 후) 사용자 투표 항목 저장 요청
     function userVote(voteId) {
         const token = localStorage.getItem('token');
+        console.log("투표 함수로 넘어옴..");
         axios({
         url: `${API_URL}/api/user/projects/uservoteinsert`,
         headers: { 'Authorization': `Bearer ${token}` },
@@ -259,39 +253,47 @@ useEffect(() => {
     }
 
     function handleCheckboxChange(e, voteId, contentId) {
-      
-      setState(contentId);
-      const voteButton = document.querySelector(`#vote-button-${voteId}`);
-      voteButton.disabled = !e.target.checked;  
-  }
-
-
-    function handleSubmittt(e, voteId) {
-      e.preventDefault();
-
-      const checkboxes = document.querySelectorAll(`[name="vote-${voteId}"]`);
-      const selected = Array.from(checkboxes).find((box) => box.checked);
+      setState(contentId); 
   
-      if (!selected) {
-          alert("항목을 선택해주세요!");  
-          return;
-      }
-      checkboxes.forEach((box) => (box.disabled = true));
     
       const voteButton = document.querySelector(`#vote-button-${voteId}`);
-      voteButton.disabled = true;
-
-      userVote(voteId);
-      localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: selected.value }));
-      handler(voteId); 
-      optionSend(voteId);
-      alert("투표가 완료되었습니다!");
+      voteButton.disabled = !e.target.checked;
   }
+  
+
+  function handleSubmittt(e, voteId) {
+    e.preventDefault();
+
+    const checkboxes = document.querySelectorAll(`[name="vote-${voteId}"]`);
+    const selected = Array.from(checkboxes).find((box) => box.checked);
+
+    if (!selected) {
+        alert("항목을 선택해주세요!"); 
+        return;
+    }
+
+    checkboxes.forEach((box) => (box.disabled = true));
+
+    const voteButton = document.querySelector(`#vote-button-${voteId}`);
+    voteButton.disabled = true; 
+
+    userVote(voteId); 
+    localStorage.setItem('userVote_' + voteId, JSON.stringify({ voteId, contentId: selected.value }));
+    
+    handler(voteId);
+    optionSend(voteId); 
+
+    alert("투표가 완료되었습니다!"); 
+}
+
   
   return (
     <>
-      <h3><FontAwesomeIcon icon={faCheckToSlot} /></h3>
-      <button className="votingButton" onClick={modalHandler}>+ 새 투표</button>
+    <div className="voteheader">
+    <h3><FontAwesomeIcon icon={faCheckToSlot} style={{fontSize:"20px"}}/></h3>
+      <h1>투표</h1>
+      <button className="votingButton" onClick={modalHandler}> <FontAwesomeIcon icon={faPenToSquare} /></button>
+      </div>
       {modalShow && (
         <NewVoting
           setModalShow={setModalShow}
@@ -375,62 +377,64 @@ useEffect(() => {
                 <span className="vote-detail">{vote.votingDetail}</span>
                 <div className="separator"></div>
                 <ul>
-                  {Array.isArray(contentsData[vote.id]) &&
-                  contentsData[vote.id].length > 0 ? (
-                    <form onSubmit={(e) => handleSubmittt(e, vote.id)}>
-                      {contentsData[vote.id].map((content, idx) => {
-                        const isVoted = userVotes[vote.id]?.contentsId === content.id;
-                        const voteCount = voteResults[vote.id]?.[content.id] || 0;
-                        return (
-                          <div key={idx} className="vote-item">
-                            <label
-                              className="vote-option"
-                              style={{ color: isVoted ? "red" : "black" }}
-                            >
-                              <input
-                                type="checkbox"
+    {Array.isArray(contentsData[vote.id]) && contentsData[vote.id].length > 0 ? (
+        <form onSubmit={(e) => handleSubmittt(e, vote.id)}>
+            {contentsData[vote.id].map((content, idx) => {
+                const isVoted = userVotes[vote.id]?.contentsId === content.id;
+                const voteCount = voteResults[vote.id]?.[content.id] || 0;
+
+                const isVotingActive = vote.vote && (!vote.votingEnd || new Date(vote.votingEnd) > new Date());
+                const isVotingEnded = !isVotingActive;
+
+                return (
+                    <div key={idx} className="vote-item">
+                        <label
+                            className="vote-option"
+                            style={{ color: isVoted ? "red" : "black" }}
+                        >
+                            <input
+                                type="radio"
                                 name={`vote-${vote.id}`}
                                 value={content.id}
-                                disabled={!!userVotes[vote.id] || isEnded} // 종료 시 체크박스 비활성화
-                                onChange={(e) =>
-                                  handleCheckboxChange(e, vote.id, content.id)
-                                }
+                                disabled={isVotingEnded || !!userVotes[vote.id]} 
+                                onChange={(e) => handleCheckboxChange(e, vote.id, content.id)}
                                 className="custom-checkbox"
-                              />
-                              <span className="checkbox-label">
+                            />
+                            <span className="checkbox-label">
                                 {content.votingContents}
-                              </span>
-                              {voteCount > 0 && (
+                            </span>
+                            {voteCount > 0 && (
                                 <span className="vote-count">({voteCount} 명 투표)</span>
-                              )}
-                            </label>
-                            <div className="progress-bar">
-                              <div
+                            )}
+                        </label>
+                        <div className="progress-bar">
+                            <div
                                 className="progress-fill"
                                 style={{
-                                  width: `${
-                                    (voteCount / (totalVotes[vote.id] || 1)) * 100
-                                  }%`,
-                                  backgroundColor: isVoted ? "red" : "gray",
+                                    width: `${(voteCount / (totalVotes[vote.id] || 1)) * 100}%`,
+                                    backgroundColor: isVoted ? "red" : "gray",
                                 }}
-                              ></div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {!isEnded && (
-                        <button
-                          type="submit"
-                          id={`vote-button-${vote.id}`}
-                          disabled={true}
-                          className="arrow-button"
-                        > 투표하기 </button>
-                              )}
-                            </form>
-                          ) : (
-                            <p>내용이 없습니다.</p>
-                          )}
-                        </ul>
+                            ></div>
+                        </div>
+                    </div>
+                );
+            })}
+            {vote.vote && (
+                <button
+                    type="submit"
+                    id={`vote-button-${vote.id}`}
+                    // disabled={!state}
+                    className="arrow-button"
+                >
+                    투표하기
+                </button>
+            )}
+        </form>
+    ) : (
+        <p>내용이 없습니다.</p>
+    )}
+</ul>
+
                       </section>
                     );
                   })}

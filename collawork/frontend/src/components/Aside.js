@@ -5,6 +5,9 @@ import { useUser } from '../context/UserContext';
 import { stateValue, projectStore } from '../store';
 import '../components/assest/css/Aside.css';
 import Pagination from "../components/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus,faFolder,faFolderOpen} from "@fortawesome/free-solid-svg-icons";
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -51,14 +54,10 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 params: { userId:userIdValue },
             });
     
-            //console.log("친구 목록 데이터:", response.data);
+       
     
             // 필터링 로직 디버깅
             const filteredFriends = response.data.reduce((acc, friend, index) => {
-                // console.log(`friend[${index}].requester.id: ${friend.requester.id}`);
-                // console.log(`friend[${index}].responder.id: ${friend.responder.id}`);
-                // console.log(`friend[${index}].status: ${friend.status}`);
-    
                 if (friend.status !== 'ACCEPTED') {
                     console.warn(`friend[${index}]가 ACCEPTED 상태가 아닙니다.`);
                     return acc;
@@ -82,7 +81,6 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 return acc;
             }, []);
     
-            //console.log("필터링된 친구 목록:", filteredFriends);
     
             setFriends(filteredFriends);
         } catch (error) {
@@ -307,6 +305,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
             alert("프로젝트가 생성되었습니다.");
             modalCloseHandler();
             selectProjectName();
+            moveProjectHome(projectName);
         } catch (error) {
             console.error("프로젝트 생성 중 오류 발생:", error.response?.data || error.message);
             alert("프로젝트 생성에 실패하였습니다.");
@@ -328,7 +327,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     };
 
     // 프로젝트 선택 시 피드에 정보 띄우는 함수
-    const moveProjectHome = (project) => {
+    function moveProjectHome (project) {
         console.log("선택된 프로젝트:", project); 
         if (!project || !project.id || !project.name) {
             console.error("프로젝트 데이터가 유효하지 않습니다:", project);
@@ -463,17 +462,27 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                     
                         <div className="aside-top">
                             <div>collawork</div>
-                            <button onClick={() => setNewShow(true)}>+ 새 프로젝트</button>
+                            <button 
+                            className='plusbutton'
+                            onClick={() => setNewShow(true)}>
+                                <FontAwesomeIcon icon={faPlus} />
+                            <FontAwesomeIcon icon={faFolder} className='righticon'/>
+                            </button>
+                            <br/>
+                            <br/>
                         </div>
 
                         <div className="aside-bottom">
                         {projectName.map((project) => (
                         <section key={project.id}>
-                        <li>
+                       
                             <span className="clickable-text" onClick={() => moveProjectHome(project)}>
+                                <li>
+                            {/* <FontAwesomeIcon icon={faFolderOpen} className='folderIcon' /> */}
                             {project.name}
+                            </li>
                         </span>
-                        </li>
+                        
                 </section>
                     ))}
                     </div>

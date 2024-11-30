@@ -23,6 +23,7 @@ const ProjectModify = ({ setModify }) => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setModify(false);
+        setModalShow(false);
       }
     };
 
@@ -42,6 +43,7 @@ const ProjectModify = ({ setModify }) => {
       setNameModalOpen(true);
     } else {
       alert("관리자 권한이 없습니다.");
+      setModalShow(false);
     }
   };
 
@@ -57,6 +59,7 @@ const ProjectModify = ({ setModify }) => {
       setNameModalOpen(false);
       setModify(false);
       PlusListState(false);
+      setModalShow(false);
     });
   };
 
@@ -66,6 +69,8 @@ const ProjectModify = ({ setModify }) => {
     if (String(userId) === String(userData.id)) {
       alert("관리자는 탈퇴할 수 없습니다.");
       setModify(false);
+
+      setModalShow(false);
       return;
     }
     const token = localStorage.getItem('token');
@@ -81,6 +86,7 @@ const ProjectModify = ({ setModify }) => {
       setExitModalOpen(false);
       setModify(false);
       PlusListState(true);
+      setModalShow(false);
       // PlusProjectData('');
       setHomeShow('');
       setChatShow('');
@@ -93,6 +99,7 @@ const ProjectModify = ({ setModify }) => {
   const closeModal = () => {
     setModalOpen(false);
     setModify(false);
+    setModalShow(false);
   };
 
   function projectDelete() {
@@ -123,12 +130,16 @@ const ProjectModify = ({ setModify }) => {
   const projectDeleteHandler = () => {
     if (String(userId) === String(userData.id)) {
       let result = window.confirm("정말 프로젝트를 삭제하시겠습니까 ? ");
+      
       if (result) {
         projectDelete(); // 프로젝트 삭제
+        setModify(false);
+        setModalShow(false);
       } else {
         return;
       }
     } else {
+      setModify(false);
       alert("프로젝트 삭제는 관리자만 가능합니다.");
     }
 
@@ -138,6 +149,8 @@ const ProjectModify = ({ setModify }) => {
     let result = window.confirm("정말 프로젝트를 나가시겠습니까 ? ");
     if (result) {
       outSend();
+      setModify(false);
+      setModalShow(false);
     } else {
       return;
     }
