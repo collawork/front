@@ -6,7 +6,19 @@
   font-style: normal;
 }
 
+.list-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+  border: 1px solid #ddd;  /* Same border style */
+  padding: 10px;
+  border-radius: 5px;  /* Rounded corners */
+  background-color: #f9f9f9;  /* Light background */
+  opacity: 0.8;
+}
 
+/* 
 .list-item {
   display: flex;
   justify-content: space-between;
@@ -16,17 +28,19 @@
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin-top: 13px;
-}
+  opacity: 0.8;
+  margin-left: -37px;
+} */
 
 .list-item:hover {
   background-color: #f3f4f6;
 }
+
 .icon-container {
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin-right: 20px;
-  width: 250px;
- 
+  margin-right: 10px;
 }
 
 
@@ -36,11 +50,9 @@
 }
 
 
-.list-item .list-content {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center; 
-  width: 100%;
+.list-content {
+  flex-grow: 1;
+  background-color: rg;
 }
 
 
@@ -93,7 +105,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top:60px;
+  margin-top:75px;
 }
 
 .project-icon {
@@ -148,7 +160,7 @@
   }
 }
 
-.calendarList, .noticesList {
+.calendarList, .noticesList .votingData {
   width: 100%; 
   max-width: 800px; 
   margin: 0 auto;
@@ -164,14 +176,7 @@
   border: none; 
   padding: 0;
   margin: 0; 
-  /* cursor: pointer; 
-  display: inline-flex;
-  align-items: center; 
-  justify-content: center;  */
   font-size: 25px;
-  /* margin-right: 10px; */
-  /* margin-left:50px; */
- 
 }
 
 .manager{
@@ -212,41 +217,35 @@
 }
 
 .projectBox {
-  width: 100%; /* 가로 길이를 공통화 */
+  width: 69%; /* 가로 길이를 공통화 */
 }
 
 .created-at{
   margin-right:-500px;
 }
 
-/* .list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-} */
-/* .list-container {
-  margin-top: 30px;
-  padding-left: 20px; 
-  padding-right: 20px; 
-  box-sizing: border-box; 
-} */
-
 .list-item {
-  width: 100%; /* 리스트 아이템 개별 크기 조정 */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+  border: 1px solid #ddd;  /* Same border style */
+  padding: 10px;
+  border-radius: 5px;  /* Rounded corners */
+  background-color: #f9f9f9;  /* Light background */
 }
-
 .list {
-  width: 100%; /* 내부 리스트도 동일한 가로 길이 */
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .list-container {
   width: 100%; /* ProjectBox와 동일한 가로 길이 */
   margin-top: 78px;
-  margin-left: -51px;
+  margin-left: 3px;
 }
+
 
 .profile-image-small {
   width: 40px;
@@ -353,6 +352,58 @@ background-color: #f0f0f0;
 .change-admin-modal button:hover {
   /* 버튼 호버 효과 */
   opacity: 0.8;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+hr {
+  margin-bottom: 20px;
+  border-top: 1px solid black;
+}
+
+.list-container h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.voting-section h4 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+
+.voting-list-container {
+  width: 100%;
+  max-width: 1200px; 
+  margin: 0 auto;
+}
+
+.voting-section{
+  margin-left: 20px;
+  width: 798px;
+  max-width: 800px;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;           
+}
+
+.schedule-header h4 {
+  margin: 0; 
+}
+
+.schedule-header h5 {
+  margin: 0;
+  cursor: pointer; 
 }
 
 

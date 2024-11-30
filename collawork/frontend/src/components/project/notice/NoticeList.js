@@ -6,6 +6,10 @@ import { useUser } from "../../../context/UserContext";
 import "../../../components/assest/css/NoticeList.css";
 import Pagination from "../../Pagination";
 import { projectStore } from "../../../store";
+import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare,faThumbtack} from "@fortawesome/free-solid-svg-icons";
+
+
 
 const NoticeList = () => {
     const [notices, setNotices] = useState([]);
@@ -110,12 +114,14 @@ const NoticeList = () => {
 
     return (
         <div className="notice-list-container">
+            <div id="plus-noti">
             <h1>공지사항</h1>
             {userRole === "ADMIN" && (
                 <button className="create-notice-button" onClick={openCreateModal}>
-                    공지사항 작성
+                   <FontAwesomeIcon icon={faPenToSquare} />
                 </button>
             )}
+            </div>
             <table className="notice-table">
                 <thead>
                     <tr>
@@ -131,7 +137,7 @@ const NoticeList = () => {
                     {paginatedNotices.map((notice, index) => (
                         <tr key={notice.id} onClick={() => openDetailModal(notice.id)}>
                             <td>{index + 1 + (currentPage - 1) * pageSize}</td>
-                            <td>{notice.important ? "중요" : ""}</td>
+                            <td>{notice.important ? <FontAwesomeIcon icon={faThumbtack} /> : ""}</td>
                             <td>{notice.title}</td>
                             <td>{notice.creatorName || "알 수 없음"}</td>
                             <td>{new Date(notice.createdAt).toLocaleString()}</td>

@@ -71,13 +71,22 @@
 }
 
 .notice-create-btn {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 15px;
+  padding: 8px 15px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
+  font-family: 'MinSans-Regular';
+  margin-left: 20px;
+  color:black;
 }
+
+.notice-create-btn :hover{
+/* 버튼 호버 효과 */
+opacity: 0.8;
+background-color: #f0f0f0;
+}
+
 
 .notice-close-btn {
   background-color: #f44336;
@@ -87,3 +96,21 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+#plus-noti {
+  display: flex;
+  justify-content: space-between; /* Aligns content to the left and right */
+  align-items: center;            /* Vertically center the items */
+}
+
+#plus-noti h1 {
+  margin: 0; /* Remove default margin */
+}
+
+.create-notice-button {
+  background: none; /* Optional, remove background to make it look cleaner */
+  border: none;     /* Optional, remove border */
+  cursor: pointer;  /* Change cursor to indicate it's clickable */
+  margin-left:10px ;
+}
+

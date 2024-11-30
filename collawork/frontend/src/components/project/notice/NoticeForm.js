@@ -152,7 +152,7 @@ const NoticeForm = ({ projectId, notice, onSubmit, onClose }) => {
 
           {/* 액션 버튼 */}
           <div className="modal-actions">
-            <button type="submit" className="notice-create-btn">
+            <button type="submit" className="notice-add-btn">
               {notice ? "수정하기" : "작성하기"}
             </button>
             <button

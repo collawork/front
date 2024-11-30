@@ -89,4 +89,21 @@
   .form-actions button:hover {
     opacity: 0.8;
   }
+
+    
+  .notice-add-btn{
+    
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left:380px;
+  }
+  .notice-add-btn:hover {
+  /* 버튼 호버 효과 */
+  opacity: 0.8;
+  background-color: #f0f0f0;
+  }
+  
   
