@@ -119,16 +119,22 @@ const Search = () => {
             <div className="search-results">
               {searchResults.users.length > 0 && (
                 <div className="search-section">
-                  <h3>사용자 검색 결과</h3>
-                  <ul>
-                    {searchResults.users.map((user) => (
-                      <li key={user.id} onClick={() => handleResultClick('user', user)}>
-                        <span>{user.username}</span> - <span>{user.email}</span>
-                        <span className="result-type">사용자</span>
-                      </li>
-                    ))}
-                  </ul>
+                <h3>사용자 검색 결과</h3>
+                <div className="name-email-header">
+                  <span className="name-header">이름</span>
+                  <span className="email-header">이메일</span>
                 </div>
+                <ul className="search-results-list">
+                  {searchResults.users.map((user) => (
+                    <li key={user.id} className="search-result-item" onClick={() => handleResultClick('user', user)}>
+                      <span className="user-name">{user.username}</span>
+                      <span className="user-email">{user.email}</span>
+                      <span className="result-type">사용자</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
               )}
               {searchResults.projects.length > 0 && (
                 <div className="search-section">

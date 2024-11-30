@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import authService from '../services/authService';
+import authService from '../../services/authService';
 
 function SignupForm() {
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });

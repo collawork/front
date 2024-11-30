@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assest/css/Modal.css';
 
-const ModalPage = ({ onClose, children }) => {
+const ModalPage = ({ onClose, children}) => {
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -10,7 +10,7 @@ const ModalPage = ({ onClose, children }) => {
   };
   return (
     <div className="chat-modal-overlay" onClick={handleOverlayClick}>
-        <button className='close-button' onClick={onClose}>x</button>
+        <button className='close-button' onClick={onClose}>닫기</button>
         {children}
       </div>
   );

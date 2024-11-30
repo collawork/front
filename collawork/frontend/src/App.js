@@ -13,6 +13,7 @@ import { UserProvider } from './context/UserContext';
 import NoticeList from './components/project/notice/NoticeList';
 import CreateNotice from './components/project/notice/CreateNotice';
 import ChatRoomOne from './components/Chat/ChatRoomOne';
+import ErrorPage from './pages/ErrorPage';
 import ProjectInformation from './components/project/ProjectInformation';
 
 function App() {
@@ -32,9 +33,9 @@ function App() {
                     <Route path="/api/kakao/user-info" element={<KakaoUserInfo />} />               {/* 카카오 사용자 정보 목록 테스트 컴포넌트 */}
                     <Route path="/main" element={<MyPage />} />                                     {/* 마이페이지 컴포넌트 */}
                     <Route path="/info" element={<UserProfile />} />                                {/* 사용자 프로필 컴포넌트 */}
-                    <Route path="/chattingServer/:chatRoomId" element={<ChatRoomOne/>} />              {/* 채팅방 컴포넌트*/}
-                    {/* <Route path="/calendar" element={<Calendar/>}/> */}
-                    {/* <Route path="/*" element={<ErrorPage/>}/> */}
+                    <Route path="/chattingServer/:chatRoomId" element={<ChatRoomOne/>} />           {/* 채팅방 컴포넌트*/}
+                    
+                    <Route path="/*" element={<ErrorPage/>}/>                                       {/* 에러 페이지 */}
                 </Routes>
             </Router>
         </UserProvider>

@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useUser } from '../../context/UserContext';
 import axios from 'axios';
 import ReactModal from "react-modal";
-import { projectStore, stateValue} from '../../store';
+import { projectStore, stateValue } from '../../store';
 import defaultImage from '../../components/assest/images/default-profile.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faThumbtack,faCheckToSlot,faCalendar,faMinus,faGear,faBell,faFolderOpen,faD} from "@fortawesome/free-solid-svg-icons";
+import { faThumbtack, faCheckToSlot, faCalendar, faMinus, faGear, faBell, faFolderOpen, faD } from "@fortawesome/free-solid-svg-icons";
 import ProjectModify from "./ProjectModify";
 import '../../components/assest/css/ProjectInformation.css';
 import ProjectBox from './ProjectBox';
@@ -20,12 +20,12 @@ const ProjectInformation = () => {
   const modalRef = useRef();
   const [modal, setModal] = useState(false);
   const [show, setShow] = useState(false);
-  const [managerModalOpen, setManagerModalOpen] = useState(false); 
+  const [managerModalOpen, setManagerModalOpen] = useState(false);
   const [noticesList, setNoticesList] = useState([]); // 초기값 빈 배열
   const [modify, setModify] = useState(false);
   const [calendarList, setCalendarList] = useState([]); // 초기값 빈 배열
-  const {setHomeShow,setChatShow,setCalShow,setNotiShow,setVotig} = stateValue();
-  const { projectName, projectData, userData, PlusProjectData, PlusUserData ,projectInformationState} = projectStore();
+  const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig } = stateValue();
+  const { projectName, projectData, userData, PlusProjectData, PlusUserData, projectInformationState } = projectStore();
   const { userId } = useUser();
 
   const fetchAcceptedParticipants = async () => {
@@ -53,7 +53,7 @@ const ProjectInformation = () => {
   useEffect(() => {
     if (managerModalOpen) {
       fetchAcceptedParticipants();
-      
+
     }
   }, [managerModalOpen]);
 
@@ -64,15 +64,15 @@ const ProjectInformation = () => {
       VotoingSend();
       setShow(true);
     }
-  }, [projectName,projectInformationState]); 
+  }, [projectName, projectInformationState]);
 
   useEffect(() => {
-    if (projectData && projectData.id) {  
+    if (projectData && projectData.id) {
       calendarSend(); // 다가오는 캘린더 일정(7일 이내)
       noticesSend(); // 등록된 중요 공지사항
       manager();
     }
-  }, [projectData]); 
+  }, [projectData]);
 
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectName },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
       PlusProjectData(response.data[0]);
       if (!response.data || response.data.length === 0) {
@@ -126,9 +126,10 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectId: projectData?.id, userId: userIdValue },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       if (response.data) {
         setCalendarList(response.data);
+        console.log(response.data);
       } else {
         setCalendarList([]); // 응답이 없을 경우 빈 배열로 설정
       }
@@ -145,7 +146,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { projectId: projectData?.id },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       if (response?.data) {
         setNoticesList(response.data);
       } else {
@@ -165,7 +166,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { id: projectData?.createdBy },
       baseURL: 'http://localhost:8080',
-    }).then(function(response) {
+    }).then(function (response) {
       PlusUserData(response.data);
     }).catch(err => console.error("유저 정보 조회 오류:", err));
   }
@@ -178,7 +179,7 @@ const ProjectInformation = () => {
       url: `${API_URL}/api/user/projects/managerModify`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { email:id, projectId: projectData.id },
+      params: { email: id, projectId: projectData.id },
     }).then(response => {
       console.log(response.data);
       setManagerModalOpen(false);
@@ -196,11 +197,11 @@ const ProjectInformation = () => {
   };
 
   const onSubmitHandler = () => {
-    
+
     if (id) {
-      if(id !== String(userData.email)){
+      if (id !== String(userData.email)) {
         managerModify();
-      }else{
+      } else {
         alert("현재 관리자 입니다.");
         return;
       }
@@ -225,19 +226,19 @@ const ProjectInformation = () => {
     setVotig(false);
   }
 
-   // 1. 프로젝트에 귀속된 투표 list 조회 요청
-   function VotoingSend() {
+  // 1. 프로젝트에 귀속된 투표 list 조회 요청
+  function VotoingSend() {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("Token is missing");
       return;
     }
-  
+
     if (!projectData || !projectData.id) {
       console.error("Invalid or missing project ID:", projectData);
       return;
     }
-  
+
     axios({
       url: `${API_URL}/api/user/projects/findVoting`,
       headers: { Authorization: `Bearer ${token}` },
@@ -254,19 +255,19 @@ const ProjectInformation = () => {
       })
       .catch(function (error) {
         if (error.response) {
-          
+
           console.error("Response error:", error.response.status, error.response.data);
         } else if (error.request) {
-         
+
           console.error("No response received:", error.request);
         } else {
-         
+
           console.error("Axios error:", error.message);
         }
       });
   }
-  
-  
+
+
 
 
   return (
@@ -496,6 +497,7 @@ const ProjectInformation = () => {
           );
         }
 
-  
+
+
 
 export default ProjectInformation;

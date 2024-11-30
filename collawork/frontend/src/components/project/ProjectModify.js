@@ -1,9 +1,9 @@
 import { useRef, useState, useEffect } from "react";
 import ReactModal from "react-modal";
-import { projectStore,stateValue } from '../../store';
+import { projectStore, stateValue } from '../../store';
 import { useUser } from '../../context/UserContext';
 import axios from "axios";
-
+import '../../components/assest/css/ProjectModify.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ProjectModify = ({ setModify }) => {
@@ -15,21 +15,21 @@ const ProjectModify = ({ setModify }) => {
   const { projectData, userData ,PlusListState} = projectStore();
   const { userId } = useUser();
   const [title, setTitle] = useState("");
-  const {setHomeShow, setChatShow,setCalShow,setNotiShow,setVotig, PlusProjectInformationState} = stateValue();
+  const { setHomeShow, setChatShow, setCalShow, setNotiShow, setVotig, PlusProjectInformationState } = stateValue();
 
 
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setModify(false); 
+        setModify(false);
       }
     };
-  
-   
+
+
     document.addEventListener("mousedown", handleClickOutside);
-  
-   
+
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -60,7 +60,7 @@ const ProjectModify = ({ setModify }) => {
     });
   };
 
-  
+
 
   const outSend = () => {
     if (String(userId) === String(userData.id)) {
@@ -70,12 +70,12 @@ const ProjectModify = ({ setModify }) => {
     }
     const token = localStorage.getItem('token');
     const userIdValue = typeof userId === "object" && userId !== null ? userId.userId : userId;
-    
+
     axios({
       url: `${API_URL}/api/user/projects/deleteSend`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: { userId:userIdValue, projectId: projectData.id },
+      params: { userId: userIdValue, projectId: projectData.id },
     }).then(response => {
       alert("프로젝트를 탈퇴했습니다.");
       setExitModalOpen(false);
@@ -83,10 +83,10 @@ const ProjectModify = ({ setModify }) => {
       PlusListState(true);
       // PlusProjectData('');
       setHomeShow('');
-      setChatShow(''); 
+      setChatShow('');
       setCalShow('');
       setNotiShow('');
-      setVotig('') ;
+      setVotig('');
     });
   };
 
@@ -95,16 +95,16 @@ const ProjectModify = ({ setModify }) => {
     setModify(false);
   };
 
-  function projectDelete(){
+  function projectDelete() {
 
     const token = localStorage.getItem('token');
-    
-    
+
+
     axios({
       url: `${API_URL}/api/user/projects/projectDelete`,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'post',
-      params: {projectId: projectData.id },
+      params: { projectId: projectData.id },
     }).then(response => {
       alert("프로젝트가 삭제되었습니다.");
       setExitModalOpen(false);
@@ -112,10 +112,10 @@ const ProjectModify = ({ setModify }) => {
       PlusListState(true);
       // PlusProjectData('');
       setHomeShow('');
-      setChatShow(''); 
+      setChatShow('');
       setCalShow('');
       setNotiShow('');
-      setVotig('') ;
+      setVotig('');
     });
 
   }
@@ -123,12 +123,12 @@ const ProjectModify = ({ setModify }) => {
   const projectDeleteHandler = () => {
     if (String(userId) === String(userData.id)) {
       let result = window.confirm("정말 프로젝트를 삭제하시겠습니까 ? ");
-      if(result){
+      if (result) {
         projectDelete(); // 프로젝트 삭제
-      }else{
+      } else {
         return;
       }
-    }else{
+    } else {
       alert("프로젝트 삭제는 관리자만 가능합니다.");
     }
 
@@ -136,9 +136,9 @@ const ProjectModify = ({ setModify }) => {
 
   const ExitModalOpen = () => {
     let result = window.confirm("정말 프로젝트를 나가시겠습니까 ? ");
-    if(result){
+    if (result) {
       outSend();
-    }else{
+    } else {
       return;
     }
   }
@@ -152,16 +152,17 @@ const ProjectModify = ({ setModify }) => {
   onRequestClose={() => setModalShow(false)}
   contentLabel="projectModify"
   appElement={document.getElementById("root")}
+  className='project-modify-modal'
   style={{
-    content: {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "300px", 
-      padding: "10px", 
-      borderRadius: "10px",
-      border: "1px solid #ccc", 
-    },
+    // content: {
+    //   top: "50%",
+    //   left: "50%",
+    //   transform: "translate(-50%, -50%)",
+    //   width: "300px", 
+    //   padding: "10px", 
+    //   borderRadius: "10px",
+    //   border: "1px solid #ccc", 
+    // },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.75)",
     },
@@ -178,16 +179,17 @@ const ProjectModify = ({ setModify }) => {
   onRequestClose={() => setNameModalOpen(false)}
   contentLabel="nameModify"
   appElement={document.getElementById("root")}
+  className='project-name-modify-modal'
   style={{
-    content: {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "300px", 
-      padding: "10px",
-      borderRadius: "10px",
-      border: "1px solid #ccc",
-    },
+    // content: {
+    //   top: "50%",
+    //   left: "50%",
+    //   transform: "translate(-50%, -50%)",
+    //   width: "300px", 
+    //   padding: "10px",
+    //   borderRadius: "10px",
+    //   border: "1px solid #ccc",
+    // },
     overlay: {
       backgroundColor: "transparent",
     },
