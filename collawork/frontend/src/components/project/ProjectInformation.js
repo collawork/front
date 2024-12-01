@@ -291,8 +291,8 @@ const ProjectInformation = () => {
               <span className="project-code">{projectData.projectCode}</span>
               <button className="icon-button" onClick={() => modify? setModify(false) : setModify(true)}>
                 <FontAwesomeIcon icon={faGear} />
-                {modify && <ProjectModify setModify={setModify} />}
               </button>
+              {modify && <ProjectModify setModify={setModify} />}
               <div className="adminBox">
                 <div
                   style={{
