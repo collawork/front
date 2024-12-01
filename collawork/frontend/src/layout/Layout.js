@@ -12,6 +12,7 @@ import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
 import { useNavigate } from "react-router-dom";
 import { projectStore, calendarEvents } from "../store";
 import WeatherBackground from "../pages/WeatherBackground";
+import gearIcon from "../components/assest/images/gear.png";
 
 const Layout = () => {
   const { userId } = useUser();
@@ -25,8 +26,13 @@ const Layout = () => {
   const [bgColor, setBgColor] = useState("#ffffff"); // 초기값
   const navigate = useNavigate();
   const { projectData, PlusProjectData } = projectStore();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
+
+  const toggleSettings = () => {
+    setIsSettingsOpen((prev) => !prev);
+  };
 
   // 저장된 설정 불러오기
   useEffect(() => {
@@ -146,24 +152,40 @@ const Layout = () => {
   return (
     <div className="layout-container">
       <WeatherBackground />
-      <div className="controls">
-        <label htmlFor="opacity">투명도</label>
-        <input
-          id="opacity"
-          type="range"
-          min="0.1"
-          max="1"
-          step="0.1"
-          value={opacity}
-          onChange={handleOpacityChange}
+      <div className="settings-container">
+        {/* 설정 아이콘 */}
+        <img
+          src={gearIcon}
+          alt="설정 아이콘"
+          className="settings-icon"
+          onClick={toggleSettings}
         />
-        <label htmlFor="bgColor">배경색</label>
-        <input
-          id="bgColor"
-          type="color"
-          value={bgColor}
-          onChange={handleColorChange}
-        />
+        {/* 설정 모달 */}
+        {isSettingsOpen && (
+          <div className="settings-modal">
+            <div className="opacity-control">
+              <label htmlFor="opacity-slider">투명도</label>
+              <input
+                type="range"
+                id="opacity-slider"
+                min="0.1"
+                max="1"
+                step="0.1"
+                value={opacity}
+                onChange={handleOpacityChange}
+              />
+            </div>
+            <div className="color-control">
+              <label htmlFor="color-picker">배경색</label>
+              <input
+                type="color"
+                id="color-picker"
+                value={bgColor}
+                onChange={handleColorChange}
+              />
+            </div>
+          </div>
+        )}
       </div>
       <button onClick={moveToMypage}>메인화면으로 이동</button>
       <Search currentUser={{ id: userId }} />

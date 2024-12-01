@@ -13,8 +13,14 @@ import "../components/assest/css/MyPage.css";
 import Temperature from "../components/assest/images/temperature.png";
 import Weather from "../components/assest/images/weather.png";
 import Wind from "../components/assest/images/wind.png";
+import gearIcon from "../components/assest/images/gear.png";
 
 const MyPage = () => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const toggleSettings = () => {
+    setIsSettingsOpen((prev) => !prev);
+  };
 
   const fetchProjectList = () => {
     const token = localStorage.getItem("token");
@@ -197,27 +203,41 @@ const MyPage = () => {
           <Search />
 
         <div className="profile-weather-container">
-          <div className="opacity-control">
-            <label htmlFor="opacity-slider">투명도</label>
-            <input
-              type="range"
-              id="opacity-slider"
-              min="0.1"
-              max="1"
-              step="0.1"
-              value={globalOpacity}
-              onChange={handleOpacityChange}
-            />
+          {/* 설정 아이콘 */}
+      <div className="settings-icon-container">
+        <img
+          src={gearIcon}
+          alt="설정 아이콘"
+          className="settings-icon"
+          onClick={toggleSettings}
+        />
+        {/* 모달 */}
+        {isSettingsOpen && (
+          <div className="settings-modal">
+            <div className="opacity-control">
+              <label htmlFor="opacity-slider">투명도</label>
+              <input
+                type="range"
+                id="opacity-slider"
+                min="0.1"
+                max="1"
+                step="0.1"
+                value={globalOpacity}
+                onChange={handleOpacityChange}
+              />
+            </div>
+            <div className="color-control">
+              <label htmlFor="color-picker">색상</label>
+              <input
+                type="color"
+                id="color-picker"
+                value={sectionColor}
+                onChange={handleColorChange}
+              />
+            </div>
           </div>
-          <div className="color-control">
-            <label htmlFor="color-picker">색상</label>
-            <input
-              type="color"
-              id="color-picker"
-              value={sectionColor}
-              onChange={handleColorChange}
-            />
-          </div>
+        )}
+      </div>
           <WeatherBackground setWeatherData={setWeatherData} />
           {weatherData && (
             <div className="weather-summary">
