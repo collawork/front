@@ -18,7 +18,6 @@
     /* width: 400px; 모달 너비 */
     max-width: 90%; /* 작은 화면 대응 */
     background: #ffffff; /* 모달 배경 */
-    border-radius: 10px; /* 둥근 모서리 */
     /* padding: 20px; 내부 여백 */
     box-shadow: var(--box-shadow) ;
     outline: none; /* 포커스 시 외곽선 제거 */
