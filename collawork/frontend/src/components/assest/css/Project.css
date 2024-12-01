@@ -58,7 +58,8 @@
 }
 
 .menu-item.active::after {
-  background-color: rgb(136, 84, 219);
+  background-color: gray;
+  opacity: 0.6;
 }
 
 .menu-item:not(.active):hover {
