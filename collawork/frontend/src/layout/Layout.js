@@ -12,9 +12,11 @@ import InviteModal from "./InviteModal"; // 초대 모달 컴포넌트
 import { useNavigate } from "react-router-dom";
 import { projectStore, calendarEvents } from "../store";
 import WeatherBackground from "../pages/WeatherBackground";
+import Weather from "../components/assest/images/weather.png";
+import Wind from "../components/assest/images/wind.png";
 import gearIcon from "../components/assest/images/gear.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import Temperature from "../components/assest/images/temperature.png";
+import Wework from '../components/assest/images/wework.png'
 
 const Layout = () => {
   const { userId } = useUser();
@@ -29,6 +31,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const { projectData, PlusProjectData } = projectStore();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [weatherData, setWeatherData] = useState(null);
 
   const API_URL = process.env.REACT_APP_API_URL;
 
@@ -153,20 +156,36 @@ const Layout = () => {
 
   return (
     <div className="layout-container">
-      <WeatherBackground />
-      <div className="settings-container">
+      <WeatherBackground setWeatherData={setWeatherData}/>
+      {weatherData && (
+            <div className="weather-summary-layout">
+              <div className="weather-item">
+                <img src={Weather} alt="Weather icon" className="weather-icon" />
+                <span>{weatherData.condition}</span>
+              </div>
+              <div className="weather-item">
+                <img src={Temperature} alt="Temperature icon" className="weather-icon" />
+                <span>{weatherData.temperature}°C</span>
+              </div>
+              <div className="weather-item">
+                <img src={Wind} alt="Wind icon" className="weather-icon" />
+                <span>{weatherData.windSpeed}m/s</span>
+              </div>
+            </div>
+          )}
+      <div className="settings-container-layout">
         {/* 설정 아이콘 */}
         <img
           src={gearIcon}
           alt="설정 아이콘"
-          className="settings-icon"
+          className="settings-icon-layout"
           onClick={toggleSettings}
         />
         {/* 설정 모달 */}
         {isSettingsOpen && (
-          <div className="settings-modal">
-            <div className="opacity-control">
-              <label htmlFor="opacity-slider">투명도</label>
+          <div className="settings-modal-layout">
+            <div className="opacity-control-layout">
+              <label htmlFor="opacity-slider-layout">투명도</label>
               <input
                 type="range"
                 id="opacity-slider"
@@ -177,8 +196,8 @@ const Layout = () => {
                 onChange={handleOpacityChange}
               />
             </div>
-            <div className="color-control">
-              <label htmlFor="color-picker">배경색</label>
+            <div className="color-control-layout">
+              <label htmlFor="color-picker-layout">배경색</label>
               <input
                 type="color"
                 id="color-picker"
@@ -189,7 +208,12 @@ const Layout = () => {
           </div>
         )}
       </div>
-      <button className="button-to-main" onClick={moveToMypage}>  <FontAwesomeIcon icon={faHouse} /> </button>
+      <div className="wework-container">
+        <button onClick={moveToMypage} className="wework-btn">
+          <img src={Wework} className="wework-icon"/>
+          wework
+        </button>
+      </div>
       <Search currentUser={{ id: userId }} />
       <div className="main-content">
         <div

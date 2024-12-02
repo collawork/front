@@ -104,8 +104,13 @@
     margin-right: 7px;
   }
 
-  .selected {
+  .selected-project {
     background-color: gray;
     opacity:0.6;
+  }
+
+  .wework {
+    text-align: center;
+    font-weight: bold;
   }
   
