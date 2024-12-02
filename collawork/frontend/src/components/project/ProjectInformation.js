@@ -64,7 +64,7 @@ const ProjectInformation = () => {
       VotoingSend();
       setShow(true);
     }
-  }, [projectName, projectInformationState]);
+  }, [projectName, projectInformationState, projectData.title]);
 
   useEffect(() => {
     if (projectData && projectData.id) {
