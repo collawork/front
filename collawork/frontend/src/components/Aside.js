@@ -338,7 +338,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
 
     // 프로젝트 선택 시 피드에 정보 띄우는 함수
     function moveProjectHome (project) {
-        console.log("선택된 프로젝트:", project); 
+        // console.log("선택된 프로젝트:", project); 
         if (!project || !project.id || !project.name) {
             console.error("프로젝트 데이터가 유효하지 않습니다:", project);
             return;
@@ -349,7 +349,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         setCalShow(false);
         setNotiShow(false);
         setVotig(false);
-        console.log("onProjectSelect 전달 확인");
+        // console.log("onProjectSelect 전달 확인");
         onProjectSelect(project);
     };
 
