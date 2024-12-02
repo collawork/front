@@ -1,8 +1,6 @@
 import ProjectHome from '../components/project/ProjectHome';
 import ChatRoom from "../components/Chat/ChatRoom";
-//import ProjectCalendar from "../components/project/ProjectCalendar";
 import '../components/assest/css/Project.css';
-import Board from '../components/project/Board';
 import { useState, useEffect } from "react";
 import { useUser } from '../context/UserContext';
 import { stateValue } from '../store';
@@ -37,7 +35,7 @@ const Project = ({ projectId }) => {
       setCalShow(false);
       setNotiShow(false);
       setVotig(false);
-      setSelected("home")
+      setSelected("home");
     }else{
       setPlusIcon(true);
     }
@@ -51,8 +49,6 @@ const Project = ({ projectId }) => {
       setNotiShow(false);
       setVotig(false);
       setSelected("chat")
-    }else{
-      setPlusIcon(false);
     }
   };
 
@@ -64,8 +60,6 @@ const Project = ({ projectId }) => {
       setNotiShow(false);
       setVotig(false);
       setSelected("calendar")
-    }else{
-      setPlusIcon(false);
     }
   };
 
@@ -77,10 +71,7 @@ const Project = ({ projectId }) => {
       setCalShow(false);
       setVotig(false);
       setSelected("noti")
-    }else{
-      setPlusIcon(false);
     }
-
   }
 
   const AllOnClickHandler = () => {
@@ -91,8 +82,6 @@ const Project = ({ projectId }) => {
       setCalShow(false);
       setVotig(true);
       setSelected("voting")
-    }else{
-      setPlusIcon(false);
     }
   }
 
@@ -138,7 +127,10 @@ const Project = ({ projectId }) => {
         {calShow && <Calendar />}
         {voting && <Voting />}
       </div>
-      {plusIcon && <FontAwesomeIcon icon={faPlus} className='plusIcon' />}
+      <h5 style={{
+        color:"gray",
+        opacity:0.7
+        }}>프로젝트를 선택해주세요</h5>
     </div>
   );
 }
