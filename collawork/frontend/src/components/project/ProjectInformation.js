@@ -403,7 +403,7 @@ const ProjectInformation = () => {
                           <FontAwesomeIcon color="purple" icon={faThumbtack} className="icon" />
                           <FontAwesomeIcon icon={faBell} className="icon" />
                         </div>
-                        <div className="list-content">
+                        <div className="list-content" onClick={noticesHandler}>
                           <h3>{list.title}</h3>
                           <p>{new Date(list.createdAt).toLocaleString()}</p>
                         </div>
