@@ -78,7 +78,7 @@ const UserEditModal = ({ user, onClose, onUpdate }) => {
             isOpen={true}
             onRequestClose={onClose}
             contentLabel="프로필 수정"
-            className="ReactModal__Content"
+            className="ReactModal__Content-userEdit"
             overlayClassName="ReactModal__Overlay"
         >
             <h2>프로필 수정</h2>
