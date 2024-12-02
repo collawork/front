@@ -25,7 +25,7 @@ const FriendList = ({ userId }) => {
 
         try {
             const token = localStorage.getItem('token');
-            console.log("API 호출 userId:", userId);
+            // console.log("API 호출 userId:", userId);
 
             const response = await axios.get(`${API_URL}/api/friends/list`, {
                 headers: {

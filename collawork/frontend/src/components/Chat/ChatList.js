@@ -23,7 +23,7 @@ const ChatList = ({ userId }) => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("API 호출 userId:", userId);
+      // console.log("API 호출 userId:", userId);
 
       const response = await axios.get(
         `http://localhost:8080/api/user/chatrooms/list`,
