@@ -111,7 +111,10 @@ export const Calendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: { selectedProjectId: projectData.id ? projectData.id : "0" } // 0은 개인 일정을 뜻함
+                        params: { 
+                            selectedProjectId: projectData.id ? projectData.id : "0",
+                            userId: userId
+                         } // 0은 개인 일정을 뜻함
                     }
                 );
                 if (response.data) { // 일정이 객체 배열로 담겨있다.
@@ -330,7 +333,7 @@ export const Calendar = () => {
                                     />
                                 ))}
                             </div>
-                            <button type='submit'>저장</button>
+                            <button className='delete-button' type='submit'>저장</button>
                         </>
                     }
                 </form>

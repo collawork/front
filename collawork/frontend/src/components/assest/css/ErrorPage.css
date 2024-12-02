@@ -1,4 +1,4 @@
-.container {
+.container-err {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,23 +7,23 @@
     color: #F3F3F3;
 }
 
-.text-container {
+.text-container-err {
     max-width: 500px;
     margin-right: 50px;
 }
 
-.title {
+.title-err {
     font-size: 3rem;
     font-weight: bold;
     line-height: 1.2;
 }
 
-.subtitle {
+.subtitle-err {
     font-size: 1.2rem;
     margin-bottom: 20px;
 }
 
-.button {
+.button-err {
     background-color: #7C3AED;
     color: #FFF;
     padding: 15px 30px;

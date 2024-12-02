@@ -17,6 +17,13 @@
     text-align: center;
     background-color: rgba(255, 255, 255, 0.9); 
     border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
+    color: #fff;
+}
+.title-chat{
+    position: center;
+    max-width: 80%;       /* 너비를 80%로 제한 */
+    margin: 0 auto;       /* 중앙 정렬 */
+    text-align: center;   /* 텍스트 중앙 정렬 */
 }
 
 .chat-window {
