@@ -69,6 +69,7 @@ html, body {
     gap: 8px;
     display: flex;
     align-items: center;
+    font-weight: bold;
 }
 
 .weather-item {
