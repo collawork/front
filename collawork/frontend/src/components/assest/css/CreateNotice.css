@@ -79,6 +79,7 @@
   font-family: 'MinSans-Regular';
   margin-left: 20px;
   color:black;
+  background-color: #ddd;
 }
 
 .notice-create-btn :hover{
