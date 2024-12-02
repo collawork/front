@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: 'MinSans-Regular';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff') format('woff');
@@ -15,12 +16,12 @@
     color: #F3F3F3;
 }
 
-.text-container {
+.text-container-home {
     max-width: 500px;
     margin-right: 50px;
 }
 
-.title {
+.title-home {
     font-size: 3rem;
     font-weight: bold;
     line-height: 1.2;
@@ -30,7 +31,7 @@
     color: transparent; /* 텍스트 내부 색상을 투명하게 설정 */
 }
 
-.subtitle {
+.subtitle-home {
     font-size: 1.2rem;
     margin-bottom: 20px;
     background: linear-gradient(135deg, #ffffff, #e0e0e0);
