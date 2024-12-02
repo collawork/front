@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ReactModal from "react-modal";
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
@@ -30,18 +30,8 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-
-
     const pageSize = 10; // 한 페이지에 표시할 프로젝트 수
-    const YourComponent = () => {
-        const [selectedProjectId, setSelectedProjectId] = useState(null); // 클릭된 프로젝트 id 저장
-      
 
-    const moveProjectHome = (project) => {
-            // 클릭된 프로젝트 ID를 상태로 업데이트
-            setSelectedProjectId(project.id);
-            // 추가적인 로직
-        };
 
     // 친구 목록 가져오기
     const fetchFriends = async () => {
@@ -483,22 +473,19 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                         </div>
 
                         <div className="aside-bottom">
-      {projectName.map((project) => (
-        <section key={project.id}>
-          <span
-            className="clickable-text"
-            onClick={() => moveProjectHome(project)}
-          >
-            <li
-              className={selectedProjectId === project.id ? 'selected' : ''} // 클릭된 항목에 'selected' 클래스 추가
-            >
-              {/* <FontAwesomeIcon icon={faFolderOpen} className='folderIcon' /> */}
-              {project.name}
-            </li>
-          </span>
-        </section>
-      ))}
-    </div>
+                        {projectName.map((project) => (
+                        <section key={project.id}>
+                       
+                            <span className="clickable-text" onClick={() => moveProjectHome(project)}>
+                                <li>
+                            {/* <FontAwesomeIcon icon={faFolderOpen} className='folderIcon' /> */}
+                            {project.name}
+                            </li>
+                        </span>
+                        
+                </section>
+                    ))}
+                    </div>
 
                 <Pagination
                     currentPage={currentPage}
@@ -507,8 +494,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                 />
             
         </>
-    )
-    }}
-
+    );
+};
 
 export default Aside;
