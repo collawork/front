@@ -112,11 +112,12 @@ export const MyCalendar = () => {
                             'Content-Type': 'application/json', // JSON 형식으로 전송
                         },
                         method: 'get',
-                        params: { selectedProjectId: "0" } // 0은 개인 일정을 뜻함
+                        params: { selectedProjectId: "0", userId: userId} // 0은 개인 일정을 뜻함
                     }
                 );
                 if (response.data) { // 일정이 객체 배열로 담겨있다.
                     setEvents(response.data);
+                    console.log(response.data);
                 } else {
                     console.log("조회된 일정이 존재하지 않습니다.");
                 };

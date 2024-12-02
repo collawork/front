@@ -22,8 +22,8 @@
     box-shadow: var(--box-shadow) ;
     outline: none; /* 포커스 시 외곽선 제거 */
     position: relative; /* 부모 요소 기준 위치 */
-    width: 30%;
-    padding: 30px;
+    /* width: 30%; */
+    /* padding: 30px; */
 }
 
 
