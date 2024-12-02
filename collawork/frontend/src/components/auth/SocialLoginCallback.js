@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useUser } from '../../context/UserContext';
 
 function SocialLoginCallback() {
     const navigate = useNavigate();
+    const { userId } = useUser();
 
     useEffect(() => {
         console.log("SocialLoginCallback 컴포넌트가 렌더링됨");
@@ -12,8 +14,8 @@ function SocialLoginCallback() {
         const token = params.get('token'); 
         const provider = params.get('provider');
 
-        console.log("받은 토큰:", token);
-        console.log("Provider:", provider);
+        // console.log("받은 토큰:", token);
+        // console.log("Provider:", provider);
 
         const isValidToken = (token) => {
             return token && token.length > 20;
@@ -27,7 +29,7 @@ function SocialLoginCallback() {
         }
 
         localStorage.setItem('token', token);
-        console.log("저장된 JWT 토큰:", localStorage.getItem('token'));
+        // console.log("저장된 JWT 토큰:", localStorage.getItem('token'));
 
         const handleSocialAuth = async () => {
             try {
@@ -48,14 +50,12 @@ function SocialLoginCallback() {
                 console.log("응답 데이터:", response.data);
 
                 const { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken } = response.data;
-                console.log("받은 토큰들:", { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken });
+                // console.log("받은 토큰들:", { jwtToken, kakaoAccessToken, googleAccsessToken, NaverAccessToken });
                 if (jwtToken) localStorage.setItem('token', jwtToken);
                 if (kakaoAccessToken) localStorage.setItem('kakaoAccessToken', kakaoAccessToken);
                 if (googleAccsessToken) localStorage.setItem('googleAccsessToken', googleAccsessToken);
                 if (NaverAccessToken) localStorage.setItem('NaverAccessToken', NaverAccessToken);
-
                 localStorage.setItem('provider', provider);
-                console.log("모든 토큰 저장 완료 후 리디렉션 시작");
                 navigate('/main');
             } catch (error) {
                 console.error("소셜 로그인 실패:", error);

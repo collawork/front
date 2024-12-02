@@ -80,6 +80,11 @@ const MyPage = () => {
     return savedData ? JSON.parse(savedData).color : "#ffffff";
   });
 
+  const [gradientColors, setGradientColors] = useState({
+    color1: "#ffffff",
+    color2: "#000000",
+  });
+
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({ username: "" });
   const [currentDate, setCurrentDate] = useState("");
@@ -189,6 +194,16 @@ const MyPage = () => {
     savePreferences(sections, globalOpacity, newColor);
   };
 
+  const handleGradientChange = (e, colorKey) => {
+    const newColors = {
+      ...gradientColors,
+      [colorKey]: e.target.value,
+    };
+    setGradientColors(newColors);
+
+    setSectionColor(`linear-gradient(135deg, ${newColors.color1}, ${newColors.color2})`);
+  };
+
   return (
     <>
       <div className="mypage-header">
@@ -235,6 +250,21 @@ const MyPage = () => {
                 onChange={handleColorChange}
               />
             </div>
+            {/* 그라데이션 설정 */}
+            {/* <div className="gradient-control">
+                <label>그라데이션 색상 1</label>
+                <input
+                  type="color"
+                  value={gradientColors.color1}
+                  onChange={(e) => handleGradientChange(e, "color1")}
+                />
+                <label>그라데이션 색상 2</label>
+                <input
+                  type="color"
+                  value={gradientColors.color2}
+                  onChange={(e) => handleGradientChange(e, "color2")}
+                />
+              </div> */}
           </div>
         )}
       </div>

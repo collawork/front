@@ -153,32 +153,71 @@
   font-size: 1.1em;
 }
 
-.settings-modal {
+.settings-modal-layout {
   position: absolute;
-  top: 30px; /* 아이콘 바로 아래에 표시 */
-  right: 0; /* 오른쪽 정렬 */
-  width: 200px;
   padding: 10px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  left: 75%;
+  top: 150px;
 }
 
-.settings-modal .opacity-control,
-.settings-modal .color-control {
+.settings-modal-layout .opacity-control,
+.settings-modal-layout .color-control {
   margin-bottom: 10px;
 }
 
-.settings-modal label {
+.settings-modal-layout label {
   display: block;
   font-size: 0.85em;
   margin-bottom: 5px;
   color: #333;
 }
 
-.settings-modal input[type="range"],
-.settings-modal input[type="color"] {
+.settings-modal-layout input[type="range"],
+.settings-modal-layout input[type="color"] {
   width: 100%;
+}
+
+.settings-icon-layout{
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  left: 75%;
+  position: relative;
+  top: 100px;
+}
+
+.weather-summary-layout{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  left: 78%;
+  top: 123px;
+  position: relative;
+}
+
+.wework-btn{
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  font-weight: bold;
+  font-size: 1.5em;
+  position: relative;
+  left: 10%;
+  top: 55px;
+}
+
+.layout-container {
+  margin-top: -30px;
+}
+
+.wework-icon {
+  width: 50px;
+  margin-right: 10px;
+  border-radius: 50px;
 }

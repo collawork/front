@@ -1,34 +1,56 @@
-.container {
+@font-face {
+    font-family: 'MinSans-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.container-home {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #2C1A47;
+    background: linear-gradient(135deg, #a8ace0, #6c63ff);
     color: #F3F3F3;
+    font-family: 'MinSans-Regular';
 }
 
-.text-container {
+.text-container-home {
     max-width: 500px;
     margin-right: 50px;
 }
 
-.title {
+.title-home {
     font-size: 3rem;
     font-weight: bold;
     line-height: 1.2;
+    background: linear-gradient(135deg, #ffffff, #d9d9d9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
 }
 
-.subtitle {
+.subtitle-home {
     font-size: 1.2rem;
     margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
 }
 
-.button {
-    background-color: #7C3AED;
+.button-home {
+    background: linear-gradient(135deg, #8980b9, #6c63ff);
     color: #FFF;
     padding: 15px 30px;
     font-size: 1rem;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-family: 'MinSans-Regular';
+    transition: background 0.3s ease;
+}
+
+.button-home:hover {
+    background: linear-gradient(135deg, #6c63ff, #8980b9);
 }

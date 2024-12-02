@@ -12,6 +12,10 @@ import sunrise from '../components/assest/videos/sunrise.mp4';
 import sunset from '../components/assest/videos/sunset.mp4';
 import thunderstorm from '../components/assest/videos/thunder.mp4';
 import night from '../components/assest/videos/night.mp4';
+import sky2 from '../components/assest/videos/sky2.mp4';
+import sky3 from '../components/assest/videos/sky3.mp4';
+import sky4 from '../components/assest/videos/sky4.mp4';
+import nightsky from '../components/assest/videos/night-sky.mp4';
 
 const WeatherBackground = ({ setWeatherData = () => {} }) => {
     const [weather, setWeather] = useState(null);
@@ -22,12 +26,12 @@ const WeatherBackground = ({ setWeatherData = () => {} }) => {
     // 날씨와 동영상 매핑
     const videoMap = {
         clear: clear,
-        clouds: [cloud2, cloud3], //cloud1 이거 좀 밤 하늘같음
+        clouds: [cloud2, cloud3,sky2,sky3,sky4], //cloud1 이거 좀 밤 하늘같음
         rain: rain,
         snow: snow,
         sunny: sunny,
         sunrise: sunrise,
-        sunset: sunset,
+        sunset: sunset, nightsky,
         thunderstorm: thunderstorm,
         night: night,
     };
