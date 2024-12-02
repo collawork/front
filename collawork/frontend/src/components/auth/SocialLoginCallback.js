@@ -56,7 +56,6 @@ function SocialLoginCallback() {
                 if (googleAccsessToken) localStorage.setItem('googleAccsessToken', googleAccsessToken);
                 if (NaverAccessToken) localStorage.setItem('NaverAccessToken', NaverAccessToken);
                 localStorage.setItem('provider', provider);
-                // console.log("모든 토큰 저장 완료 후 리디렉션 시작");
                 navigate('/main');
             } catch (error) {
                 console.error("소셜 로그인 실패:", error);

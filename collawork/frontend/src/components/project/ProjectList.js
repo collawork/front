@@ -23,7 +23,7 @@ const ProjectList = ({ onProjectSelect, fetchProjectList }) => {
 
     // console.log("ProjectList userId:", userId);
     // console.log("localStorage.getItem : ", localStorage.getItem("userId"));
-    console.log("localStorage에 저장된 userId:", localStorage.getItem('userId'));
+    console.log("userId : ",userId);
 
     useEffect(() => {
         // console.log("ProjectList useEffect 호출됨");
@@ -47,8 +47,7 @@ const ProjectList = ({ onProjectSelect, fetchProjectList }) => {
             console.error("유효하지 않은 userId:", userIdValue);
             return;
         }
-        const storedUserId = localStorage.getItem('userId');
-        console.log("pjpj userId : ", storedUserId);
+
         // API 호출
         axios.post(
             `/api/user/projects/selectAll`,
