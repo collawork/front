@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { projectStore, calendarEvents } from "../store";
 import WeatherBackground from "../pages/WeatherBackground";
 import gearIcon from "../components/assest/images/gear.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
 
 const Layout = () => {
   const { userId } = useUser();
@@ -187,7 +189,7 @@ const Layout = () => {
           </div>
         )}
       </div>
-      <button onClick={moveToMypage}>메인화면으로 이동</button>
+      <button className="button-to-main" onClick={moveToMypage}>  <FontAwesomeIcon icon={faHouse} /> </button>
       <Search currentUser={{ id: userId }} />
       <div className="main-content">
         <div

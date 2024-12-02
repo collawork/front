@@ -182,3 +182,9 @@
 .settings-modal input[type="color"] {
   width: 100%;
 }
+
+.button-to-main {
+  border: none;
+  background: #faebd700;
+  opacity: 0.5;
+}
