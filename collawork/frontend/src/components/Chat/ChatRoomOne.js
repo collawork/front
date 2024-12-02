@@ -186,6 +186,11 @@ const ChatRoomOne = ({chatRoomId}) => {
                 formData.append('chatRoomId', chatRoomId);
                 formData.append('timestamp', timestamp);
 
+                console.log('업로드된 파일 URL:', fileUrl);
+                console.log('fileUrl in message:', msg.fileUrl);
+
+
+
                 try {
                     const token = localStorage.getItem('token');
                     const response = await axios.post('http://localhost:8080/api/chat/upload', formData, {
