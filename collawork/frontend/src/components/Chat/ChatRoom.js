@@ -277,7 +277,7 @@ const ChatRoom = () => {
 
     return (
         <div className="chat-container">
-            <h3 className='title'>{roomName}</h3>
+            <h3 className='title-chat'>{roomName}</h3>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg) => (
                     <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>

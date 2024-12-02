@@ -18,7 +18,7 @@
     font-weight: bold;
     color: #fff;
 }
-.title{
+.title-chat{
     position: center;
     max-width: 80%;       /* 너비를 80%로 제한 */
     margin: 0 auto;       /* 중앙 정렬 */
