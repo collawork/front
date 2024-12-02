@@ -73,7 +73,7 @@ useEffect(() => {
           });
           setVotingData(response.data);
           VotingBySend(response.data);
-           console.log(response.data);
+         
           return response.data;
         } catch (error) {
           console.error("Voting error:", error);
@@ -151,23 +151,17 @@ useEffect(() => {
     // 각 투표 별 정보 조회 handler(1. 기본 투표 정보  2.투표 항목 )
     const handler = async () => {
     const votingResponse = await Send(); // 1
-    console.log("Voting data:" + votingResponse);
-    // VotingBySend(); // 1-1 만든사람 정보
-    // setVotingData(votingData);
+ 
 
         if (votingResponse && votingResponse.length > 0) {
         const allContents = {};
 
         for (const vote of votingResponse) {
             const contents = await contentsSend(vote.id); // 2
-            console.log(contents);
+           
             allContents[vote.id] = contents;
             const userVoteContents = await userVoteSend(vote.id); // 3(유저의 투표한 정보 불러오기) // 투표 별
            
-            console.log(userVoteContents);
-          
-            console.log(votingData);
-
         if (userVoteContents !== null) {
             // 만약 투표를 한 유저면,
           setUserVotes(prev => ({
@@ -184,7 +178,6 @@ useEffect(() => {
     // (투표 후) 사용자 투표 항목 저장 요청
     function userVote(voteId) {
         const token = localStorage.getItem('token');
-        console.log("투표 함수로 넘어옴..");
         axios({
         url: `${API_URL}/api/user/projects/uservoteinsert`,
         headers: { 'Authorization': `Bearer ${token}` },
@@ -215,7 +208,6 @@ useEffect(() => {
             [voteId]: voteCounts,
           }));
       
-          console.log(`${voteId}:`, voteCounts);
         } catch (error) {
           console.error(` ${voteId}:`, error);
         }
@@ -225,7 +217,7 @@ useEffect(() => {
     const modalHandler = () => {
         console.log("새 투표 버튼 누름");
         setModalShow(true);
-        console.log(modalShow);
+    
     }
 
    // 투표 종료 handler(idVote 값 false 로 변경)
@@ -234,7 +226,6 @@ useEffect(() => {
       
       if(result){
         const token = localStorage.getItem('token');
-      console.log(voteId)
       axios({
       url: `${API_URL}/api/user/projects/isVoteUpdate`,
       headers: { 'Authorization': `Bearer ${token}` },
@@ -243,8 +234,7 @@ useEffect(() => {
       }).then(function (response) {
           setIdVoteState(true);
           alert("투표가 종료되었습니다 !");
-          console.log(response);
-          console.log(response.data)
+       
       });
       }else{
         return;

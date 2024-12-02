@@ -44,7 +44,7 @@ const ProjectInformation = () => {
         email: participant.email || "이메일 없음",
       }));
       setParticipant(formattedParticipants);
-      console.log(formattedParticipants);
+      // console.log(formattedParticipants);
     } catch (error) {
       console.error("참여자 목록을 가져오는 중 오류 발생:", error);
     }
@@ -99,7 +99,7 @@ const ProjectInformation = () => {
       params: { projectName },
       baseURL: 'http://localhost:8080',
     }).then(function (response) {
-      console.log(response);
+      // console.log(response);
       PlusProjectData(response.data[0]);
       if (!response.data || response.data.length === 0) {
         Send();
@@ -109,9 +109,9 @@ const ProjectInformation = () => {
 
   const changeHandler = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setId(e.target.value);
-    console.log(id);
+    // console.log(id);
   }
 
 
@@ -129,7 +129,7 @@ const ProjectInformation = () => {
     }).then(function (response) {
       if (response.data) {
         setCalendarList(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } else {
         setCalendarList([]); // 응답이 없을 경우 빈 배열로 설정
       }
@@ -181,7 +181,7 @@ const ProjectInformation = () => {
       method: 'post',
       params: { email: id, projectId: projectData.id },
     }).then(response => {
-      console.log(response.data);
+      // console.log(response.data);
       setManagerModalOpen(false);
       setModify(false);
       alert("담당자가 변경되었습니다!");
@@ -257,7 +257,6 @@ const ProjectInformation = () => {
     })
       .then(function (response) {
         if (response.data) {
-          
           setVotingData(response.data);
         } else {
           setVotingData(null);
@@ -292,7 +291,7 @@ const ProjectInformation = () => {
               <button className="icon-button" onClick={() => modify? setModify(false) : setModify(true)}>
                 <FontAwesomeIcon icon={faGear} />
               </button>
-              {modify && <ProjectModify setModify={setModify} />}
+              {modify && <ProjectModify setModify={setModify} Send={Send}/>}
               <div className="adminBox">
                 <div
                   style={{
@@ -471,36 +470,36 @@ const ProjectInformation = () => {
                   <br/>
                   
       
-          <ReactModal
-            isOpen={managerModalOpen}
-            onRequestClose={() => setManagerModalOpen(false)}
-            contentLabel="managerModify"
-            className="change-admin-modal"
-            style={{
-              overlay: { backgroundColor: 'transparent' },
-            }}
-          >
-            <ul>
-              <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
-              {participant.map((part) => (
-                <li key={part.email}>
-                  <input
-                    type="radio"
-                    id={`participant-${part.email}`}
-                    name="adminParticipant"
-                    value={part.email}
-                    onChange={(e) => changeHandler(e)}
-                  />
-                  <label htmlFor={`participant-${part.email}`}>
-                    {part.id} {part.name} - {part.email}
-                  </label>
-                </li>
-              ))}
-            </ul>
-            <button onClick={onSubmitHandler}>변경하기</button>
-            <button onClick={() => setManagerModalOpen(false)}>취소</button>
-          </ReactModal>
-  
+                  <ReactModal
+                    isOpen={managerModalOpen}
+                    onRequestClose={() => setManagerModalOpen(false)}
+                    contentLabel="managerModify"
+                    className="change-admin-modal"
+                    style={{
+                      overlay: { backgroundColor: 'transparent' },
+                    }}
+                  >
+                    <ul>
+                      <h4>관리자로 변경 할 참가자를 선택하세요.</h4>
+                      {participant.map((part) => (
+                        <li key={part.email}>
+                          <input
+                            type="radio"
+                            id={`participant-${part.email}`}
+                            name="adminParticipant"
+                            value={part.email}
+                            onChange={(e) => changeHandler(e)}
+                          />
+                          <label htmlFor={`participant-${part.email}`}>
+                            {part.id} {part.name} - {part.email}
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                    <button onClick={onSubmitHandler}>변경하기</button>
+                    <button onClick={() => setManagerModalOpen(false)}>취소</button>
+                  </ReactModal>
+          
           <h5 className="created-at">
             {projectData.createdAt ? projectData.createdAt.split('T')[0] : '정보없음'}
           </h5>

@@ -18,7 +18,6 @@ const Project = ({ projectId }) => {
   const { projectData } = projectStore();
   const [selected, setSelected] = useState("home"); 
   const token = localStorage.getItem("token");
-  console.log("현재 로그인한 사용자의 token : " + token);
   const [plusIcon, setPlusIcon] = useState(true);
 
   const { userId } = useUser();
@@ -135,9 +134,9 @@ const Project = ({ projectId }) => {
         <h5 style={{
         color:"gray",
         opacity:0.8,
-        marginLeft: "338px",
         marginTop:"94px",
         fontSize:"20px",
+        textAlign: "center",
         }}>프로젝트를 선택해주세요</h5>
         }
     

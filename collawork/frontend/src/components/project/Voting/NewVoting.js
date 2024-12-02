@@ -79,8 +79,7 @@ const Voting = ({
           },
         }
       );
-      console.log(response.data[0]);
-      console.log(response.data);
+      
     } catch (error) {
       console.error("Error during API request:", error.response || error.message);
     }
@@ -90,7 +89,7 @@ const Voting = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     arr = inputItems.map((item) => item.voteOption);
-    console.log("입력받은 날짜 : " + inputDate);
+   
 
     try {
       await send(); // API 호출

@@ -6,7 +6,7 @@ import axios from "axios";
 import '../../components/assest/css/ProjectModify.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
-const ProjectModify = ({ setModify }) => {
+const ProjectModify = ({ setModify,Send }) => {
   const modalRef = useRef();
   const [modalShow, setModalShow] = useState(true); 
   const [nameModalOpen, setNameModalOpen] = useState(false); 
@@ -60,6 +60,7 @@ const ProjectModify = ({ setModify }) => {
       setModify(false);
       PlusListState(false);
       setModalShow(false);
+      Send();
     });
   };
 
