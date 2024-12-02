@@ -171,3 +171,32 @@ html, body {
     height: 24px;
     cursor: pointer;
 }
+
+.settings-modal {
+    position: absolute;
+  
+    width: 200px;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .settings-modal .opacity-control,
+  .settings-modal .color-control {
+    margin-bottom: 10px;
+  }
+  
+  .settings-modal label {
+    display: block;
+    font-size: 0.85em;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .settings-modal input[type="range"],
+  .settings-modal input[type="color"] {
+    width: 100%;
+  }
