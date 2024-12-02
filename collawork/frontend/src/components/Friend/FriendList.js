@@ -35,7 +35,7 @@ const FriendList = ({ userId }) => {
                 params: { userId },
             });
 
-            console.log("API 응답 데이터:", response.data);
+            // console.log("API 응답 데이터:", response.data);
 
             // 필터링 로직
             const filteredFriends = response.data
@@ -50,7 +50,7 @@ const FriendList = ({ userId }) => {
                 })
                 .filter(Boolean);
 
-            console.log("필터링된 친구 목록:", filteredFriends);
+            // console.log("필터링된 친구 목록:", filteredFriends);
             setFriends(filteredFriends);
         } catch (error) {
             console.error('친구 목록을 불러오는 중 오류 발생:', error);
@@ -59,7 +59,7 @@ const FriendList = ({ userId }) => {
 
     useEffect(() => {
         if (userId) {
-            console.log("fetchFriends 호출 - userId 초기화 완료:", userId);
+            // console.log("fetchFriends 호출 - userId 초기화 완료:", userId);
             fetchFriends();
         } else {
             console.warn("userId가 아직 초기화되지 않았습니다.");
