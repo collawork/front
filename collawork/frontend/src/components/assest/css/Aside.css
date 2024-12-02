@@ -104,7 +104,7 @@
     margin-right: 7px;
   }
 
-  .selected {
+  .selected-project {
     background-color: gray;
     opacity:0.6;
   }

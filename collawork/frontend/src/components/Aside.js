@@ -30,6 +30,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [selectedProjectId, setSelectedProjectId] = useState(null);
     const pageSize = 10; // 한 페이지에 표시할 프로젝트 수
 
 
@@ -473,19 +474,23 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
                         </div>
 
                         <div className="aside-bottom">
-                        {projectName.map((project) => (
-                        <section key={project.id}>
-                       
-                            <span className="clickable-text" onClick={() => moveProjectHome(project)}>
-                                <li>
-                            {/* <FontAwesomeIcon icon={faFolderOpen} className='folderIcon' /> */}
-                            {project.name}
-                            </li>
-                        </span>
-                        
-                </section>
-                    ))}
-                    </div>
+                     {projectName.map((project) => (
+                    <section key={project.id}>
+                    <span
+                     className={`clickable-text ${selectedProjectId === project.id ? 'selected-project' : ''}`}
+                    onClick={() => {
+                        moveProjectHome(project);
+                        setSelectedProjectId(project.id); // 클릭된 프로젝트 ID 저장
+                    }}
+                >
+                <li>
+                    {/* <FontAwesomeIcon icon={faFolderOpen} className='folderIcon' /> */}
+                    {project.name}
+                </li>
+            </span>
+        </section>
+    ))}
+</div>
 
                 <Pagination
                     currentPage={currentPage}

@@ -127,10 +127,20 @@ const Project = ({ projectId }) => {
         {calShow && <Calendar />}
         {voting && <Voting />}
       </div>
-      <h5 style={{
+      { homeShow == false && 
+        notiShow == false &&
+        chatShow == false && 
+        calShow == false && 
+        voting == false && 
+        <h5 style={{
         color:"gray",
-        opacity:0.7
+        opacity:0.8,
+        marginLeft: "338px",
+        marginTop:"94px",
+        fontSize:"20px",
         }}>프로젝트를 선택해주세요</h5>
+        }
+    
     </div>
   );
 }

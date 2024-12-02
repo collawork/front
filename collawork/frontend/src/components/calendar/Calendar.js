@@ -330,7 +330,7 @@ export const Calendar = () => {
                                     />
                                 ))}
                             </div>
-                            <button type='submit'>저장</button>
+                            <button className='delete-button' type='submit'>저장</button>
                         </>
                     }
                 </form>
