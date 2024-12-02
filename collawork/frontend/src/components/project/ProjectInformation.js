@@ -244,10 +244,10 @@ const ProjectInformation = () => {
       return;
     }
 
-    if (!projectData || !projectData.id) {
-      console.error("Invalid or missing project ID:", projectData);
-      return;
-    }
+    // if (!projectData || !projectData.id) {
+    //   console.error("Invalid or missing project ID:", projectData);
+    //   return;
+    // }
 
     axios({
       url: `${API_URL}/api/user/projects/findVoting`,
@@ -264,16 +264,16 @@ const ProjectInformation = () => {
         }
       })
       .catch(function (error) {
-        if (error.response) {
+        // if (error.response) {
 
-          console.error("Response error:", error.response.status, error.response.data);
-        } else if (error.request) {
+        //   console.error("Response error:", error.response.status, error.response.data);
+        // } else if (error.request) {
 
-          console.error("No response received:", error.request);
-        } else {
+        //   console.error("No response received:", error.request);
+        // } else {
 
-          console.error("Axios error:", error.message);
-        }
+        //   console.error("Axios error:", error.message);
+        // }
       });
   }
 
@@ -434,7 +434,7 @@ const ProjectInformation = () => {
                   <div className="voting-section">
                   <div className="schedule-header">
                     <h4>진행중인 투표</h4>
-                    <h5 style={{color:"gray"}} onClick={calendatHandler}> + 더보기</h5>
+                    <h5 style={{color:"gray"}} onClick={voteHandler}> + 더보기</h5>
                     </div>
                     <hr style={{ borderTop: '1px solid black', marginBottom: '10px' }} />
                     <div className="voting-list-container">
@@ -443,12 +443,12 @@ const ProjectInformation = () => {
                           {votingData
                             .filter((vote) => vote.vote === true)
                             .map((vote) => (
-                              <li key={vote.id} className="list-item">
+                              <li key={vote.id} className="list-item" onClick={voteHandler}>
                                 <div className="icon-container">
                                 <FontAwesomeIcon icon={faThumbtack} color="purple" className="icon" />
                                   <FontAwesomeIcon icon={faCheckToSlot} style={{ color: 'black' }} />
                                 </div>
-                                <div className="list-content">
+                                <div className="list-content" >
                                   <h3>{vote.votingName}</h3>
                                 </div>
                               </li>
