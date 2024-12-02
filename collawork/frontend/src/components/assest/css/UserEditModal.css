@@ -22,6 +22,8 @@
     box-shadow: var(--box-shadow) ;
     outline: none; /* 포커스 시 외곽선 제거 */
     position: relative; /* 부모 요소 기준 위치 */
+    width: 30%;
+    padding: 30px;
 }
 
 
@@ -73,6 +75,10 @@ form button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    color: #333;
 }
 
 /* form button[type="submit"] {
