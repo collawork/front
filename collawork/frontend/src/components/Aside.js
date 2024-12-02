@@ -44,9 +44,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         }
     
         try {
-            console.log(userId);
-            console.log(userIdValue );
-            console.log("토큰토큰 : " + token);
+          
             const response = await axios.get(`${API_URL}/api/friends/list`, {
                 headers: { 
                     Authorization: `Bearer ${token}`,
@@ -103,6 +101,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         let userIdValue = typeof userId === "object" && userId !== null
             ? userId.id || userId.userId // 객체에서 id 또는 userId 추출
             : userId;
+        
     
         // userId가 숫자인지 확인하고 변환
         if (!userIdValue || isNaN(Number(userIdValue))) {
@@ -197,8 +196,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
         if (userIdValue && token) {
             fetchFriends();
             selectProjectName();
-            console.log("현재 userId:", userIdValue);
-            console.log("현재 selectedProject:", selectedProject);
+          
         }
     }, [userId,listState]);
 
@@ -209,7 +207,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
     }, [newShow]);
 
     useEffect(() => {
-        console.log("초기 userId:", userId);
+       
     
         // userId가 객체일 경우 처리
         let userIdValue = typeof userId === "object" && userId !== null
@@ -280,12 +278,6 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
 
         const participantIds = participants.map(participant => participant.id || participant);
 
-        console.log("전송 데이터 확인:", {
-            title,
-            context,
-            userId,
-            participants: participantIds, // 숫자 배열인지 확인
-        });
     
         try {
             const response = await axios.post(

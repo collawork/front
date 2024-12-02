@@ -280,34 +280,53 @@ const ChatRoom = () => {
             <h3 className='title-chat'>{roomName}</h3>
             <div id="chatWindow" className="chat-window" ref={chatWindowRef}>
                 {messages.map((msg) => (
-                    <div key={msg.messageId} className={`message ${msg.sort}`} onContextMenu={(e) => rightClick(e,msg.messageId)}>
-                         {isDeleteMode && (
+                    <div
+                        key={msg.messageId}
+                        className={`message ${msg.sort}`}
+                        onContextMenu={(e) => rightClick(e, msg.messageId)}
+                    >
+                        {isDeleteMode && (
                             <input
                                 type="checkbox"
                                 checked={selectedMessages.includes(msg.messageId)}
                                 onChange={() => handleCheckboxChange(msg.messageId)}
                             />
                         )}
-                        <strong>{msg.username}</strong>: 
-                        {msg.type === 'file' || msg.type === 'FILE' ? (
-                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|img|jfif)$/i) ? (
-                                <img src={msg.fileUrl} alt="이미지 미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                        <strong>{msg.username}</strong>:{" "}
+                        {msg.type === "file" ? (
+                            msg.fileUrl.match(/\.(jpeg|jpg|gif|png|bmp|svg|jfif)$/i) ? (
+                                <img
+                                    src={msg.fileUrl}
+                                    alt="Image Preview"
+                                    style={{
+                                        maxWidth: "200px",
+                                        maxHeight: "200px",
+                                        borderRadius: "8px",
+                                    }}
+                                />
                             ) : (
-                                <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" download={`file_${msg.senderId}_${msg.username}`}>{msg.fileUrl}</a>
+                                <a
+                                    href={msg.fileUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download={`file_${msg.senderId}_${msg.username}`}
+                                >
+                                    {msg.fileUrl}
+                                </a>
                             )
                         ) : (
-                            msg.message 
+                            msg.message
                         )}
                         <br />
                         <span>{msg.time}</span>
                     </div>
                 ))}
-                       {dropdownVisible && (
+                {dropdownVisible && (
                     <ul
                         className="dropdown-menu"
                         style={{ top: dropdownPosition.y, left: dropdownPosition.x }}
                     >
-                        <li onClick={() => handleDropdownSelect('delete')}>삭제</li>
+                        <li onClick={() => handleDropdownSelect("delete")}>삭제</li>
                     </ul>
                 )}
             </div>
@@ -318,17 +337,24 @@ const ChatRoom = () => {
                     id="chatMessage"
                     placeholder="메시지 입력"
                     value={messageInput}
-                    onChange={e => setMessageInput(e.target.value)}
+                    onChange={(e) => setMessageInput(e.target.value)}
                     onKeyDown={handleKeyPress}
                 />
-            
-       
-                {isDeleteMode && <button onClick={deleteSelectedMessages}> <FontAwesomeIcon icon={faTrash} />선택 삭제</button>}
-                {/* <button className="back-to-main-button" onClick={handlerBackToMain}>메인으로 돌아가기</button> */}
+                {isDeleteMode && (
+                    <button onClick={deleteSelectedMessages}>
+                        <FontAwesomeIcon icon={faTrash} />
+                        선택 삭제
+                    </button>
+                )}
+                <button className="sendBtn" onClick={() => sendMessage("text")}>
+                    전송
+                </button>
             </div>
             <div className="button-container">
-            <button className="sendBtn" onClick={() => sendMessage('file')}>  <FontAwesomeIcon icon={faPaperclip}  />  파일 전송</button>
-            <button className="sendBtn" onClick={() => sendMessage('text')}>전송</button>
+                <button className="sendBtn" onClick={() => sendMessage("file")}>
+                    <FontAwesomeIcon icon={faPaperclip} />
+                    파일 전송
+                </button>
             </div>
         </div>
     );

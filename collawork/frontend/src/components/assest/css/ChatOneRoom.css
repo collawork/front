@@ -12,9 +12,6 @@
     top: 50%; 
     right: 20px;
     transform: translateY(-50%);
-
-    
-   
 }
 
 .message-input2{
@@ -107,8 +104,6 @@
     width: 95%;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #2f3136;
     color: #fff;
     font-size: 14px;
 }
