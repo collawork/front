@@ -462,7 +462,7 @@ const Aside = ({ onProjectSelect, onInviteFriends  }) => {
 
                     
                         <div className="aside-top">
-                            <div>collawork</div>
+                            <div className='wework'>wework</div>
                             <button 
                             className='plusbutton'
                             onClick={() => setNewShow(true)}>
