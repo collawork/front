@@ -40,6 +40,8 @@ const Search = () => {
             params: { query: searchQuery , userId : userId},
         });
 
+        console.log('API 응답 데이터:', response.data);
+
         // console.log("API 응답 데이터:", response.data);
         // console.log("현재 로그인된 사용자:", userId);
 
@@ -68,9 +70,12 @@ const Search = () => {
         setNoResults(isEmptyResults);
         setSearchResults(filteredResults);
         setIsModalOpen(true);
+        // console.log('검색 결과 상태:', searchResults);
+        // console.log('검색어:', searchQuery);
     } catch (error) {
         console.error('검색 중 오류 발생: ', error);
         setNoResults(true);
+        // console.log("error : ",error);
     }
 };
 
